@@ -1,0 +1,23 @@
+{
+  "openapi": "3.0.0",
+  "paths": {},
+  "info": {
+    "title": "Snipet core API",
+    "description": "The Snipet API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "x-api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API Key"
+      }
+    },
+    "schemas": {}
+  }
+}
