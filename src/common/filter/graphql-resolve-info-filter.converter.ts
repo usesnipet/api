@@ -1,5 +1,7 @@
 import type { FieldNode, GraphQLResolveInfo, SelectionSetNode } from "graphql";
 
+import { isRelationField, getRelationNestedType, type GraphQLModelClass } from "@/common/graphql/relation.decorator";
+
 import {
   FilterCondition, FilterOptionsInit, FilterPrimitive, FilterWhere, FilterWhereOp
 } from "./filter-options";
@@ -42,10 +44,46 @@ function toFilterCondition(where: Record<string, any>): Record<string, FilterCon
   }
   return result;
 }
+
+function collectFromSelections(
+  selectionSet: SelectionSetNode | undefined,
+  fragments: GraphQLResolveInfo["fragments"],
+  modelType: GraphQLModelClass,
+  pathPrefix: string | undefined,
+  scalars: string[],
+  relations: string[],
+): void {
+  walkSelections(selectionSet, fragments, (field) => {
+    const name = field.name.value;
+    if (name === "__typename") return;
+
+    const atRoot = pathPrefix === undefined;
+
+    if (!field.selectionSet) {
+      if (atRoot) scalars.push(name);
+      return;
+    }
+
+    if (!isRelationField(modelType, name)) {
+      if (atRoot) scalars.push(name);
+      return;
+    }
+
+    const path = pathPrefix ? `${pathPrefix}.${name}` : name;
+    relations.push(path);
+
+    const nestedType = getRelationNestedType(modelType, name);
+    if (nestedType) {
+      collectFromSelections(field.selectionSet, fragments, nestedType, path, scalars, relations);
+    }
+  });
+}
+
 export class GraphQLFilterConverter {
   static toFilterOptions<Model extends object = any>(
+    model: GraphQLModelClass,
     info: GraphQLResolveInfo,
-    args: GraphQLFilterArgsType
+    args: GraphQLFilterArgsType,
   ): FilterOptionsInit<Model> {
     const scalars: string[] = [];
     const relations: string[] = [];
@@ -55,24 +93,7 @@ export class GraphQLFilterConverter {
       return {};
     }
 
-    walkSelections(root.selectionSet, info.fragments, (field) => {
-      const name = field.name.value;
-      if (name === "__typename") return;
-
-      if (!field.selectionSet) {
-        scalars.push(name);
-        return;
-      }
-
-      relations.push(name);
-      walkSelections(field.selectionSet, info.fragments, (sub) => {
-        const subName = sub.name.value;
-        if (subName === "__typename") return;
-        if (sub.selectionSet) {
-          relations.push(`${name}.${subName}`);
-        }
-      });
-    });
+    collectFromSelections(root.selectionSet, info.fragments, model, undefined, scalars, relations);
 
     const init: FilterOptionsInit<Model> = {
       where: toFilterCondition(args.where as Record<string, any>) as FilterWhere<Model>,

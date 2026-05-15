@@ -1,4 +1,4 @@
-import { JsonObject } from "@/common/graphql/json-object";
+import { Relation } from "@/common/graphql/relation.decorator";
 import { FieldManifest } from "@/core/manifest/field";
 import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
@@ -32,13 +32,13 @@ export class NodeType {
   @Field(() => String, { nullable: true })
   author: string | null;
 
-  @Field(() => [JsonObject], { nullable: true })
+  @Field(() => [FieldManifest], { nullable: true })
   inputs: FieldManifest[];
 
-  @Field(() => [JsonObject], { nullable: true })
+  @Field(() => [FieldManifest], { nullable: true })
   outputs: FieldManifest[];
 
-  @Field(() => [JsonObject], { nullable: true })
+  @Field(() => [NodeTypeComponentManifest], { nullable: true })
   components: NodeTypeComponentManifest[];
 
   @Field(() => Date)
@@ -47,6 +47,7 @@ export class NodeType {
   @Field(() => Date)
   updatedAt: Date;
 
+  @Relation(() => NodeTypeTag)
   @Field(() => [NodeTypeTag], { nullable: true })
   nodeTypeTags: NodeTypeTag[];
 

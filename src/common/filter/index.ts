@@ -1,3 +1,4 @@
+export * from '../graphql/relation.decorator';
 export * from './filter-options';
 export * from './filter.decorator';
 export * from './http-filter.converter';

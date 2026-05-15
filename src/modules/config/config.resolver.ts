@@ -14,7 +14,7 @@ export class ConfigResolver {
   @Query(() => [Config])
   async configs(@Info() info: GraphQLResolveInfo, @Args() args: ConfigArgs): Promise<Config[]> {
     return this.configService.find(
-      new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)),
+      new FilterOptions(GraphQLFilterConverter.toFilterOptions(Config, info, args)),
     );
   }
 }

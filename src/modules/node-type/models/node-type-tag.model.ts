@@ -1,3 +1,4 @@
+import { Relation } from "@/common/graphql/relation.decorator";
 import type { NodeTypeTagRow } from "@/db/schema/entity-tags";
 import { Tag } from "@/modules/tag/models/tag.model";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
@@ -10,6 +11,7 @@ export class NodeTypeTag {
   @Field(() => ID)
   tagId: string;
 
+  @Relation(() => Tag)
   @Field(() => Tag, { nullable: true })
   tag?: Tag;
 

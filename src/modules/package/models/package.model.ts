@@ -1,3 +1,4 @@
+import { Relation } from "@/common/graphql/relation.decorator";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 import { PackageTag } from "./package-tag.model";
@@ -36,6 +37,7 @@ export class Package {
   @Field(() => Date)
   updatedAt: Date;
 
+  @Relation(() => PackageTag)
   @Field(() => [PackageTag], { nullable: true })
   packageTags: PackageTag[];
 

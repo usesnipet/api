@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type FieldManifest {
+  name: String!
+  type: String!
+  description: String!
+  required: Boolean
+  defaultValue: JSONObject
+  items: FieldManifest
+  properties: [FieldManifest!]
+  encrypted: Boolean
+}
+
 type Tag {
   id: ID!
   name: String!
@@ -22,7 +33,7 @@ type Config {
   docs: String
   icon: String
   author: String
-  fieldManifest: [JSONObject!]
+  fieldManifest: [FieldManifest!]
   createdAt: DateTime!
   updatedAt: DateTime!
   configTags: [ConfigTag!]
@@ -83,6 +94,20 @@ type Flow {
   updatedAt: DateTime!
 }
 
+type NodeTypeComponentManifest {
+  name: String!
+  type: String!
+  required: Boolean
+}
+
+type NodeTypeManifest {
+  metadata: MetadataManifest!
+  id: String!
+  inputs: [JSONObject!]
+  outputs: [JSONObject!]
+  components: [JSONObject!]
+}
+
 type NodeTypeTag {
   nodeTypeId: ID!
   tagId: ID!
@@ -98,9 +123,9 @@ type NodeType {
   docs: String
   icon: String
   author: String
-  inputs: [JSONObject!]
-  outputs: [JSONObject!]
-  components: [JSONObject!]
+  inputs: [FieldManifest!]
+  outputs: [FieldManifest!]
+  components: [NodeTypeComponentManifest!]
   createdAt: DateTime!
   updatedAt: DateTime!
   nodeTypeTags: [NodeTypeTag!]
@@ -151,17 +176,6 @@ type Node {
   config: Config
 }
 
-type FieldManifest {
-  name: String!
-  type: String!
-  description: String!
-  required: Boolean
-  defaultValue: JSONObject
-  items: JSONObject
-  properties: [JSONObject!]
-  encrypted: Boolean
-}
-
 type ConfigManifest {
   metadata: MetadataManifest!
   id: String!
@@ -173,14 +187,6 @@ type NodeManifest {
   id: String!
   type: String!
   config: String
-}
-
-type NodeTypeManifest {
-  metadata: MetadataManifest!
-  id: String!
-  inputs: [JSONObject!]
-  outputs: [JSONObject!]
-  components: [JSONObject!]
 }
 
 """Arbitrary JSON object"""

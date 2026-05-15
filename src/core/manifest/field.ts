@@ -36,13 +36,13 @@ export class FieldManifest {
   @IsOptional()
   @ValidateNested()
   @Type(() => FieldManifest)
-  @Field(() => JsonObject, { nullable: true })
+  @Field(() => FieldManifest, { nullable: true })
   items?: FieldManifest;
 
   @IsOptional()
   @IsRecordOf(FieldManifest)
-  @Field(() => [JsonObject], { nullable: true })
-  properties?: Record<string, FieldManifest>;
+  @Field(() => [FieldManifest], { nullable: true })
+  properties?: FieldManifest[];
 
   @IsOptional()
   @IsBoolean()

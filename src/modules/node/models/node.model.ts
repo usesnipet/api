@@ -1,3 +1,4 @@
+import { Relation } from "@/common/graphql/relation.decorator";
 import type { NodeRow } from "@/db/schema/node";
 import { Config } from "@/modules/config/models/config.model";
 import { NodeType } from "@/modules/node-type/models/node-type.model";
@@ -44,15 +45,19 @@ export class Node {
   @Field(() => Date)
   updatedAt: Date;
 
+  @Relation(() => NodeTag)
   @Field(() => [NodeTag], { nullable: true })
   nodeTags: NodeTag[];
 
+  @Relation(() => Package)
   @Field(() => Package, { nullable: true })
   package?: Package;
 
+  @Relation(() => NodeType)
   @Field(() => NodeType, { nullable: true })
   nodeType?: NodeType;
 
+  @Relation(() => Config)
   @Field(() => Config, { nullable: true })
   config?: Config;
 

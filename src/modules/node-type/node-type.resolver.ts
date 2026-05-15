@@ -14,7 +14,7 @@ export class NodeTypeResolver {
   @Query(() => [NodeType])
   async nodeTypes(@Info() info: GraphQLResolveInfo, @Args() args: NodeTypeArgs): Promise<NodeType[]> {
     return this.nodeTypeService.find(
-      new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)),
+      new FilterOptions(GraphQLFilterConverter.toFilterOptions(NodeType, info, args)),
     );
   }
 }

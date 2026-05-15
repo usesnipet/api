@@ -13,6 +13,6 @@ export class NodeResolver {
 
   @Query(() => [Node])
   async nodes(@Info() info: GraphQLResolveInfo, @Args() args: NodeArgs): Promise<Node[]> {
-    return this.nodeService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)));
+    return this.nodeService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(Node, info, args)));
   }
 }

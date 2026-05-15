@@ -13,6 +13,6 @@ export class TagResolver {
 
   @Query(() => [Tag])
   async tags(@Info() info: GraphQLResolveInfo, @Args() args: TagArgs): Promise<Tag[]> {
-    return this.tagService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)));
+    return this.tagService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(Tag, info, args)));
   }
 }

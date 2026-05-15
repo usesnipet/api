@@ -4,7 +4,7 @@ import { Allow, IsOptional, Max, Min } from "class-validator";
 
 /**
  * String / ID / text column filters. Conversion to {@link FilterWhere} happens in
- * {@link graphqlWhereFromFieldKinds} / {@link GraphQLFilterConverter.toFilterOptions}.
+ * {@link graphqlWhereFromFieldKinds} / {@link GraphQLFilterConverter.toFilterOptions} (pass the GraphQL model class).
  */
 @InputType()
 export class StringFilterInput {

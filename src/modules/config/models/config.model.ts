@@ -1,4 +1,4 @@
-import { JsonObject } from "@/common/graphql/json-object";
+import { Relation } from "@/common/graphql/relation.decorator";
 import { FieldManifest } from "@/core/manifest/field";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
@@ -32,7 +32,7 @@ export class Config {
   @Field(() => String, { nullable: true })
   author: string | null;
 
-  @Field(() => [JsonObject], { nullable: true })
+  @Field(() => [FieldManifest], { nullable: true })
   fieldManifest?: FieldManifest[];
 
   @Field(() => Date)
@@ -41,6 +41,7 @@ export class Config {
   @Field(() => Date)
   updatedAt: Date;
 
+  @Relation(() => ConfigTag)
   @Field(() => [ConfigTag], { nullable: true })
   configTags: ConfigTag[];
 

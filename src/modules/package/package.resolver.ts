@@ -14,7 +14,7 @@ export class PackageResolver {
   @Query(() => [Package])
   async packages(@Info() info: GraphQLResolveInfo, @Args() args: PackageArgs): Promise<Package[]> {
     return this.packageService.find(
-      new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)),
+      new FilterOptions(GraphQLFilterConverter.toFilterOptions(Package, info, args)),
     );
   }
 }

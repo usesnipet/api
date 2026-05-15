@@ -13,6 +13,6 @@ export class FlowResolver {
 
   @Query(() => [Flow])
   async Flows(@Info() info: GraphQLResolveInfo, @Args() args: FlowArgs): Promise<Flow[]> {
-    return this.FlowService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(info, args)));
+    return this.FlowService.find(new FilterOptions(GraphQLFilterConverter.toFilterOptions(Flow, info, args)));
   }
 }
