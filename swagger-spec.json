@@ -102,6 +102,90 @@
         "tags": [
           "flows"
         ]
+      },
+      "post": {
+        "operationId": "FlowController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Flow"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "flows"
+        ]
+      },
+      "put": {
+        "operationId": "FlowController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFlowDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Flow"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/flows/{id}": {
+      "delete": {
+        "operationId": "FlowController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "flows"
+        ]
       }
     },
     "/api/nodes": {
@@ -638,36 +722,6 @@
       }
     },
     "schemas": {
-      "MetadataManifest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "docs": {
-            "type": "string"
-          },
-          "icon": {
-            "type": "string"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "author": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "description"
-        ]
-      },
       "FlowNodeRefManifest": {
         "type": "object",
         "properties": {
@@ -746,12 +800,6 @@
       "FlowManifest": {
         "type": "object",
         "properties": {
-          "metadata": {
-            "$ref": "#/components/schemas/MetadataManifest"
-          },
-          "id": {
-            "type": "string"
-          },
           "nodes": {
             "type": "array",
             "items": {
@@ -766,7 +814,6 @@
           }
         },
         "required": [
-          "id",
           "nodes",
           "connections"
         ]
@@ -805,6 +852,29 @@
           "code",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "UpdateFlowDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "code": {
+            "$ref": "#/components/schemas/FlowManifest"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
         ]
       },
       "Tag": {

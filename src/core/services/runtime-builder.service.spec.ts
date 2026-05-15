@@ -1,7 +1,6 @@
 import "reflect-metadata";
 
 import { FlowManifest } from "@/core/manifest/flow";
-import type { MetadataManifest } from "@/core/manifest/base";
 import { NodeManifest } from "@/core/manifest/node";
 import { NodeTypeManifest } from "@/core/manifest/node-type";
 import { err } from "neverthrow";
@@ -10,12 +9,12 @@ import { RunnerDef } from "../runtime/runner";
 
 import { ConfigRegistry } from "./registry/config.registry";
 import { RegistryError } from "./registry/errors/registry.error";
-import { FlowRegistry } from "./registry/flow.registry";
 import { NodeTypeRegistry } from "./registry/node-type.registry";
 import { NodeRegistry } from "./registry/node.registry";
 import { Registry } from "./registry/registry";
 import { RuntimeBuilderService } from "./runtime-builder.service";
 
+import type { MetadataManifest } from "@/core/manifest/base";
 export const testRunner: RunnerDef = {
   id: "test-runner",
   execute: async () => {}
@@ -52,7 +51,6 @@ async function makeRegistry(
   const config = new ConfigRegistry();
   const node = new NodeRegistry();
   const nodeType = new SeedableNodeTypeRegistry();
-  const flowReg = new FlowRegistry();
 
   for (const nt of nodeTypes) {
     const payload = { id: nt.id } as NodeTypeManifest;
@@ -74,7 +72,7 @@ async function makeRegistry(
     }
   }
 
-  return new Registry(config, node, nodeType, flowReg);
+  return new Registry(config, node, nodeType);
 }
 
 function flow(

@@ -4,8 +4,6 @@ import {
   IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString, ValidateNested
 } from "class-validator";
 
-import { BaseManifest } from "./base";
-
 export class FlowNodeRefManifest {
   @ApiProperty()
   @IsString()
@@ -65,7 +63,7 @@ export class FlowConnectionManifest {
   active!: boolean;
 }
 
-export class FlowManifest extends BaseManifest {
+export class FlowManifest {
   @ApiProperty({ type: [FlowNodeRefManifest] })
   @IsArray()
   @ValidateNested({ each: true })
@@ -78,8 +76,10 @@ export class FlowManifest extends BaseManifest {
   @Type(() => FlowConnectionManifest)
   connections!: FlowConnectionManifest[];
 
-  constructor(flow: FlowManifest) {
-    super();
+  constructor(flow?: Partial<FlowManifest>) {
+    flow ??= {};
+    flow.nodes ??= [];
+    flow.connections ??= [];
     Object.assign(this, flow);
   }
 }

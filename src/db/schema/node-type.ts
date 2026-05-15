@@ -1,13 +1,12 @@
 import { FieldManifest } from "@/core/manifest/field";
 import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
 import { index, jsonb, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import moment from "moment";
 
 import { packageTable } from "./package";
 
 import type { NodeTypeTagRow } from "./entity-tags";
-/**
- * Node type definition: describes the class of node (e.g. “LLM”, “storage”) including port shapes.
- */
+
 export const nodeType = pgTable(
   'node_type',
   {
@@ -25,7 +24,10 @@ export const nodeType = pgTable(
     outputs: jsonb('outputs').$type<Array<FieldManifest>>().default([]),
     components: jsonb('components').$type<Array<NodeTypeComponentManifest>>().default([]),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => moment().toISOString()),
   },
   (t) => [unique().on(t.typeId), index('node_type_package_id_idx').on(t.packageId)],
 );
