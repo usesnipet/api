@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { ConfigSchema } from "@/core/schemas/config";
+import { ConfigManifest } from "@/core/manifest/config";
 import { config, ConfigRow } from "@/db/schema/config";
 import { configTag } from "@/db/schema/entity-tags";
 import { PackageRow } from "@/db/schema/package";
@@ -15,12 +15,8 @@ import { Config } from "./models/config.model";
 function insertRowFromDto(rest: Omit<CreateConfigDto, "tags">) {
   return {
     ...rest,
-    fieldSchema: rest.fieldSchema ?? [],
+    fieldManifest: rest.fieldManifest ?? [],
   };
-}
-
-function packageRowForSchemaId(dbPackages: PackageRow[], schemaId: string): PackageRow | undefined {
-  return dbPackages.find((p) => schemaId === p.packageId || schemaId.startsWith(`${p.packageId}:`));
 }
 
 @Injectable()
@@ -122,8 +118,8 @@ export class ConfigService extends BaseService {
   /**
    * Upserts config definitions from in-process package manifests into the database.
    */
-  async syncConfigs(dbPackages: PackageRow[], configSchemas: ConfigSchema[]): Promise<ConfigRow[]> {
-    const ids = new Set(configSchemas.map((c) => c.id));
+  async syncConfigs(dbPackages: PackageRow[], configManifests: ConfigManifest[]): Promise<ConfigRow[]> {
+    const ids = new Set(configManifests.map((c) => c.id));
     const entities = await this.db().query.config.findMany({
       where(fields, { inArray }) {
         return inArray(fields.configId, Array.from(ids));
@@ -131,52 +127,52 @@ export class ConfigService extends BaseService {
       with: { configTags: { with: { tag: true } } },
     });
 
-    const { toCreate, toUpdate } = configSchemas.reduce(
-      (acc, schema) => {
-        const row = entities.find((e) => e.configId === schema.id);
+    const { toCreate, toUpdate } = configManifests.reduce(
+      (acc, manifest) => {
+        const row = entities.find((e) => e.configId === manifest.id);
         if (row) {
           const fieldsChanged =
-            JSON.stringify(schema.fields) !== JSON.stringify(row.fieldSchema);
+            JSON.stringify(manifest.fields) !== JSON.stringify(row.fieldManifest);
           if (
-            (schema.metadata?.name ?? row.name) !== row.name ||
-            (schema.metadata?.description ?? null) !== row.description ||
-            (schema.metadata?.docs ?? null) !== row.docs ||
-            (schema.metadata?.icon ?? null) !== row.icon ||
-            (schema.metadata?.author ?? null) !== row.author ||
+            (manifest.metadata?.name ?? row.name) !== row.name ||
+            (manifest.metadata?.description ?? null) !== row.description ||
+            (manifest.metadata?.docs ?? null) !== row.docs ||
+            (manifest.metadata?.icon ?? null) !== row.icon ||
+            (manifest.metadata?.author ?? null) !== row.author ||
             fieldsChanged ||
-            schema.metadata?.tags?.length !== row.configTags.length ||
-            schema.metadata?.tags?.some((t) => !row.configTags.some((t2) => t2.tag.name === t))
+            manifest.metadata?.tags?.length !== row.configTags.length ||
+            manifest.metadata?.tags?.some((t) => !row.configTags.some((t2) => t2.tag.name === t))
           ) {
             acc.toUpdate.push(
               new UpdateConfigDto({
                 id: row.id,
-                configId: schema.id,
+                configId: manifest.id,
                 packageId: row.packageId,
-                name: schema.metadata?.name ?? row.name,
-                description: schema.metadata?.description ?? row.description ?? null,
-                docs: schema.metadata?.docs ?? row.docs ?? null,
-                icon: schema.metadata?.icon ?? row.icon ?? null,
-                author: schema.metadata?.author ?? row.author ?? null,
-                fieldSchema: schema.fields,
-                tags: schema.metadata?.tags,
+                name: manifest.metadata?.name ?? row.name,
+                description: manifest.metadata?.description ?? row.description ?? null,
+                docs: manifest.metadata?.docs ?? row.docs ?? null,
+                icon: manifest.metadata?.icon ?? row.icon ?? null,
+                author: manifest.metadata?.author ?? row.author ?? null,
+                fieldManifest: manifest.fields,
+                tags: manifest.metadata?.tags,
               }),
             );
           }
         } else {
-          const packageEntity = packageRowForSchemaId(dbPackages, schema.id);
-          if (!packageEntity) throw new Error(`Package not found for config ${schema.id}`);
+          const packageEntity = dbPackages.find((p) => p.packageId === manifest.id);
+          if (!packageEntity) throw new Error(`Package not found for config ${manifest.id}`);
 
           acc.toCreate.push(
             new CreateConfigDto({
-              configId: schema.id,
+              configId: manifest.id,
               packageId: packageEntity.id,
-              name: schema.metadata?.name ?? schema.id,
-              description: schema.metadata?.description ?? null,
-              docs: schema.metadata?.docs ?? null,
-              icon: schema.metadata?.icon ?? null,
-              author: schema.metadata?.author ?? null,
-              fieldSchema: schema.fields ?? [],
-              tags: schema.metadata?.tags,
+              name: manifest.metadata?.name ?? manifest.id,
+              description: manifest.metadata?.description ?? null,
+              docs: manifest.metadata?.docs ?? null,
+              icon: manifest.metadata?.icon ?? null,
+              author: manifest.metadata?.author ?? null,
+              fieldManifest: manifest.fields ?? [],
+              tags: manifest.metadata?.tags,
             }),
           );
         }

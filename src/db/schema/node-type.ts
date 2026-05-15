@@ -1,5 +1,5 @@
-import { FieldSchema } from "@/core/schemas/field";
-import { NodeTypeComponentSchema } from "@/core/schemas/node-type";
+import { FieldManifest } from "@/core/manifest/field";
+import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
 import { index, jsonb, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { packageTable } from "./package";
@@ -21,9 +21,9 @@ export const nodeType = pgTable(
     docs: text('docs'),
     icon: text('icon'),
     author: text('author'),
-    inputs: jsonb('inputs').$type<Array<FieldSchema>>().default([]),
-    outputs: jsonb('outputs').$type<Array<FieldSchema>>().default([]),
-    components: jsonb('components').$type<Array<NodeTypeComponentSchema>>().default([]),
+    inputs: jsonb('inputs').$type<Array<FieldManifest>>().default([]),
+    outputs: jsonb('outputs').$type<Array<FieldManifest>>().default([]),
+    components: jsonb('components').$type<Array<NodeTypeComponentManifest>>().default([]),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
   },

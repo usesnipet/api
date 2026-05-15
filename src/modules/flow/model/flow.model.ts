@@ -1,4 +1,4 @@
-import { FlowSchema } from "@/core/schemas/flow";
+import { FlowManifest } from "@/core/manifest/flow";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 import type { FlowRow } from "@/db/schema/flow";
@@ -16,8 +16,8 @@ export class Flow {
   @Field(() => Boolean)
   active: boolean;
 
-  @Field(() => FlowSchema)
-  code: FlowSchema;
+  @Field(() => FlowManifest)
+  code: FlowManifest;
 
   @Field(() => Date)
   createdAt: Date;

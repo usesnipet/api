@@ -22,7 +22,7 @@ type Config {
   docs: String
   icon: String
   author: String
-  fieldSchema: [JSONObject!]
+  fieldManifest: [JSONObject!]
   createdAt: DateTime!
   updatedAt: DateTime!
   configTags: [ConfigTag!]
@@ -33,7 +33,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type MetadataSchema {
+type MetadataManifest {
   name: String!
   description: String!
   docs: String
@@ -42,7 +42,7 @@ type MetadataSchema {
   author: String
 }
 
-type FlowNodeRefSchema {
+type FlowNodeRefManifest {
   instanceId: String!
   nodeId: String!
   config: JSONObject
@@ -50,27 +50,27 @@ type FlowNodeRefSchema {
   y: Float!
 }
 
-type FlowConnectionOutSchema {
+type FlowConnectionOutManifest {
   instanceId: String!
   outputId: String!
 }
 
-type FlowConnectionInSchema {
+type FlowConnectionInManifest {
   instanceId: String!
   inputId: String!
 }
 
-type FlowConnectionSchema {
-  source: FlowConnectionOutSchema!
-  target: FlowConnectionInSchema!
+type FlowConnectionManifest {
+  source: FlowConnectionOutManifest!
+  target: FlowConnectionInManifest!
   active: Boolean!
 }
 
-type FlowSchema {
-  metadata: MetadataSchema!
+type FlowManifest {
+  metadata: MetadataManifest!
   id: String!
-  nodes: [FlowNodeRefSchema!]!
-  connections: [FlowConnectionSchema!]!
+  nodes: [FlowNodeRefManifest!]!
+  connections: [FlowConnectionManifest!]!
 }
 
 type Flow {
@@ -78,7 +78,7 @@ type Flow {
   name: String!
   description: String
   active: Boolean!
-  code: FlowSchema!
+  code: FlowManifest!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -151,7 +151,7 @@ type Node {
   config: Config
 }
 
-type FieldSchema {
+type FieldManifest {
   name: String!
   type: String!
   description: String!
@@ -162,21 +162,21 @@ type FieldSchema {
   encrypted: Boolean
 }
 
-type ConfigSchema {
-  metadata: MetadataSchema!
+type ConfigManifest {
+  metadata: MetadataManifest!
   id: String!
-  fields: [FieldSchema!]
+  fields: [FieldManifest!]
 }
 
-type NodeSchema {
-  metadata: MetadataSchema!
+type NodeManifest {
+  metadata: MetadataManifest!
   id: String!
   type: String!
   config: String
 }
 
-type NodeTypeSchema {
-  metadata: MetadataSchema!
+type NodeTypeManifest {
+  metadata: MetadataManifest!
   id: String!
   inputs: [JSONObject!]
   outputs: [JSONObject!]

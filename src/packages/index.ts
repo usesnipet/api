@@ -1,10 +1,10 @@
 import { RunnerDef } from "@/core/runtime/runner";
-import { PackageSchema } from "@/core/schemas/package";
+import { PackageManifest } from "@/core/manifest/package";
 
 import { InternalPackage } from "./internal";
 
 export type PackageRegistry = Array<{
-  schema: PackageSchema;
+  manifest: PackageManifest;
   runners: RunnerDef[];
 }>;
 

@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { PackageSchema } from "@/core/schemas/package";
+import { PackageManifest } from "@/core/manifest/package";
 import { ConfigRow } from "@/db/schema/config";
 import { nodeTag } from "@/db/schema/entity-tags";
 import { node, NodeRow } from "@/db/schema/node";
@@ -13,10 +13,6 @@ import { eq, inArray } from "drizzle-orm";
 import { CreateNodeDto } from "./dto/create-node.dto";
 import { UpdateNodeDto } from "./dto/update-node.dto";
 import { Node } from "./models/node.model";
-
-function packageRowForSchemaId(dbPackages: PackageRow[], schemaId: string): PackageRow | undefined {
-  return dbPackages.find((p) => schemaId === p.packageId || schemaId.startsWith(`${p.packageId}:`));
-}
 
 @Injectable()
 export class NodeService extends BaseService {
@@ -103,10 +99,10 @@ export class NodeService extends BaseService {
     dbPackages: PackageRow[],
     dbNodeTypes: NodeTypeRow[],
     dbConfigs: ConfigRow[],
-    packageSchemas: PackageSchema[],
+    packageManifests: PackageManifest[],
   ): Promise<NodeRow[]> {
-    const nodeSchemas = packageSchemas.map((p) => p.nodes.map((n) => ({ ...n, packageId: p.id }))).flat();
-    const ids = new Set(nodeSchemas.map((n) => n.id));
+    const nodeManifests = packageManifests.map((p) => p.nodes.map((n) => ({ ...n, packageId: p.id }))).flat();
+    const ids = new Set(nodeManifests.map((n) => n.id));
 
     const entities = await this.db().query.node.findMany({
       where(fields, { inArray }) {
@@ -119,29 +115,29 @@ export class NodeService extends BaseService {
     const nodeTypeIdByTypeId = new Map(dbNodeTypes.map((nt) => [nt.typeId, nt.id]));
     const configDbIdByConfigId = new Map(dbConfigs.map((c) => [c.configId, c.id]));
 
-    const { toCreate, toUpdate } = nodeSchemas.reduce(
-      (acc, schema) => {
-        const row = entities.find((e) => e.nodeId === schema.id);
+    const { toCreate, toUpdate } = nodeManifests.reduce(
+      (acc, manifest) => {
+        const row = entities.find((e) => e.nodeId === manifest.id);
 
-        const packageId = packageDbIdByPackageId.get(schema.packageId);
-        if (!packageId) throw new Error(`Package not found for node ${schema.id}`);
+        const packageId = packageDbIdByPackageId.get(manifest.packageId);
+        if (!packageId) throw new Error(`Package not found for node ${manifest.id}`);
 
-        const resolvedNodeTypeId = nodeTypeIdByTypeId.get(schema.type);
-        if (!resolvedNodeTypeId) throw new Error(`Node type not found for node ${schema.id} (type=${schema.type})`);
+        const resolvedNodeTypeId = nodeTypeIdByTypeId.get(manifest.type);
+        if (!resolvedNodeTypeId) throw new Error(`Node type not found for node ${manifest.id} (type=${manifest.type})`);
 
-        const resolvedConfigId = schema.config ? (configDbIdByConfigId.get(schema.config) ?? null) : null;
+        const resolvedConfigId = manifest.config ? (configDbIdByConfigId.get(manifest.config) ?? null) : null;
 
         const next = new CreateNodeDto({
-          nodeId: schema.id,
+          nodeId: manifest.id,
           packageId: packageId,
-          name: schema.metadata?.name ?? schema.id,
-          description: schema.metadata?.description ?? null,
-          docs: schema.metadata?.docs ?? null,
-          icon: schema.metadata?.icon ?? null,
-          author: schema.metadata?.author ?? null,
+          name: manifest.metadata?.name ?? manifest.id,
+          description: manifest.metadata?.description ?? null,
+          docs: manifest.metadata?.docs ?? null,
+          icon: manifest.metadata?.icon ?? null,
+          author: manifest.metadata?.author ?? null,
           nodeTypeId: resolvedNodeTypeId,
           configId: resolvedConfigId,
-          tags: schema.metadata?.tags ?? [],
+          tags: manifest.metadata?.tags ?? [],
         });
 
         if (row) {

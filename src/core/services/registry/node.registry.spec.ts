@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import { RunnerDef } from "@/core/runtime/runner";
-import { NodeSchema } from "@/core/schemas/node";
+import { NodeManifest } from "@/core/manifest/node";
 import { ok } from "neverthrow";
 
 import { RegistryError } from "./errors/registry.error";
@@ -24,7 +24,11 @@ describe("NodeRegistry", () => {
   test("registerRunner registers and getRunner returns it", async () => {
     const registry = new NodeRegistry();
 
-    const node: NodeSchema = { id: "node-1", type: "test" };
+    const node: NodeManifest = {
+      id: "node-1",
+      type: "test",
+      metadata: { name: "node-1", description: "test" },
+    };
     const regRes = await registry.register(node);
     expect(regRes).toEqual(ok(undefined));
 
@@ -38,7 +42,11 @@ describe("NodeRegistry", () => {
 
   test("registerRunner rejects duplicates", async () => {
     const registry = new NodeRegistry();
-    await registry.register({ id: "node-1", type: "test" });
+    await registry.register({
+      id: "node-1",
+      type: "test",
+      metadata: { name: "node-1", description: "test" },
+    });
 
     expect(registry.registerRunner("node-1", dummyRunner).isOk()).toBe(true);
     const dup = registry.registerRunner("node-1", dummyRunner);

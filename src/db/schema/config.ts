@@ -1,4 +1,4 @@
-import { FieldSchema } from "@/core/schemas/field";
+import { FieldManifest } from "@/core/manifest/field";
 import { index, jsonb, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { packageTable } from "./package";
@@ -29,7 +29,7 @@ export const config = pgTable(
     /** Author of the config. */
     author: text('author'),
     /** Field definitions keyed by field name (shape matches package `Field` schema). */
-    fieldSchema: jsonb('field_schema').notNull().$type<Array<FieldSchema>>().default([]),
+    fieldManifest: jsonb('field_schema').notNull().$type<Array<FieldManifest>>().default([]),
     /** Creation time of the config. */
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
     /** Last update time of the config. */

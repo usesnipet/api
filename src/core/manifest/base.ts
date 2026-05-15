@@ -3,7 +3,7 @@ import { Type } from "class-transformer";
 import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
 
 @ObjectType()
-export class MetadataSchema {
+export class MetadataManifest {
   @IsString()
   @Field(() => String)
   name!: string;
@@ -35,12 +35,12 @@ export class MetadataSchema {
 }
 
 @ObjectType()
-export class BaseSchema {
+export class BaseManifest {
   @IsOptional()
   @ValidateNested()
-  @Type(() => MetadataSchema)
-  @Field(() => MetadataSchema)
-  metadata: MetadataSchema;
+  @Type(() => MetadataManifest)
+  @Field(() => MetadataManifest)
+  metadata: MetadataManifest;
 
   @IsString()
   @Field(() => String)

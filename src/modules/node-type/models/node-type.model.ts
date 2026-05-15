@@ -1,6 +1,6 @@
 import { JsonObject } from "@/common/graphql/json-object";
-import { FieldSchema } from "@/core/schemas/field";
-import { NodeTypeComponentSchema } from "@/core/schemas/node-type";
+import { FieldManifest } from "@/core/manifest/field";
+import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 import { NodeTypeTag } from "./node-type-tag.model";
@@ -33,13 +33,13 @@ export class NodeType {
   author: string | null;
 
   @Field(() => [JsonObject], { nullable: true })
-  inputs: FieldSchema[];
+  inputs: FieldManifest[];
 
   @Field(() => [JsonObject], { nullable: true })
-  outputs: FieldSchema[];
+  outputs: FieldManifest[];
 
   @Field(() => [JsonObject], { nullable: true })
-  components: NodeTypeComponentSchema[];
+  components: NodeTypeComponentManifest[];
 
   @Field(() => Date)
   createdAt: Date;

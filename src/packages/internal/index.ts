@@ -1,21 +1,19 @@
-import { PackageSchema } from "@/core/schemas/package";
+import { PackageManifest } from "@/core/manifest/package";
 import { plainToInstance } from "class-transformer";
 import { validateSync } from "class-validator";
 
+import manifestJson from "./manifest.json";
 import { fileSystemStorageRunner, logRunner, sleepRunner } from "./runners";
-import schemaJson from "./schema.json";
 
-const { $schema: _packageJsonSchema, ...schema } = schemaJson as typeof schemaJson & {
-  $schema?: string;
-};
-const pkg = plainToInstance(PackageSchema, schema);
+const { $schema: _packageJsonSchema, ...manifest } = manifestJson;
+const pkg = plainToInstance(PackageManifest, manifest);
 const errors = validateSync(pkg as any, { whitelist: true, forbidUnknownValues: false });
 if (errors.length) {
-  throw new Error(`InternalPackage schema is invalid: ${errors.map((e) => e.toString()).join("; ")}`);
+  throw new Error(`InternalPackage manifest is invalid: ${errors.map((e) => e.toString()).join("; ")}`);
 }
 
 export const InternalPackage = {
-  schema: pkg,
+  manifest: pkg,
   runners: [
     logRunner,
     sleepRunner,

@@ -1,9 +1,9 @@
-import { FlowSchema } from "../../schemas/flow";
+import { FlowManifest } from "../../manifest/flow";
 
 import { BaseRegistry } from "./base-registry";
 
-export class FlowRegistry extends BaseRegistry<FlowSchema> {
+export class FlowRegistry extends BaseRegistry<FlowManifest> {
   constructor() {
-    super(FlowSchema);
+    super(FlowManifest);
   }
 }

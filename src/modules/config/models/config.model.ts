@@ -1,5 +1,5 @@
 import { JsonObject } from "@/common/graphql/json-object";
-import { FieldSchema } from "@/core/schemas/field";
+import { FieldManifest } from "@/core/manifest/field";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 import { ConfigTag } from "./config-tag.model";
@@ -33,7 +33,7 @@ export class Config {
   author: string | null;
 
   @Field(() => [JsonObject], { nullable: true })
-  fieldSchema?: FieldSchema[];
+  fieldManifest?: FieldManifest[];
 
   @Field(() => Date)
   createdAt: Date;

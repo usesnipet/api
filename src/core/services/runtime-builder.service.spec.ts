@@ -1,8 +1,9 @@
 import "reflect-metadata";
 
-import { FlowSchema } from "@/core/schemas/flow";
-import { NodeSchema } from "@/core/schemas/node";
-import { NodeTypeSchema } from "@/core/schemas/node-type";
+import { FlowManifest } from "@/core/manifest/flow";
+import type { MetadataManifest } from "@/core/manifest/base";
+import { NodeManifest } from "@/core/manifest/node";
+import { NodeTypeManifest } from "@/core/manifest/node-type";
 import { err } from "neverthrow";
 
 import { RunnerDef } from "../runtime/runner";
@@ -26,7 +27,7 @@ export const testRunner: RunnerDef = {
  * RuntimeBuilderService only reads types via registry.get().
  */
 class SeedableNodeTypeRegistry extends NodeTypeRegistry {
-  put(item: NodeTypeSchema): void {
+  put(item: NodeTypeManifest): void {
     this.items[item.id] = item;
   }
 }
@@ -54,16 +55,17 @@ async function makeRegistry(
   const flowReg = new FlowRegistry();
 
   for (const nt of nodeTypes) {
-    const payload = { id: nt.id } as NodeTypeSchema;
-    if (nt.outputs !== undefined) payload.outputs = nt.outputs as NodeTypeSchema["outputs"];
-    if (nt.inputs !== undefined) payload.inputs = nt.inputs as NodeTypeSchema["inputs"];
+    const payload = { id: nt.id } as NodeTypeManifest;
+    if (nt.outputs !== undefined) payload.outputs = nt.outputs as unknown as NodeTypeManifest["outputs"];
+    if (nt.inputs !== undefined) payload.inputs = nt.inputs as unknown as NodeTypeManifest["inputs"];
     nodeType.put(payload);
   }
 
   for (const n of nodes) {
-    const nodeObj = new NodeSchema();
+    const nodeObj = new NodeManifest();
     nodeObj.id = n.id;
     nodeObj.type = "test";
+    nodeObj.metadata = { name: n.id, description: "test" };
     const reg = await node.register(nodeObj);
     expect(reg.isOk()).toBe(true);
     if (n.withRunner !== false) {
@@ -75,8 +77,14 @@ async function makeRegistry(
   return new Registry(config, node, nodeType, flowReg);
 }
 
-function flow(partial: Omit<ConstructorParameters<typeof FlowSchema>[0], "id"> & { id?: string }): FlowSchema {
-  return new FlowSchema({ ...partial, id: partial.id ?? "flow-1" });
+function flow(
+  partial: Pick<FlowManifest, "nodes" | "connections"> & { id?: string; metadata?: MetadataManifest },
+): FlowManifest {
+  return new FlowManifest({
+    ...partial,
+    metadata: partial.metadata ?? { name: "test-flow", description: "test" },
+    id: partial.id ?? "flow-1",
+  } as FlowManifest);
 }
 
 describe("RuntimeBuilderService", () => {

@@ -5,11 +5,10 @@ import {
   IsAlphanumeric, IsBoolean, IsNotEmpty, IsOptional, IsString, Length, ValidateNested
 } from "class-validator";
 
-import { BaseSchema } from "./base";
-import { FieldSchema } from "./field";
+import { IsRecordOf } from "../../decorators/is-record-of";
 
 @ObjectType()
-export class NodeTypeComponentSchema {
+export class FieldManifest {
   @IsString()
   @IsNotEmpty()
   @IsAlphanumeric()
@@ -21,29 +20,32 @@ export class NodeTypeComponentSchema {
   @Field(() => String)
   type!: string;
 
+  @IsString()
+  @Field(() => String)
+  description!: string;
+
   @IsOptional()
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   required?: boolean;
-}
-
-@ObjectType()
-export class NodeTypeSchema extends BaseSchema {
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => FieldSchema)
-  @Field(() => [JsonObject], { nullable: true })
-  inputs?: FieldSchema[];
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => FieldSchema)
-  @Field(() => [JsonObject], { nullable: true })
-  outputs?: FieldSchema[];
+  @Field(() => JsonObject, { nullable: true })
+  defaultValue?: unknown;
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => NodeTypeComponentSchema)
+  @ValidateNested()
+  @Type(() => FieldManifest)
+  @Field(() => JsonObject, { nullable: true })
+  items?: FieldManifest;
+
+  @IsOptional()
+  @IsRecordOf(FieldManifest)
   @Field(() => [JsonObject], { nullable: true })
-  components?: NodeTypeComponentSchema[];
+  properties?: Record<string, FieldManifest>;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  encrypted?: boolean;
 }

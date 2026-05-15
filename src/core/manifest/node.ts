@@ -1,10 +1,10 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsOptional, IsString } from "class-validator";
 
-import { BaseSchema } from "./base";
+import { BaseManifest } from "./base";
 
 @ObjectType()
-export class NodeSchema extends BaseSchema {
+export class NodeManifest extends BaseManifest {
   @IsString()
   @Field(() => String)
   type!: string;

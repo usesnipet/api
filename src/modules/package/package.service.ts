@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { PackageSchema } from "@/core/schemas/package";
+import { PackageManifest } from "@/core/manifest/package";
 import { packageTag } from "@/db/schema/entity-tags";
 import { packageTable } from "@/db/schema/package";
 import { Injectable, Logger } from "@nestjs/common";
@@ -19,7 +19,7 @@ export class PackageService extends BaseService {
     super();
   }
 
-  async syncPackages(packages: PackageSchema[]) {
+  async syncPackages(packages: PackageManifest[]) {
     const pkgIds = new Set(packages.map((pkg) => pkg.id));
     const pkgEntities = await this.db().query.package.findMany({
       where(fields, { inArray }) {

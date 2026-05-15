@@ -14,21 +14,21 @@ export class SyncService implements OnModuleInit {
   @Inject() private readonly nodeService: NodeService;
 
   async onModuleInit() {
-    const packageSchemas = packages.map((pkg) => pkg.schema);
-    const dbPackages = await this.packageService.syncPackages(packageSchemas);
+    const packageManifests = packages.map((pkg) => pkg.manifest);
+    const dbPackages = await this.packageService.syncPackages(packageManifests);
     const dbNodeTypes = await this.nodeTypeService.syncNodeTypes(
       dbPackages,
-      packageSchemas.map((pkg) => pkg.nodeTypes).flat()
+      packageManifests.map((pkg) => pkg.nodeTypes).flat()
     );
     const dbConfigs = await this.configService.syncConfigs(
       dbPackages,
-      packageSchemas.map((pkg) => pkg.configs).flat()
+      packageManifests.map((pkg) => pkg.configs).flat()
     );
     await this.nodeService.syncNodes(
       dbPackages,
       dbNodeTypes,
       dbConfigs,
-      packageSchemas
+      packageManifests
     );
   }
 }

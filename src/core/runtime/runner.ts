@@ -1,10 +1,10 @@
-import { FlowNodeRefSchema } from "../schemas/flow";
+import { FlowNodeRefManifest } from "../manifest/flow";
 
 export type RunnerContext<TConfig = Record<string, unknown>> = {
   instanceId: string;
   emit: (name: string, data: unknown) => Promise<void>;
   finish: () => Promise<void>;
-  executeNode: (nodeRef: FlowNodeRefSchema) => Promise<void>;
+  executeNode: (nodeRef: FlowNodeRefManifest) => Promise<void>;
   config?: TConfig;
 };
 

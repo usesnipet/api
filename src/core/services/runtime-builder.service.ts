@@ -2,14 +2,14 @@ import { err, ok, Result } from "neverthrow";
 
 import { Runtime, RuntimeOptions } from "../runtime";
 import { RuntimeError } from "../runtime/errors/runtime.error";
-import { FlowSchema } from "../schemas/flow";
+import { FlowManifest } from "../manifest/flow";
 
 import { Registry } from "./registry";
 
 export class RuntimeBuilderService {
   constructor(private readonly registry: Registry) {}
 
-  build(flow: FlowSchema): Result<Runtime, RuntimeError> {
+  build(flow: FlowManifest): Result<Runtime, RuntimeError> {
     // validate flow
     const dependencies = this.buildDependencies(flow);
 
@@ -52,7 +52,7 @@ export class RuntimeBuilderService {
    * @param flow - The flow to build the dependencies for
    * @returns A Map containing the dependencies of the flow
    */
-  private buildDependencies(flow: FlowSchema): Map<string, string[]> {
+  private buildDependencies(flow: FlowManifest): Map<string, string[]> {
     const dependencies = new Map<string, string[]>();
 
     for (const node of flow.nodes) {
@@ -74,7 +74,7 @@ export class RuntimeBuilderService {
    * @returns A boolean indicating if the flow has a cycle
    */
   private checkIfHasCycle(
-    flow: FlowSchema,
+    flow: FlowManifest,
     dependencies: Map<string, string[]> = this.buildDependencies(flow)
   ): boolean {
     const visited = new Set<string>();
@@ -104,7 +104,7 @@ export class RuntimeBuilderService {
    * @param flow - The flow to check
    * @returns A Result containing void if the output and input types are matching, otherwise a RuntimeError
    */
-  private checkOutInMatching(flow: FlowSchema): Result<void, RuntimeError> {
+  private checkOutInMatching(flow: FlowManifest): Result<void, RuntimeError> {
     for (const conn of flow.connections) {
       if (!conn.active) continue;
       const sourceNode = flow.nodes.find(node => node.instanceId === conn.source.instanceId);
@@ -138,7 +138,7 @@ export class RuntimeBuilderService {
    * @param flow - The flow to check
    * @returns A Result containing void if all nodes are registered, otherwise a RuntimeError
    */
-  private checkAllNodesRegistered(flow: FlowSchema): Result<void, RuntimeError> {
+  private checkAllNodesRegistered(flow: FlowManifest): Result<void, RuntimeError> {
     const nodeIds = flow.nodes.map(node => node.nodeId);
     const registeredNodesResult = this.registry.node.list();
     if (registeredNodesResult.isErr()) return err(new RuntimeError("Failed to get registered nodes"));

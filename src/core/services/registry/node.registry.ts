@@ -1,15 +1,15 @@
 import { RunnerDef } from "@/core/runtime/runner";
-import { NodeSchema } from "@/core/schemas/node";
+import { NodeManifest } from "@/core/manifest/node";
 import { err, ok, Result } from "neverthrow";
 
 import { BaseRegistry } from "./base-registry";
 import { RegistryError } from "./errors/registry.error";
 
-export class NodeRegistry extends BaseRegistry<NodeSchema> {
+export class NodeRegistry extends BaseRegistry<NodeManifest> {
   private runners: Record<string, RunnerDef> = {};
 
   constructor() {
-    super(NodeSchema);
+    super(NodeManifest);
   }
 
   registerRunner(id: string, runner: RunnerDef): Result<void, RegistryError> {

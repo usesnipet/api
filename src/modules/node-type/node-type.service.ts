@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { NodeTypeSchema } from "@/core/schemas/node-type";
+import { NodeTypeManifest } from "@/core/manifest/node-type";
 import { nodeTypeTag } from "@/db/schema/entity-tags";
 import { nodeType, NodeTypeRow } from "@/db/schema/node-type";
 import { PackageRow } from "@/db/schema/package";
@@ -115,7 +115,7 @@ export class NodeTypeService extends BaseService {
    * Upserts node types from in-process package manifests into the database.
    * Removes DB rows for synced packages whose `type_id` no longer appears in any manifest.
    */
-  async syncNodeTypes(dbPackages: PackageRow[], nodeTypes: NodeTypeSchema[]): Promise<NodeTypeRow[]> {
+  async syncNodeTypes(dbPackages: PackageRow[], nodeTypes: NodeTypeManifest[]): Promise<NodeTypeRow[]> {
     const ntIds = new Set(nodeTypes.map((nt) => nt.id));
     const ntEntities = await this.db().query.nodeType.findMany({
       where(fields, { inArray }) {

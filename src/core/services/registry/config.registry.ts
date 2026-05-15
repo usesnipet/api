@@ -1,9 +1,9 @@
-import { ConfigSchema } from "../../schemas/config";
+import { ConfigManifest } from "../../manifest/config";
 
 import { BaseRegistry } from "./base-registry";
 
-export class ConfigRegistry extends BaseRegistry<ConfigSchema> {
+export class ConfigRegistry extends BaseRegistry<ConfigManifest> {
   constructor() {
-    super(ConfigSchema);
+    super(ConfigManifest);
   }
 }

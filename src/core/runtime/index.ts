@@ -1,12 +1,12 @@
-import { FlowNodeRefSchema, FlowSchema } from "../schemas/flow";
-import { NodeSchema } from "../schemas/node";
+import { FlowNodeRefManifest, FlowManifest } from "../manifest/flow";
+import { NodeManifest } from "../manifest/node";
 
 import { RuntimeError } from "./errors/runtime.error";
 import { RunnerDef } from "./runner";
 
 export type RuntimeOptions = {
-  flow: FlowSchema;
-  nodes: Array<NodeSchema & { runner: RunnerDef }>;
+  flow: FlowManifest;
+  nodes: Array<NodeManifest & { runner: RunnerDef }>;
   dependencies: Map<string, string[]>;
 }
 
@@ -28,11 +28,11 @@ export class Runtime {
   state = RuntimeState.READY;
   nodeState = new Map<string, NodeState>();
 
-  get flow(): FlowSchema {
+  get flow(): FlowManifest {
     return this.options.flow;
   }
 
-  get nodes(): Array<NodeSchema & { runner: RunnerDef }> {
+  get nodes(): Array<NodeManifest & { runner: RunnerDef }> {
     return this.options.nodes;
   }
 
@@ -42,7 +42,7 @@ export class Runtime {
 
   constructor(private readonly options: RuntimeOptions) {}
 
-  private buildInputs(nodeRef: FlowNodeRefSchema): Record<string, unknown> {
+  private buildInputs(nodeRef: FlowNodeRefManifest): Record<string, unknown> {
     const inputs: Record<string, unknown> = {};
     for (const conn of this.flow.connections) {
       if (!conn.active) continue;
@@ -70,7 +70,7 @@ export class Runtime {
     return this.executeNode(startNode, true);
   }
 
-  private async executeNode(nodeRef: FlowNodeRefSchema, force: boolean = false): Promise<void> {
+  private async executeNode(nodeRef: FlowNodeRefManifest, force: boolean = false): Promise<void> {
     const nodeState = this.nodeState.get(nodeRef.instanceId);
     if (nodeState?.status === "running") return nodeState.promise;
     if (nodeState?.status === "completed" && !force) return;

@@ -5,10 +5,10 @@ import {
   IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString, ValidateNested
 } from "class-validator";
 
-import { BaseSchema } from "./base";
+import { BaseManifest } from "./base";
 
 @ObjectType()
-export class FlowNodeRefSchema {
+export class FlowNodeRefManifest {
   @IsString()
   @Field(() => String)
   instanceId!: string;
@@ -32,7 +32,7 @@ export class FlowNodeRefSchema {
 }
 
 @ObjectType()
-export class FlowConnectionOutSchema {
+export class FlowConnectionOutManifest {
   @IsString()
   @Field(() => String)
   instanceId!: string;
@@ -43,7 +43,7 @@ export class FlowConnectionOutSchema {
 }
 
 @ObjectType()
-export class FlowConnectionInSchema {
+export class FlowConnectionInManifest {
   @IsString()
   @Field(() => String)
   instanceId!: string;
@@ -54,16 +54,16 @@ export class FlowConnectionInSchema {
 }
 
 @ObjectType()
-export class FlowConnectionSchema {
+export class FlowConnectionManifest {
   @ValidateNested()
-  @Type(() => FlowConnectionOutSchema)
-  @Field(() => FlowConnectionOutSchema)
-  source!: FlowConnectionOutSchema;
+  @Type(() => FlowConnectionOutManifest)
+  @Field(() => FlowConnectionOutManifest)
+  source!: FlowConnectionOutManifest;
 
   @ValidateNested()
-  @Type(() => FlowConnectionInSchema)
-  @Field(() => FlowConnectionInSchema)
-  target!: FlowConnectionInSchema;
+  @Type(() => FlowConnectionInManifest)
+  @Field(() => FlowConnectionInManifest)
+  target!: FlowConnectionInManifest;
 
   @IsBoolean()
   @Field(() => Boolean)
@@ -71,20 +71,20 @@ export class FlowConnectionSchema {
 }
 
 @ObjectType()
-export class FlowSchema extends BaseSchema {
+export class FlowManifest extends BaseManifest {
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => FlowNodeRefSchema)
-  @Field(() => [FlowNodeRefSchema])
-  nodes!: FlowNodeRefSchema[];
+  @Type(() => FlowNodeRefManifest)
+  @Field(() => [FlowNodeRefManifest])
+  nodes!: FlowNodeRefManifest[];
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => FlowConnectionSchema)
-  @Field(() => [FlowConnectionSchema])
-  connections!: FlowConnectionSchema[];
+  @Type(() => FlowConnectionManifest)
+  @Field(() => [FlowConnectionManifest])
+  connections!: FlowConnectionManifest[];
 
-  constructor(flow: FlowSchema) {
+  constructor(flow: FlowManifest) {
     super();
     Object.assign(this, flow);
   }
