@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 
-import { FlowResolver } from "./flow.resolver";
+import { FlowController } from "./flow.controller";
 import { FlowService } from "./flow.service";
 
 @Module({
-  providers: [FlowService, FlowResolver],
+  controllers: [FlowController],
+  providers: [FlowService],
   exports: [FlowService],
 })
 export class FlowModule {}

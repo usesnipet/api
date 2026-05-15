@@ -1,23 +1,21 @@
-import { Relation } from "@/common/graphql/relation.decorator";
+import { Relation } from "@/decorators/relation.decorator";
 import type { PackageTagRow } from "@/db/schema/entity-tags";
 import { Tag } from "@/modules/tag/models/tag.model";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
-@ObjectType()
 export class PackageTag {
-  @Field(type => ID)
+  @ApiProperty()
   packageId: string;
 
-  @Field(type => ID)
+  @ApiProperty()
   tagId: string;
 
   @Relation(() => Tag)
-  @Field(type => Tag, { nullable: true })
+  @ApiPropertyOptional({ type: Tag })
   tag?: Tag;
 
   constructor(data: PackageTagRow) {
     Object.assign(this, data);
-
     this.tag = data.tag ? new Tag(data.tag) : undefined;
   }
 }

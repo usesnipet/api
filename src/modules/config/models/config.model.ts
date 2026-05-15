@@ -1,48 +1,46 @@
-import { Relation } from "@/common/graphql/relation.decorator";
+import { Relation } from "@/decorators/relation.decorator";
 import { FieldManifest } from "@/core/manifest/field";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import type { ConfigRow } from "@/db/schema/config";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { ConfigTag } from "./config-tag.model";
 
-import type { ConfigRow } from "@/db/schema/config";
-
-@ObjectType()
 export class Config {
-  @Field(() => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   configId: string;
 
-  @Field(() => ID)
+  @ApiProperty()
   packageId: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   description: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   docs: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   icon: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   author: string | null;
 
-  @Field(() => [FieldManifest], { nullable: true })
+  @ApiPropertyOptional({ type: [FieldManifest] })
   fieldManifest?: FieldManifest[];
 
-  @Field(() => Date)
+  @ApiProperty()
   createdAt: Date;
 
-  @Field(() => Date)
+  @ApiProperty()
   updatedAt: Date;
 
   @Relation(() => ConfigTag)
-  @Field(() => [ConfigTag], { nullable: true })
+  @ApiPropertyOptional({ type: [ConfigTag] })
   configTags: ConfigTag[];
 
   constructor(data: ConfigRow) {

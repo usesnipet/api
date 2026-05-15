@@ -1,49 +1,46 @@
-import { Relation } from "@/common/graphql/relation.decorator";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Relation } from "@/decorators/relation.decorator";
+import type { PackageRow } from "@/db/schema/package";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { PackageTag } from "./package-tag.model";
 
-import type { PackageRow } from "@/db/schema/package";
-
-@ObjectType()
 export class Package {
-  @Field(() => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   packageId: string;
 
-  @Field(() => String)
+  @ApiProperty()
   version: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   description: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   docs: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   icon: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   author: string | null;
 
-  @Field(() => Date)
+  @ApiProperty()
   createdAt: Date;
 
-  @Field(() => Date)
+  @ApiProperty()
   updatedAt: Date;
 
   @Relation(() => PackageTag)
-  @Field(() => [PackageTag], { nullable: true })
+  @ApiPropertyOptional({ type: [PackageTag] })
   packageTags: PackageTag[];
 
   constructor(data: PackageRow) {
     Object.assign(this, data);
-
     this.packageTags = data.packageTags?.map((t) => new PackageTag(t)) ?? [];
   }
 }

@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 
-import { ConfigResolver } from "./config.resolver";
+import { ConfigController } from "./config.controller";
 import { ConfigService } from "./config.service";
 
 @Module({
-  providers: [ConfigService, ConfigResolver],
+  controllers: [ConfigController],
+  providers: [ConfigService],
   exports: [ConfigService],
 })
 export class ConfigModule {}

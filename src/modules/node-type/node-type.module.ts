@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 
-import { NodeTypeResolver } from "./node-type.resolver";
+import { NodeTypeController } from "./node-type.controller";
 import { NodeTypeService } from "./node-type.service";
 
 @Module({
-  providers: [NodeTypeService, NodeTypeResolver],
+  controllers: [NodeTypeController],
+  providers: [NodeTypeService],
   exports: [NodeTypeService],
 })
 export class NodeTypeModule {}

@@ -1,28 +1,27 @@
 import { FlowManifest } from "@/core/manifest/flow";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-
 import type { FlowRow } from "@/db/schema/flow";
-@ObjectType()
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+
 export class Flow {
-  @Field(() => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional()
   description?: string;
 
-  @Field(() => Boolean)
+  @ApiProperty()
   active: boolean;
 
-  @Field(() => FlowManifest)
+  @ApiProperty({ type: FlowManifest })
   code: FlowManifest;
 
-  @Field(() => Date)
+  @ApiProperty()
   createdAt: Date;
 
-  @Field(() => Date)
+  @ApiProperty()
   updatedAt: Date;
 
   constructor(data: FlowRow) {

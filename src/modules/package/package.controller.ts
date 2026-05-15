@@ -1,0 +1,24 @@
+import { ApiFilterQueries, Filter } from "@/common/filter";
+import { getAllowedRelationPaths } from "@/decorators";
+import { Controller, Get } from "@nestjs/common";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+
+import { Package } from "./models/package.model";
+import { PackageService } from "./package.service";
+
+import type { FilterOptions } from "@/common/filter/filter-options";
+
+@ApiTags("packages")
+@Controller("packages")
+export class PackageController {
+  constructor(private readonly packageService: PackageService) {}
+
+  @Get()
+  @ApiFilterQueries()
+  @ApiOkResponse({ type: [Package] })
+  find(
+    @Filter({ relations: { allow: getAllowedRelationPaths(Package) }, maxLimit: 1000 }) filter: FilterOptions<Package>,
+  ) {
+    return this.packageService.find(filter);
+  }
+}

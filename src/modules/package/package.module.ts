@@ -1,13 +1,14 @@
-import { NodeTypeModule } from "@/modules/node-type/node-type.module";
 import { Module } from "@nestjs/common";
 
-import { PackageResolver } from "./package.resolver";
+import { NodeTypeModule } from "../node-type/node-type.module";
+
+import { PackageController } from "./package.controller";
 import { PackageService } from "./package.service";
 
 @Module({
   imports: [NodeTypeModule],
-  providers: [PackageService, PackageResolver],
+  controllers: [PackageController],
+  providers: [PackageService],
   exports: [PackageService],
 })
 export class PackageModule {}
-

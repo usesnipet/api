@@ -1,6 +1,625 @@
 {
   "openapi": "3.0.0",
-  "paths": {},
+  "paths": {
+    "/api/flows": {
+      "get": {
+        "operationId": "FlowController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Flow"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/nodes": {
+      "get": {
+        "operationId": "NodeController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Node"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "nodes"
+        ]
+      }
+    },
+    "/api/packages": {
+      "get": {
+        "operationId": "PackageController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Package"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "packages"
+        ]
+      }
+    },
+    "/api/node-types": {
+      "get": {
+        "operationId": "NodeTypeController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NodeType"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "node-types"
+        ]
+      }
+    },
+    "/api/configs": {
+      "get": {
+        "operationId": "ConfigController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Config"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "configs"
+        ]
+      }
+    },
+    "/api/tags": {
+      "get": {
+        "operationId": "TagController_find",
+        "parameters": [
+          {
+            "name": "where",
+            "required": false,
+            "in": "query",
+            "description": "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names, or a JSON array string.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows (`take` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `limit`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip (`skip` is an alias).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "description": "Alias for `offset`.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      }
+    }
+  },
   "info": {
     "title": "Snipet core API",
     "description": "The Snipet API description",
@@ -18,6 +637,403 @@
         "description": "API Key"
       }
     },
-    "schemas": {}
+    "schemas": {
+      "FlowManifest": {
+        "type": "object",
+        "properties": {}
+      },
+      "Flow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "code": {
+            "$ref": "#/components/schemas/FlowManifest"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "active",
+          "code",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "NodeTag": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/Tag"
+          }
+        },
+        "required": [
+          "nodeId",
+          "tagId"
+        ]
+      },
+      "PackageTag": {
+        "type": "object",
+        "properties": {
+          "packageId": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/Tag"
+          }
+        },
+        "required": [
+          "packageId",
+          "tagId"
+        ]
+      },
+      "Package": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "packageId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "object",
+            "nullable": true
+          },
+          "docs": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "object",
+            "nullable": true
+          },
+          "author": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "packageTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackageTag"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "packageId",
+          "version",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "FieldManifest": {
+        "type": "object",
+        "properties": {}
+      },
+      "NodeTypeComponentManifest": {
+        "type": "object",
+        "properties": {}
+      },
+      "NodeTypeTag": {
+        "type": "object",
+        "properties": {
+          "nodeTypeId": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/Tag"
+          }
+        },
+        "required": [
+          "nodeTypeId",
+          "tagId"
+        ]
+      },
+      "NodeType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "typeId": {
+            "type": "string"
+          },
+          "packageId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "object",
+            "nullable": true
+          },
+          "docs": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "object",
+            "nullable": true
+          },
+          "author": {
+            "type": "object",
+            "nullable": true
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldManifest"
+            }
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldManifest"
+            }
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeTypeComponentManifest"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "nodeTypeTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeTypeTag"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "typeId",
+          "packageId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ConfigTag": {
+        "type": "object",
+        "properties": {
+          "configId": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/Tag"
+          }
+        },
+        "required": [
+          "configId",
+          "tagId"
+        ]
+      },
+      "Config": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "configId": {
+            "type": "string"
+          },
+          "packageId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "object",
+            "nullable": true
+          },
+          "docs": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "object",
+            "nullable": true
+          },
+          "author": {
+            "type": "object",
+            "nullable": true
+          },
+          "fieldManifest": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldManifest"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "configTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigTag"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "configId",
+          "packageId",
+          "name",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Node": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "packageId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "object",
+            "nullable": true
+          },
+          "docs": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "object",
+            "nullable": true
+          },
+          "author": {
+            "type": "object",
+            "nullable": true
+          },
+          "nodeTypeId": {
+            "type": "string"
+          },
+          "configId": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "nodeTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NodeTag"
+            }
+          },
+          "package": {
+            "$ref": "#/components/schemas/Package"
+          },
+          "nodeType": {
+            "$ref": "#/components/schemas/NodeType"
+          },
+          "config": {
+            "$ref": "#/components/schemas/Config"
+          }
+        },
+        "required": [
+          "id",
+          "nodeId",
+          "packageId",
+          "name",
+          "nodeTypeId",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+    }
   }
 }

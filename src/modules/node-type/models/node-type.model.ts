@@ -1,54 +1,53 @@
-import { Relation } from "@/common/graphql/relation.decorator";
+import { Relation } from "@/decorators/relation.decorator";
 import { FieldManifest } from "@/core/manifest/field";
 import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import type { NodeTypeRow } from "@/db/schema/node-type";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { NodeTypeTag } from "./node-type-tag.model";
 
-import type { NodeTypeRow } from "@/db/schema/node-type";
-@ObjectType()
 export class NodeType {
-  @Field(() => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   typeId: string;
 
-  @Field(() => ID)
+  @ApiProperty()
   packageId: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   description: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   docs: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   icon: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   author: string | null;
 
-  @Field(() => [FieldManifest], { nullable: true })
+  @ApiPropertyOptional({ type: [FieldManifest] })
   inputs: FieldManifest[];
 
-  @Field(() => [FieldManifest], { nullable: true })
+  @ApiPropertyOptional({ type: [FieldManifest] })
   outputs: FieldManifest[];
 
-  @Field(() => [NodeTypeComponentManifest], { nullable: true })
+  @ApiPropertyOptional({ type: [NodeTypeComponentManifest] })
   components: NodeTypeComponentManifest[];
 
-  @Field(() => Date)
+  @ApiProperty()
   createdAt: Date;
 
-  @Field(() => Date)
+  @ApiProperty()
   updatedAt: Date;
 
   @Relation(() => NodeTypeTag)
-  @Field(() => [NodeTypeTag], { nullable: true })
+  @ApiPropertyOptional({ type: [NodeTypeTag] })
   nodeTypeTags: NodeTypeTag[];
 
   constructor(data: NodeTypeRow) {

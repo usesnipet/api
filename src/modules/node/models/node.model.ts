@@ -1,64 +1,63 @@
-import { Relation } from "@/common/graphql/relation.decorator";
+import { Relation } from "@/decorators/relation.decorator";
 import type { NodeRow } from "@/db/schema/node";
 import { Config } from "@/modules/config/models/config.model";
 import { NodeType } from "@/modules/node-type/models/node-type.model";
 import { Package } from "@/modules/package/models/package.model";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { NodeTag } from "./node-tag.model";
 
-@ObjectType()
 export class Node {
-  @Field(() => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   nodeId: string;
 
-  @Field(() => ID)
+  @ApiProperty()
   packageId: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   description: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   docs: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   icon: string | null;
 
-  @Field(() => String, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   author: string | null;
 
-  @Field(() => ID)
+  @ApiProperty()
   nodeTypeId: string;
 
-  @Field(() => ID, { nullable: true })
+  @ApiPropertyOptional({ nullable: true })
   configId: string | null;
 
-  @Field(() => Date)
+  @ApiProperty()
   createdAt: Date;
 
-  @Field(() => Date)
+  @ApiProperty()
   updatedAt: Date;
 
   @Relation(() => NodeTag)
-  @Field(() => [NodeTag], { nullable: true })
+  @ApiPropertyOptional({ type: [NodeTag] })
   nodeTags: NodeTag[];
 
   @Relation(() => Package)
-  @Field(() => Package, { nullable: true })
+  @ApiPropertyOptional({ type: Package })
   package?: Package;
 
   @Relation(() => NodeType)
-  @Field(() => NodeType, { nullable: true })
+  @ApiPropertyOptional({ type: NodeType })
   nodeType?: NodeType;
 
   @Relation(() => Config)
-  @Field(() => Config, { nullable: true })
+  @ApiPropertyOptional({ type: Config })
   config?: Config;
 
   constructor(data: NodeRow) {

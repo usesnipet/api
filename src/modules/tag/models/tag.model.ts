@@ -1,12 +1,11 @@
 import type { TagRow } from "@/db/schema/tag";
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
 
-@ObjectType()
 export class Tag {
-  @Field(type => ID)
+  @ApiProperty()
   id: string;
 
-  @Field(() => String)
+  @ApiProperty()
   name: string;
 
   constructor(data: TagRow) {
