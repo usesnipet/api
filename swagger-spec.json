@@ -638,9 +638,138 @@
       }
     },
     "schemas": {
+      "MetadataManifest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "docs": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "author": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      },
+      "FlowNodeRefManifest": {
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "nodeId": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "instanceId",
+          "nodeId",
+          "x",
+          "y"
+        ]
+      },
+      "FlowConnectionOutManifest": {
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "outputId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId",
+          "outputId"
+        ]
+      },
+      "FlowConnectionInManifest": {
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string"
+          },
+          "inputId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "instanceId",
+          "inputId"
+        ]
+      },
+      "FlowConnectionManifest": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/components/schemas/FlowConnectionOutManifest"
+          },
+          "target": {
+            "$ref": "#/components/schemas/FlowConnectionInManifest"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "active"
+        ]
+      },
       "FlowManifest": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/MetadataManifest"
+          },
+          "id": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowNodeRefManifest"
+            }
+          },
+          "connections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowConnectionManifest"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "nodes",
+          "connections"
+        ]
       },
       "Flow": {
         "type": "object",
@@ -786,11 +915,56 @@
       },
       "FieldManifest": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "defaultValue": {
+            "type": "object"
+          },
+          "items": {
+            "$ref": "#/components/schemas/FieldManifest"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "encrypted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "description"
+        ]
       },
       "NodeTypeComponentManifest": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
       },
       "NodeTypeTag": {
         "type": "object",
@@ -978,19 +1152,19 @@
             "type": "string"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "docs": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "icon": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "author": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "nodeTypeId": {
@@ -1029,6 +1203,10 @@
           "nodeId",
           "packageId",
           "name",
+          "description",
+          "docs",
+          "icon",
+          "author",
           "nodeTypeId",
           "createdAt",
           "updatedAt"

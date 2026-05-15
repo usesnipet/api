@@ -19,16 +19,16 @@ export class Node {
   @ApiProperty()
   name: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ type: String, nullable: true })
   description: string | null;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ type: String, nullable: true })
   docs: string | null;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ type: String, nullable: true })
   icon: string | null;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ type: String, nullable: true })
   author: string | null;
 
   @ApiProperty()
@@ -44,7 +44,7 @@ export class Node {
   updatedAt: Date;
 
   @ApiPropertyOptional({ type: [NodeTag] })
-  nodeTags: NodeTag[];
+  nodeTags?: NodeTag[];
 
   @ApiPropertyOptional({ type: Package })
   package?: Package;
