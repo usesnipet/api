@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { getAllowedRelationPaths } from "@/decorators";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -17,7 +16,7 @@ export class NodeTypeController {
   @ApiFilterQueries()
   @ApiOkResponse({ type: [NodeType] })
   find(
-    @Filter({ relations: { allow: getAllowedRelationPaths(NodeType) }, maxLimit: 1000 }) filter: FilterOptions<NodeType>,
+    @Filter() filter: FilterOptions<NodeType>,
   ) {
     return this.nodeTypeService.find(filter);
   }

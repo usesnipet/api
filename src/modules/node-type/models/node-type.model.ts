@@ -1,11 +1,11 @@
-import { Relation } from "@/decorators/relation.decorator";
+
 import { FieldManifest } from "@/core/manifest/field";
 import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
-import type { NodeTypeRow } from "@/db/schema/node-type";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { NodeTypeTag } from "./node-type-tag.model";
 
+import type { NodeTypeRow } from "@/db/schema/node-type";
 export class NodeType {
   @ApiProperty()
   id: string;
@@ -46,7 +46,6 @@ export class NodeType {
   @ApiProperty()
   updatedAt: Date;
 
-  @Relation(() => NodeTypeTag)
   @ApiPropertyOptional({ type: [NodeTypeTag] })
   nodeTypeTags: NodeTypeTag[];
 

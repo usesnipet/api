@@ -1,4 +1,3 @@
-import { Relation } from "@/decorators/relation.decorator";
 import type { NodeTagRow } from "@/db/schema/entity-tags";
 import { Tag } from "@/modules/tag/models/tag.model";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
@@ -10,7 +9,6 @@ export class NodeTag {
   @ApiProperty()
   tagId: string;
 
-  @Relation(() => Tag)
   @ApiPropertyOptional({ type: Tag })
   tag?: Tag;
 

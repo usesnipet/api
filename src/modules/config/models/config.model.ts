@@ -1,10 +1,9 @@
-import { Relation } from "@/decorators/relation.decorator";
 import { FieldManifest } from "@/core/manifest/field";
-import type { ConfigRow } from "@/db/schema/config";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { ConfigTag } from "./config-tag.model";
 
+import type { ConfigRow } from "@/db/schema/config";
 export class Config {
   @ApiProperty()
   id: string;
@@ -39,7 +38,6 @@ export class Config {
   @ApiProperty()
   updatedAt: Date;
 
-  @Relation(() => ConfigTag)
   @ApiPropertyOptional({ type: [ConfigTag] })
   configTags: ConfigTag[];
 

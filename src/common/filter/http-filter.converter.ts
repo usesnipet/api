@@ -1,15 +1,10 @@
 import { FilterOptions, FilterOptionsInit } from "./filter-options";
 
-export type FilterAccessList = {
-  allow?: string[];
-  deny?: string[];
-};
-
 export type FilterHttpConfig = {
-  select?: FilterAccessList;
-  where?: FilterAccessList;
-  order?: FilterAccessList;
-  relations?: FilterAccessList;
+  select?: string[];
+  where?: string[];
+  order?: string[];
+  relations?: string[];
   maxLimit?: number;
 };
 
@@ -23,16 +18,12 @@ function uniqStrings(values: string[]): string[] {
   return Array.from(new Set(values.map((v) => v.trim()).filter(Boolean)));
 }
 
-function applyAccessList(values: string[] | undefined, access?: FilterAccessList): string[] | undefined {
+function applyAccessList(values: string[] | undefined, access?: string[]): string[] | undefined {
   if (!values?.length) return undefined;
   let out = uniqStrings(values);
-  if (access?.allow?.length) {
-    const allow = new Set(access.allow);
+  if (access?.length) {
+    const allow = new Set(access);
     out = out.filter((v) => allow.has(v));
-  }
-  if (access?.deny?.length) {
-    const deny = new Set(access.deny);
-    out = out.filter((v) => !deny.has(v));
   }
   return out.length ? out : undefined;
 }
@@ -116,7 +107,7 @@ function parseWhere(value: unknown): Record<string, any> | undefined {
 
 function sanitizeWhere(
   where: Record<string, any> | undefined,
-  access?: FilterAccessList
+  access?: string[]
 ): Record<string, any> | undefined {
   if (!where || typeof where !== 'object') return undefined;
   let keys = Object.keys(where);

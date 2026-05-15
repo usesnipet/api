@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { getAllowedRelationPaths } from "@/decorators";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -16,7 +15,7 @@ export class FlowController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Flow] })
-  find(@Filter({ relations: { allow: getAllowedRelationPaths(Flow) }, maxLimit: 1000 }) filter: FilterOptions<Flow>) {
+  find(@Filter() filter: FilterOptions<Flow>) {
     return this.flowService.find(filter);
   }
 }

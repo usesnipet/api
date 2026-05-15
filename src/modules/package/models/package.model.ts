@@ -1,4 +1,3 @@
-import { Relation } from "@/decorators/relation.decorator";
 import type { PackageRow } from "@/db/schema/package";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
@@ -35,7 +34,6 @@ export class Package {
   @ApiProperty()
   updatedAt: Date;
 
-  @Relation(() => PackageTag)
   @ApiPropertyOptional({ type: [PackageTag] })
   packageTags: PackageTag[];
 

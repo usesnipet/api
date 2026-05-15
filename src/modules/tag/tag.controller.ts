@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { getAllowedRelationPaths } from "@/decorators";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -16,7 +15,7 @@ export class TagController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Tag] })
-  find(@Filter({ relations: { allow: getAllowedRelationPaths(Tag) }, maxLimit: 1000 }) filter: FilterOptions<Tag>) {
+  find(@Filter() filter: FilterOptions<Tag>) {
     return this.tagService.find(filter);
   }
 }

@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { getAllowedRelationPaths } from "@/decorators";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -16,7 +15,7 @@ export class ConfigController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Config] })
-  find(@Filter({ relations: { allow: getAllowedRelationPaths(Config) }, maxLimit: 1000 }) filter: FilterOptions<Config>) {
+  find(@Filter() filter: FilterOptions<Config>) {
     return this.configService.find(filter);
   }
 }
