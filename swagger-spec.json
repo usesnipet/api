@@ -1,6 +1,27 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/system": {
+      "get": {
+        "operationId": "AppController_getSystemInfo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Get system information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfo"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
     "/api/flows": {
       "get": {
         "operationId": "FlowController_find",
@@ -809,6 +830,17 @@
       }
     },
     "schemas": {
+      "SystemInfo": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version"
+        ]
+      },
       "FlowNodeRefManifest": {
         "type": "object",
         "properties": {

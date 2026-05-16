@@ -15,8 +15,10 @@ import { NodeModule } from "./modules/node/node.module";
 import { PackageModule } from "./modules/package/package.module";
 import { SyncModule } from "./modules/sync/sync.module";
 import { TagModule } from "./modules/tag/tag.module";
+import { AppController } from "./app.controller";
 
 @Module({
+  controllers: [AppController],
   imports: [
     ScheduleModule.forRoot(),
     DatabaseModule.register({
