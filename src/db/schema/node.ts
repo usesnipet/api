@@ -1,9 +1,9 @@
 import { index, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import moment from "moment";
 
-import { config } from "./config";
-import { nodeType } from "./node-type";
-import { packageTable } from "./package";
+import { config, ConfigRow } from "./config";
+import { nodeType, NodeTypeRow } from "./node-type";
+import { PackageRow, packageTable } from "./package";
 
 import type { NodeTagRow } from './entity-tags';
 export const node = pgTable(
@@ -18,7 +18,6 @@ export const node = pgTable(
     description: text('description'),
     docs: text('docs'),
     icon: text('icon'),
-    author: text('author'),
     nodeTypeId: uuid('node_type_id')
       .notNull()
       .references(() => nodeType.id, { onDelete: 'restrict' }),
@@ -37,4 +36,4 @@ export const node = pgTable(
   ],
 );
 
-export type NodeRow = typeof node.$inferSelect & { nodeTags?: NodeTagRow[] };
+export type NodeRow = typeof node.$inferSelect & { nodeTags?: NodeTagRow[], package?: PackageRow, nodeType?: NodeTypeRow, config?: ConfigRow };

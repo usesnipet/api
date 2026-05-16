@@ -12,7 +12,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { CreateNodeDto } from "./dto/create-node.dto";
 import { UpdateNodeDto } from "./dto/update-node.dto";
-import { Node } from "./models/node.model";
+import { Node } from "./model/node.model";
 
 @Injectable()
 export class NodeService extends BaseService {
@@ -25,7 +25,7 @@ export class NodeService extends BaseService {
   async find(filter: FilterOptions<Node>, opts?: ReadOpts): Promise<Node[]> {
     const drizzleFilter = DrizzleFilterConverter.toFindMany(filter);
     const queryResult = await this.db(opts).query.node.findMany(drizzleFilter);
-    return queryResult.map((row) => new Node(row));
+    return queryResult.map((row) => Node.fromRow(row));
   }
 
   async create(dto: CreateNodeDto, opts?: CreateOpts): Promise<Node>;
@@ -43,12 +43,12 @@ export class NodeService extends BaseService {
             tagsPerRow[i]?.length ? this.addTags(entity.id, tagsPerRow[i]!, txOpts) : Promise.resolve(),
           ),
         );
-        return entities.map((e) => new Node(e));
+        return entities.map((e) => Node.fromRow(e));
       }
       const { tags, ...rest } = dto;
       const [entity] = await this.db(txOpts).insert(node).values(rest).returning();
       if (tags?.length) await this.addTags(entity.id, tags, txOpts);
-      return new Node(entity);
+      return Node.fromRow(entity);
     }, opts);
   }
 
@@ -76,7 +76,7 @@ export class NodeService extends BaseService {
               await this.addTags(id, nextTags, txOpts as CreateOpts);
             }
           }
-          return new Node(row);
+          return Node.fromRow(row);
         }),
       );
 
@@ -145,7 +145,6 @@ export class NodeService extends BaseService {
             (next.description ?? null) !== (row.description ?? null) ||
             (next.docs ?? null) !== (row.docs ?? null) ||
             (next.icon ?? null) !== (row.icon ?? null) ||
-            (next.author ?? null) !== (row.author ?? null) ||
             next.nodeId !== row.nodeId ||
             next.packageId !== row.packageId ||
             next.nodeTypeId !== row.nodeTypeId ||

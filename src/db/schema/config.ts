@@ -16,7 +16,6 @@ export const config = pgTable(
     description: text('description'),
     docs: text('docs'),
     icon: text('icon'),
-    author: text('author'),
     fieldManifest: jsonb('field_schema').notNull().$type<Array<FieldManifest>>().default([]),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })

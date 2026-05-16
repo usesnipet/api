@@ -2,10 +2,11 @@ import { ApiFilterQueries, Filter } from "@/common/filter";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
-import { Node } from "./models/node.model";
+import { Node } from "./model/node.model";
 import { NodeService } from "./node.service";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
+
 @ApiTags("nodes")
 @Controller("nodes")
 export class NodeController {
@@ -14,9 +15,7 @@ export class NodeController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Node] })
-  find(
-    @Filter() filter: FilterOptions<Node>
-  ) {
+  find(@Filter() filter: FilterOptions<Node>) {
     return this.nodeService.find(filter);
   }
 }

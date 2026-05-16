@@ -19,7 +19,6 @@ export const nodeType = pgTable(
     description: text('description'),
     docs: text('docs'),
     icon: text('icon'),
-    author: text('author'),
     inputs: jsonb('inputs').$type<Array<FieldManifest>>().default([]),
     outputs: jsonb('outputs').$type<Array<FieldManifest>>().default([]),
     components: jsonb('components').$type<Array<NodeTypeComponentManifest>>().default([]),
