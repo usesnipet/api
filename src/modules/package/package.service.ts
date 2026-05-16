@@ -6,10 +6,11 @@ import { packageTag } from "@/db/schema/entity-tags";
 import { packageTable } from "@/db/schema/package";
 import { Injectable, Logger } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
+import moment from "moment";
 
 import { CreatePackageDto } from "./dto/create-package.dto";
 import { UpdatePackageDto } from "./dto/update-package.dto";
-import { Package } from "./models/package.model";
+import { Package } from "./model/package.model";
 
 @Injectable()
 export class PackageService extends BaseService {
@@ -25,49 +26,56 @@ export class PackageService extends BaseService {
       where(fields, { inArray }) {
         return inArray(fields.packageId, Array.from(pkgIds));
       },
-      with: { packageTags: { with: { tag: true } } }
-    })
+      with: { packageTags: { with: { tag: true } } },
+    });
 
-    const { toCreate, toUpdate } = packages.reduce((acc, schema) => {
-      const pkgEntity = pkgEntities.find((p) => p.packageId === schema.id);
-      if (pkgEntity) {
-        if (
-          schema.name !== pkgEntity.name ||
-          schema.version !== pkgEntity.version ||
-          schema.description !== pkgEntity.description ||
-          schema.author !== (pkgEntity.author ?? undefined) ||
-          schema.docs !== (pkgEntity.docs ?? undefined) ||
-          schema.icon !== (pkgEntity.icon ?? undefined) ||
-          schema.tags?.length !== pkgEntity.packageTags.length ||
-          schema.tags?.some((t) => !pkgEntity.packageTags.some((t2) => t2.tag.name === t))
-        ) {
-          acc.toUpdate.push(new UpdatePackageDto({
-            id: pkgEntity.id,
-            packageId: schema.id,
-            name: schema.name,
-            version: schema.version,
-            description: schema.description,
-            author: schema.author ?? null,
-            docs: schema.docs ?? null,
-            icon: schema.icon ?? null,
-            tags: schema.tags,
-          }));
+    const { toCreate, toUpdate } = packages.reduce(
+      (acc, schema) => {
+        const pkgEntity = pkgEntities.find((p) => p.packageId === schema.id);
+        if (pkgEntity) {
+          if (
+            schema.name !== pkgEntity.name ||
+            schema.version !== pkgEntity.version ||
+            schema.description !== pkgEntity.description ||
+            schema.author !== (pkgEntity.author ?? undefined) ||
+            schema.docs !== (pkgEntity.docs ?? undefined) ||
+            schema.icon !== (pkgEntity.icon ?? undefined) ||
+            schema.tags?.length !== pkgEntity.packageTags.length ||
+            schema.tags?.some((t) => !pkgEntity.packageTags.some((t2) => t2.tag.name === t))
+          ) {
+            acc.toUpdate.push(
+              new UpdatePackageDto({
+                id: pkgEntity.id,
+                packageId: schema.id,
+                name: schema.name,
+                version: schema.version,
+                description: schema.description,
+                author: schema.author ?? null,
+                docs: schema.docs ?? null,
+                icon: schema.icon ?? null,
+                tags: schema.tags,
+              }),
+            );
+          }
+        } else {
+          acc.toCreate.push(
+            new CreatePackageDto({
+              packageId: schema.id,
+              name: schema.name,
+              version: schema.version,
+              description: schema.description,
+              author: schema.author ?? null,
+              docs: schema.docs ?? null,
+              icon: schema.icon ?? null,
+              tags: schema.tags,
+            }),
+          );
         }
-      } else {
-        acc.toCreate.push(new CreatePackageDto({
-          packageId: schema.id,
-          name: schema.name,
-          version: schema.version,
-          description: schema.description,
-          author: schema.author ?? null,
-          docs: schema.docs ?? null,
-          icon: schema.icon ?? null,
-          tags: schema.tags,
-        }));
-      }
-      return acc;
-    }, { toCreate: [] as CreatePackageDto[], toUpdate: [] as UpdatePackageDto[] });
-    const toDelete = pkgEntities.filter(e => !pkgIds.has(e.packageId));
+        return acc;
+      },
+      { toCreate: [] as CreatePackageDto[], toUpdate: [] as UpdatePackageDto[] },
+    );
+    const toDelete = pkgEntities.filter((e) => !pkgIds.has(e.packageId));
 
     if (toCreate.length > 0) {
       this.logger.log(`Creating ${toCreate.length} packages`);
@@ -87,7 +95,7 @@ export class PackageService extends BaseService {
   async find(filter: FilterOptions<Package>, opts?: ReadOpts): Promise<Package[]> {
     const drizzleFilter = DrizzleFilterConverter.toFindMany(filter);
     const queryResult = await this.db(opts).query.package.findMany(drizzleFilter);
-    return queryResult.map((row) => new Package(row));
+    return queryResult.map((row) => Package.fromRow(row));
   }
 
   async create(dto: CreatePackageDto, opts?: CreateOpts): Promise<Package>;
@@ -106,13 +114,13 @@ export class PackageService extends BaseService {
             tagsPerRow[i]?.length ? this.addTags(entity.id, tagsPerRow[i]!, txOpts) : Promise.resolve(),
           ),
         );
-        return entities.map((entity) => new Package(entity));
+        return entities.map((entity) => Package.fromRow(entity));
       }
 
       const { tags, ...rest } = dto;
       const [entity] = await this.db(txOpts).insert(packageTable).values(rest as CreatePackageDto).returning();
       if (tags?.length) await this.addTags(entity.id, tags, txOpts);
-      return new Package(entity);
+      return Package.fromRow(entity);
     }, opts);
   }
 
@@ -129,7 +137,7 @@ export class PackageService extends BaseService {
 
           const [row] = await this.db(txOpts)
             .update(packageTable)
-            .set({ ...(patch as any), updatedAt: new Date() })
+            .set({ ...(patch as Record<string, unknown>), updatedAt: moment().toISOString() })
             .where(eq(packageTable.id, id))
             .returning();
 
@@ -141,8 +149,8 @@ export class PackageService extends BaseService {
             }
           }
 
-          return new Package(row);
-        })
+          return Package.fromRow(row);
+        }),
       );
 
       return updated;
@@ -172,4 +180,3 @@ export class PackageService extends BaseService {
   }
   //#endregion
 }
-

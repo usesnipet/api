@@ -2,7 +2,7 @@ import { ApiFilterQueries, Filter } from "@/common/filter";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
-import { Package } from "./models/package.model";
+import { Package } from "./model/package.model";
 import { PackageService } from "./package.service";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
@@ -15,9 +15,7 @@ export class PackageController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Package] })
-  find(
-    @Filter() filter: FilterOptions<Package>,
-  ) {
+  find(@Filter() filter: FilterOptions<Package>) {
     return this.packageService.find(filter);
   }
 }

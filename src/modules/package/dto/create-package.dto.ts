@@ -1,11 +1,13 @@
-import { OmitType } from "@nestjs/swagger";
+import { ApiPropertyOptional, OmitType } from "@nestjs/swagger";
+import { IsArray, IsOptional, IsString } from "class-validator";
 
-import { Package } from "../models/package.model";
+import { Package } from "../model/package.model";
 
-export class CreatePackageDto extends OmitType(
-  Package,
-  ["id", "packageTags", "createdAt", "updatedAt"] as const
-) {
+export class CreatePackageDto extends OmitType(Package, ["id", "packageTags", "createdAt", "updatedAt"] as const) {
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   tags?: string[];
 
   constructor(data?: CreatePackageDto) {
@@ -13,4 +15,3 @@ export class CreatePackageDto extends OmitType(
     if (data) Object.assign(this, data);
   }
 }
-
