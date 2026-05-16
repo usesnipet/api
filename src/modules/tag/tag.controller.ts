@@ -1,8 +1,10 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { Controller, Get } from "@nestjs/common";
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
-import { Tag } from "./models/tag.model";
+import { CreateTagDto } from "./dto/create-tag.dto";
+import { UpdateTagDto } from "./dto/update-tag.dto";
+import { Tag } from "./model/tag.model";
 import { TagService } from "./tag.service";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
@@ -17,5 +19,23 @@ export class TagController {
   @ApiOkResponse({ type: [Tag] })
   find(@Filter() filter: FilterOptions<Tag>) {
     return this.tagService.find(filter);
+  }
+
+  @Post()
+  @ApiCreatedResponse({ type: [Tag] })
+  create(@Body() dto: CreateTagDto[]): Promise<Tag[]> {
+    return this.tagService.create(dto);
+  }
+
+  @Put()
+  @ApiOkResponse({ type: Tag })
+  update(@Body() dto: UpdateTagDto): Promise<Tag> {
+    return this.tagService.update(dto);
+  }
+
+  @Delete(":id")
+  @ApiOkResponse({ type: void 0 })
+  delete(@Param("id") id: string): Promise<void> {
+    return this.tagService.delete(id);
   }
 }
