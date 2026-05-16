@@ -1,6 +1,6 @@
-import qs from "qs";
-
 import { FilterOrderDirection } from "../filter-options";
+
+import { extractBracketQuery } from "./extract-bracket-query";
 
 export type ParsedOrderItem = {
   field: string;
@@ -30,9 +30,8 @@ function normalizeFieldOrder(
     if ("direction" in obj) {
       return { field, direction: normalizeDirection(obj.direction) };
     }
-    for (const dir of ["asc", "desc"] as const) {
-      if (dir in obj) return { field, direction: dir };
-    }
+    const dir = (["asc", "desc"] as const).find((d) => d in obj);
+    if (dir) return { field, direction: dir };
   }
 
   return undefined;
@@ -65,29 +64,5 @@ export function parseOrderQuery(value: unknown): ParsedOrderItem[] | undefined {
 export function extractOrderFromQuery(
   query: Record<string, unknown>,
 ): ParsedOrderItem[] | undefined {
-  const nested = query.order;
-  if (nested !== undefined) {
-    const parsed = parseOrderQuery(nested);
-    if (parsed?.length) return parsed;
-  }
-
-  const flatKeys = Object.keys(query).filter((k) => k.startsWith("order["));
-  if (!flatKeys.length) return undefined;
-
-  const parts: string[] = [];
-  for (const key of flatKeys) {
-    const raw = query[key];
-    if (Array.isArray(raw)) {
-      for (const v of raw) {
-        parts.push(`${key}=${encodeURIComponent(String(v))}`);
-      }
-    } else if (raw !== undefined && raw !== null) {
-      parts.push(`${key}=${encodeURIComponent(String(raw))}`);
-    }
-  }
-
-  if (!parts.length) return undefined;
-
-  const parsed = qs.parse(parts.join("&")) as { order?: unknown };
-  return parseOrderQuery(parsed.order);
+  return extractBracketQuery(query, "order", parseOrderQuery);
 }

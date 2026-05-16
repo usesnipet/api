@@ -27,14 +27,12 @@ function uniqStrings(values: string[]): string[] {
 
 function applyAccessList(
   values: string[] | undefined,
-  access?: string[]
+  access?: string[],
 ): string[] | undefined {
   if (!values?.length) return undefined;
-  let out = uniqStrings(values);
-  if (access?.length) {
-    const allow = new Set(access);
-    out = out.filter((v) => allow.has(v));
-  }
+  const out = access?.length
+    ? uniqStrings(values).filter((v) => access.includes(v))
+    : uniqStrings(values);
   return out.length ? out : undefined;
 }
 
@@ -48,6 +46,18 @@ function intersectWithEntityFields(
   return allowed.filter((f) => entity.has(f));
 }
 
+function pickFromAllowList(
+  requested: string[] | undefined,
+  allowed: string[],
+  whenEmptyRequest: string[] | undefined,
+): string[] | undefined {
+  if (!allowed.length) return undefined;
+  if (!requested?.length) return whenEmptyRequest;
+  const allowSet = new Set(allowed);
+  const picked = uniqStrings(requested).filter((v) => allowSet.has(v));
+  return picked.length ? picked : undefined;
+}
+
 /** Config `select` is the default projection; query can only narrow it. */
 function resolveSelect(
   requested: string[] | undefined,
@@ -59,13 +69,7 @@ function resolveSelect(
   }
 
   const allowed = intersectWithEntityFields(configured, entityColumns);
-  if (!allowed.length) return undefined;
-
-  if (!requested?.length) return allowed;
-
-  const allowSet = new Set(allowed);
-  const picked = uniqStrings(requested).filter((f) => allowSet.has(f));
-  return picked.length ? picked : undefined;
+  return pickFromAllowList(requested, allowed, allowed);
 }
 
 function toStringArray(value?: string | string[]): string[] | undefined {
@@ -87,15 +91,8 @@ function resolveRelations(
   entityRelations: string[],
 ): string[] | undefined {
   if (!configured?.length) return undefined;
-
   const allowed = intersectWithEntityFields(configured, entityRelations);
-  if (!allowed.length) return undefined;
-
-  if (!requested?.length) return undefined;
-
-  const allowSet = new Set(allowed);
-  const picked = uniqStrings(requested).filter((r) => allowSet.has(r));
-  return picked.length ? picked : undefined;
+  return pickFromAllowList(requested, allowed, undefined);
 }
 
 /** Entity columns intersected with optional config allow list. */
@@ -122,16 +119,13 @@ function sanitizeOrder(
 }
 
 function sanitizeWhere(
-  where: Record<string, any> | undefined,
-  access?: string[]
-): Record<string, any> | undefined {
+  where: Record<string, unknown> | undefined,
+  access?: string[],
+): Record<string, unknown> | undefined {
   if (!where || typeof where !== 'object') return undefined;
-  let keys = Object.keys(where);
-  keys = applyAccessList(keys, access) ?? [];
-  if (!keys.length) return undefined;
-  const out: Record<string, any> = {};
-  for (const k of keys) out[k] = where[k];
-  return Object.keys(out).length ? out : undefined;
+  const keys = applyAccessList(Object.keys(where), access);
+  if (!keys?.length) return undefined;
+  return Object.fromEntries(keys.map((k) => [k, where[k]]));
 }
 
 export class HttpFilterConverter {
@@ -144,24 +138,25 @@ export class HttpFilterConverter {
     const whereAccess = mergeFieldAccess(config.where, fields.columns);
     const orderAccess = mergeFieldAccess(config.order, fields.columns);
 
-    const whereRaw = extractWhereFromQuery(query);
-    const selectRaw = toStringArray(query.select as string | string[] | undefined);
-    const orderRaw = extractOrderFromQuery(query);
-    const relationsRaw = toStringArray(query.relations as string | string[] | undefined);
-
-    const limit = Math.min(toNumber(query.limit) ?? env.MAX_FIND_LIMIT, env.MAX_FIND_LIMIT);
-    const offset = toNumber(query.offset) ?? 0;
+    const maxLimit = Math.min(config.maxLimit ?? env.MAX_FIND_LIMIT, env.MAX_FIND_LIMIT);
 
     const init: FilterOptionsInit<TEntity> = {
-      where: sanitizeWhere(whereRaw, whereAccess) as any,
-      select: resolveSelect(selectRaw, config.select, fields.columns) as any,
-      relations: resolveRelations(relationsRaw, config.relations, fields.relations) as any,
-      order: sanitizeOrder(orderRaw, orderAccess) as any,
-      limit,
-      offset,
+      where: sanitizeWhere(extractWhereFromQuery(query), whereAccess) as any,
+      select: resolveSelect(
+        toStringArray(query.select as string | string[] | undefined),
+        config.select,
+        fields.columns,
+      ) as any,
+      relations: resolveRelations(
+        toStringArray(query.relations as string | string[] | undefined),
+        config.relations,
+        fields.relations,
+      ) as any,
+      order: sanitizeOrder(extractOrderFromQuery(query), orderAccess) as any,
+      limit: Math.min(toNumber(query.limit) ?? maxLimit, maxLimit),
+      offset: toNumber(query.offset) ?? 0,
     };
-    const filter = new FilterOptions<TEntity>(init);
-    return filter;
+
+    return new FilterOptions<TEntity>(init);
   }
 }
-

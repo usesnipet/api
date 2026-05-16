@@ -1,10 +1,10 @@
-import qs from "qs";
-
 import {
   FilterCondition,
   FilterPrimitive,
   FilterWhereOp,
 } from "../filter-options";
+
+import { extractBracketQuery } from "./extract-bracket-query";
 
 const WHERE_OPS: FilterWhereOp[] = [
   "eq",
@@ -70,12 +70,9 @@ function normalizeLegacyOpObject(
 function normalizeBracketOps(
   raw: Record<string, unknown>,
 ): FilterCondition | undefined {
-  for (const op of WHERE_OPS) {
-    if (!(op in raw) || raw[op] === undefined) continue;
-    const value = coerceFilterValue(raw[op]);
-    return { op, value };
-  }
-  return undefined;
+  const op = WHERE_OPS.find((name) => name in raw && raw[name] !== undefined);
+  if (!op) return undefined;
+  return { op, value: coerceFilterValue(raw[op]) };
 }
 
 export function normalizeFieldCondition(raw: unknown): FilterCondition | undefined {
@@ -86,9 +83,7 @@ export function normalizeFieldCondition(raw: unknown): FilterCondition | undefin
     if ("op" in obj && "value" in obj) {
       return normalizeLegacyOpObject(obj);
     }
-    const fromOps = normalizeBracketOps(obj);
-    if (fromOps) return fromOps;
-    return undefined;
+    return normalizeBracketOps(obj);
   }
 
   return coerceScalar(raw);
@@ -109,8 +104,7 @@ export function parseWhereQuery(
 
   let parsed: unknown = value;
   if (typeof value === "string") {
-    const maybeJson = parseJsonIfPossible(value);
-    parsed = maybeJson;
+    parsed = parseJsonIfPossible(value);
   }
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
@@ -129,10 +123,6 @@ export function parseWhereQuery(
   return Object.keys(out).length ? out : undefined;
 }
 
-function isNestedWhereObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
 /**
  * Reads `where` from the full request query.
  * Supports nested `query.where` (extended parser) and flat `where[field][op]` keys.
@@ -140,30 +130,5 @@ function isNestedWhereObject(value: unknown): value is Record<string, unknown> {
 export function extractWhereFromQuery(
   query: Record<string, unknown>,
 ): Record<string, FilterCondition> | undefined {
-  const nested = query.where;
-  if (nested !== undefined) {
-    const parsed = parseWhereQuery(nested);
-    if (parsed) return parsed;
-  }
-
-  const flatKeys = Object.keys(query).filter((k) => k.startsWith("where["));
-  if (!flatKeys.length) return undefined;
-
-  const parts: string[] = [];
-  for (const key of flatKeys) {
-    const raw = query[key];
-    if (Array.isArray(raw)) {
-      for (const v of raw) {
-        parts.push(`${key}=${encodeURIComponent(String(v))}`);
-      }
-    } else if (raw !== undefined && raw !== null) {
-      parts.push(`${key}=${encodeURIComponent(String(raw))}`);
-    }
-  }
-
-  if (!parts.length) return undefined;
-
-  const parsed = qs.parse(parts.join("&")) as { where?: unknown };
-  if (!isNestedWhereObject(parsed.where)) return undefined;
-  return parseWhereQuery(parsed.where);
+  return extractBracketQuery(query, "where", parseWhereQuery);
 }
