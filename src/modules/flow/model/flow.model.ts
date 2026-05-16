@@ -49,6 +49,7 @@ export class Flow {
     return new Flow({
       id: row.id,
       name: row.name,
+      description: row.description ?? undefined,
       active: row.active,
       code: new FlowManifest(row.code),
       createdAt: moment(row.createdAt).toDate(),
