@@ -15,7 +15,7 @@ export class ConfigController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Config] })
-  find(@Filter() filter: FilterOptions<Config>) {
+  find(@Filter(Config) filter: FilterOptions<Config>) {
     return this.configService.find(filter);
   }
 }

@@ -9,7 +9,7 @@
 import dotenv from "dotenv";
 import z from "zod";
 
-import { __root } from "./root";
+
 
 const envFile = process.env.ENV_FILE;
 

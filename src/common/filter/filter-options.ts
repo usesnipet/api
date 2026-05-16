@@ -36,12 +36,9 @@ export interface FilterOptionsInit<TEntity extends object> {
   where?: FilterWhere<TEntity>;
   select?: FilterSelect<TEntity>;
   order?: FilterOrder<TEntity>;
-  limit?: number;
-  take?: number;
-  /** Paths such as `packageTags` or `packageTags.tag` (service-specific). */
   relations?: string[];
+  limit?: number;
   offset?: number;
-  skip?: number;
 }
 
 export class FilterOptions<Model extends object = any> {
@@ -50,9 +47,7 @@ export class FilterOptions<Model extends object = any> {
   order?: FilterOrder<Model>;
   relations?: string[];
   limit?: number;
-  take?: number;
   offset?: number;
-  skip?: number;
 
   constructor(init: FilterOptionsInit<Model> = {}) {
     Object.assign(this, init);

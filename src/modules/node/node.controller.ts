@@ -15,7 +15,17 @@ export class NodeController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Node] })
-  find(@Filter() filter: FilterOptions<Node>) {
+  find(
+    @Filter(
+      Node,
+      {
+        relations: [
+          "package", "nodeType", "config",
+          "nodeTags", "nodeTags.tag"
+        ]
+      }
+    ) filter: FilterOptions<Node>
+  ) {
     return this.nodeService.find(filter);
   }
 }

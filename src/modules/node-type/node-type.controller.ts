@@ -15,7 +15,7 @@ export class NodeTypeController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [NodeType] })
-  find(@Filter() filter: FilterOptions<NodeType>) {
+  find(@Filter(NodeType) filter: FilterOptions<NodeType>) {
     return this.nodeTypeService.find(filter);
   }
 }

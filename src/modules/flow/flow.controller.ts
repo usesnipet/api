@@ -17,7 +17,7 @@ export class FlowController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Flow] })
-  find(@Filter() filter: FilterOptions<Flow>) {
+  find(@Filter(Flow) filter: FilterOptions<Flow>) {
     return this.flowService.find(filter);
   }
 

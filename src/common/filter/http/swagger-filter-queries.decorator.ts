@@ -16,45 +16,33 @@ export function ApiFilterQueries() {
     ApiQuery({
       name: "select",
       required: false,
-      description: "Comma-separated field names, or a JSON array string.",
-      schema: { type: "string" },
+      description: "Comma-separated field names",
+      schema: { type: "array", items: { type: "string" } },
     }),
     ApiQuery({
       name: "relations",
       required: false,
-      description: "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
-      schema: { type: "string" },
+      description: "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
+      schema: { type: "array", items: { type: "string" } },
     }),
     ApiQuery({
       name: "order",
       required: false,
       description:
-        "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
-      schema: { type: "string" },
+        "Comma-separated `field:asc|desc`.",
+      schema: { type: "array", items: { type: "string" } },
     }),
     ApiQuery({
       name: "limit",
       required: false,
-      description: "Maximum number of rows (`take` is an alias).",
+      description: "Maximum number of rows",
       schema: { type: "integer", minimum: 1, example: 200 },
-    }),
-    ApiQuery({
-      name: "take",
-      required: false,
-      description: "Alias for `limit`.",
-      schema: { type: "integer", minimum: 1 },
     }),
     ApiQuery({
       name: "offset",
       required: false,
-      description: "Number of rows to skip (`skip` is an alias).",
+      description: "Number of rows to skip",
       schema: { type: "integer", minimum: 0, example: 0 },
-    }),
-    ApiQuery({
-      name: "skip",
-      required: false,
-      description: "Alias for `offset`.",
-      schema: { type: "integer", minimum: 0 },
     }),
   );
 }

@@ -56,19 +56,20 @@ export class Node {
   @IsUUID()
   configId: string | null;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsDate()
-  createdAt: Date;
+  createdAt?: Date;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsDate()
-  updatedAt: Date;
+  updatedAt?: Date;
 
-  @ApiProperty({ type: [NodeTag] })
+  @ApiPropertyOptional({ type: [NodeTag] })
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => NodeTag)
-  nodeTags: NodeTag[];
+  nodeTags?: NodeTag[];
 
   @ApiPropertyOptional({ type: Package })
   @IsOptional()
@@ -103,9 +104,9 @@ export class Node {
       icon: row.icon,
       nodeTypeId: row.nodeTypeId,
       configId: row.configId,
-      createdAt: moment(row.createdAt).toDate(),
-      updatedAt: moment(row.updatedAt).toDate(),
-      nodeTags: row.nodeTags?.map((t) => NodeTag.fromRow(t)) ?? [],
+      createdAt: row.createdAt ? moment(row.createdAt).toDate() : undefined,
+      updatedAt: row.updatedAt ? moment(row.updatedAt).toDate() : undefined,
+      nodeTags: row.nodeTags?.map((t) => NodeTag.fromRow(t)),
       package: row.package ? Package.fromRow(row.package) : undefined,
       nodeType: row.nodeType ? NodeType.fromRow(row.nodeType) : undefined,
       config: row.config ? Config.fromRow(row.config) : undefined,

@@ -17,7 +17,7 @@ export class TagController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Tag] })
-  find(@Filter() filter: FilterOptions<Tag>) {
+  find(@Filter(Tag) filter: FilterOptions<Tag>) {
     return this.tagService.find(filter);
   }
 

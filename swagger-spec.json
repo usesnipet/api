@@ -39,34 +39,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -74,34 +83,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -226,34 +215,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -261,34 +259,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -329,34 +307,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -364,34 +351,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -432,34 +399,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -467,34 +443,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -535,34 +491,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -570,34 +535,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -638,34 +583,43 @@
             "name": "select",
             "required": false,
             "in": "query",
-            "description": "Comma-separated field names, or a JSON array string.",
+            "description": "Comma-separated field names",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "relations",
             "required": false,
             "in": "query",
-            "description": "Comma-separated relation paths (e.g. `packageTags`, `packageTags.tag`).",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "order",
             "required": false,
             "in": "query",
-            "description": "Comma-separated `field:asc|desc`, or JSON array like `[{\"field\":\"name\",\"direction\":\"asc\"}]`.",
+            "description": "Comma-separated `field:asc|desc`.",
             "schema": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           {
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Maximum number of rows (`take` is an alias).",
+            "description": "Maximum number of rows",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -673,34 +627,14 @@
             }
           },
           {
-            "name": "take",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `limit`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
             "name": "offset",
             "required": false,
             "in": "query",
-            "description": "Number of rows to skip (`skip` is an alias).",
+            "description": "Number of rows to skip",
             "schema": {
               "type": "integer",
               "minimum": 0,
               "example": 0
-            }
-          },
-          {
-            "name": "skip",
-            "required": false,
-            "in": "query",
-            "description": "Alias for `offset`.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0
             }
           }
         ],
@@ -1389,10 +1323,7 @@
           "nodeId",
           "packageId",
           "name",
-          "nodeTypeId",
-          "createdAt",
-          "updatedAt",
-          "nodeTags"
+          "nodeTypeId"
         ]
       },
       "UpdateTagDto": {

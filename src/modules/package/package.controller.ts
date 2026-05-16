@@ -15,7 +15,7 @@ export class PackageController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [Package] })
-  find(@Filter() filter: FilterOptions<Package>) {
+  find(@Filter(Package) filter: FilterOptions<Package>) {
     return this.packageService.find(filter);
   }
 }

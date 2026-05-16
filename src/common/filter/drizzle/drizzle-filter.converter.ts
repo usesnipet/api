@@ -1,6 +1,6 @@
 import { inArray } from "drizzle-orm";
 
-import { FilterCondition, FilterOptions } from "./filter-options";
+import { FilterCondition, FilterOptions } from "../filter-options";
 
 /** Drizzle relational `with` branch: `true` or nested `{ with: { … } }`. */
 export type DrizzleRelationWithBranch = true | { with: Record<string, DrizzleRelationWithBranch> };
@@ -69,8 +69,8 @@ export class DrizzleFilterConverter {
     with?: Record<string, DrizzleRelationWithBranch>;
   } {
     if (!filter) return {};
-    const limit = filter.limit ?? filter.take;
-    const offset = filter.offset ?? filter.skip;
+    const limit = filter.limit;
+    const offset = filter.offset;
 
     const columns =
       filter.select?.length

@@ -1,4 +1,8 @@
-import { FilterOptions, FilterOptionsInit } from "./filter-options";
+import { env } from "@/env";
+import { Constructable } from "@/types";
+
+import { FilterOptions, FilterOptionsInit } from "../filter-options";
+import { getEntityFields } from "../get-entity-fields";
 
 export type FilterHttpConfig = {
   select?: string[];
@@ -18,7 +22,10 @@ function uniqStrings(values: string[]): string[] {
   return Array.from(new Set(values.map((v) => v.trim()).filter(Boolean)));
 }
 
-function applyAccessList(values: string[] | undefined, access?: string[]): string[] | undefined {
+function applyAccessList(
+  values: string[] | undefined,
+  access?: string[]
+): string[] | undefined {
   if (!values?.length) return undefined;
   let out = uniqStrings(values);
   if (access?.length) {
@@ -28,26 +35,77 @@ function applyAccessList(values: string[] | undefined, access?: string[]): strin
   return out.length ? out : undefined;
 }
 
-function toStringArray(value: unknown): string[] | undefined {
+function intersectWithEntityFields(
+  fields: string[],
+  entityFields: string[],
+): string[] {
+  const allowed = uniqStrings(fields);
+  if (!entityFields.length) return allowed;
+  const entity = new Set(entityFields);
+  return allowed.filter((f) => entity.has(f));
+}
+
+/** Config `select` is the default projection; query can only narrow it. */
+function resolveSelect(
+  requested: string[] | undefined,
+  configured: string[] | undefined,
+  entityColumns: string[],
+): string[] | undefined {
+  if (!configured?.length) {
+    return applyAccessList(requested, entityColumns.length ? entityColumns : undefined);
+  }
+
+  const allowed = intersectWithEntityFields(configured, entityColumns);
+  if (!allowed.length) return undefined;
+
+  if (!requested?.length) return allowed;
+
+  const allowSet = new Set(allowed);
+  const picked = uniqStrings(requested).filter((f) => allowSet.has(f));
+  return picked.length ? picked : undefined;
+}
+
+function toStringArray(value?: string | string[]): string[] | undefined {
   if (value === undefined || value === null) return undefined;
   if (Array.isArray(value)) return value.map(String).filter(Boolean);
   if (typeof value === 'string') {
-    const trimmed = value.trim();
-    if (!trimmed) return undefined;
-    if (trimmed.startsWith('[')) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
-      } catch {
-        // fallthrough to comma split
-      }
-    }
-    return trimmed
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    return value.split(',').map((s) => s.trim()).filter(Boolean);
   }
   return [String(value)].filter(Boolean);
+}
+
+/**
+ * Relations are opt-in via config. No config entry means none load.
+ * Query only narrows the configured allow list.
+ */
+function resolveRelations(
+  requested: string[] | undefined,
+  configured: string[] | undefined,
+  entityRelations: string[],
+): string[] | undefined {
+  if (!configured?.length) return undefined;
+
+  const allowed = intersectWithEntityFields(configured, entityRelations);
+  if (!allowed.length) return undefined;
+
+  if (!requested?.length) return undefined;
+
+  const allowSet = new Set(allowed);
+  const picked = uniqStrings(requested).filter((r) => allowSet.has(r));
+  return picked.length ? picked : undefined;
+}
+
+/** Entity columns intersected with optional config allow list. */
+function mergeFieldAccess(
+  configured: string[] | undefined,
+  entityFields: string[],
+): string[] | undefined {
+  if (!entityFields.length) {
+    return configured?.length ? uniqStrings(configured) : undefined;
+  }
+  if (!configured?.length) return [...new Set(entityFields)];
+  const out = intersectWithEntityFields(configured, entityFields);
+  return out.length ? out : undefined;
 }
 
 function parseJsonIfPossible(value: unknown): unknown {
@@ -120,54 +178,44 @@ function sanitizeWhere(
 
 export class HttpFilterConverter {
   static fromQuery<TEntity extends object = any>(
-    query: Record<string, any>,
+    cls: Constructable<TEntity>,
+    query: {
+      where?: unknown;
+      select?: string | string[];
+      order?: unknown;
+      relations?: string | string[];
+      limit?: number;
+      offset?: number;
+    },
     config: FilterHttpConfig = {}
   ): FilterOptions<TEntity> {
+    const fields = getEntityFields(cls);
+    const whereAccess = mergeFieldAccess(config.where, fields.columns);
+    const orderAccess = mergeFieldAccess(config.order, fields.columns);
+
     const whereRaw = parseWhere(query.where) as any;
-    const selectRaw = toStringArray(query.select) as any;
+    const selectRaw = toStringArray(query.select);
     const orderRaw = parseOrder(query.order) as any;
     const relationsRaw = toStringArray(query.relations);
 
-    const limit = toNumber(query.limit);
-    const take = toNumber(query.take);
-    const effectiveLimit = limit ?? take;
-    const maxLimit = config.maxLimit;
-    const clampedLimit =
-      effectiveLimit === undefined
-        ? undefined
-        : maxLimit === undefined
-          ? effectiveLimit
-          : Math.min(effectiveLimit, maxLimit);
+    const limit = Math.min(toNumber(query.limit) ?? env.MAX_FIND_LIMIT, env.MAX_FIND_LIMIT);
+    const offset = toNumber(query.offset) ?? 0;
 
     const init: FilterOptionsInit<TEntity> = {
-      where: sanitizeWhere(whereRaw, config.where) as any,
-      select: applyAccessList(selectRaw, config.select) as any,
-      relations: applyAccessList(relationsRaw, config.relations) as any,
+      where: sanitizeWhere(whereRaw, whereAccess) as any,
+      select: resolveSelect(selectRaw, config.select, fields.columns) as any,
+      relations: resolveRelations(relationsRaw, config.relations, fields.relations) as any,
       order: orderRaw
         ?.filter((o) => o?.field)
         .filter((o) => {
-          const allowed = applyAccessList([o.field], config.order);
+          const allowed = applyAccessList([o.field], orderAccess);
           return Boolean(allowed?.length);
         }) as any,
-      limit: clampedLimit,
-      take: undefined,
-      offset: toNumber(query.offset),
-      skip: toNumber(query.skip),
+      limit,
+      offset,
     };
-    return new FilterOptions<TEntity>(init);
-  }
-
-  static toQuery(filter: FilterOptions<any>): Record<string, any> {
-    const q: Record<string, any> = {};
-    if (filter.where) q.where = JSON.stringify(filter.where);
-    if (filter.select?.length) q.select = filter.select.join(',');
-    if (filter.order?.length) q.order = filter.order.map((o) => `${o.field}:${o.direction || 'asc'}`).join(',');
-    if (filter.limit !== undefined) q.limit = String(filter.limit);
-    if (filter.take !== undefined) q.take = String(filter.take);
-    if (filter.offset !== undefined) q.offset = String(filter.offset);
-    if (filter.skip !== undefined) q.skip = String(filter.skip);
-    if (filter.relations?.length) q.relations = filter.relations.join(",");
-    return q;
+    const filter = new FilterOptions<TEntity>(init);
+    return filter;
   }
 }
 
