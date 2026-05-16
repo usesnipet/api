@@ -1125,8 +1125,10 @@
             "$ref": "#/components/schemas/FieldManifest"
           },
           "properties": {
-            "type": "object",
-            "additionalProperties": true
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldManifest"
+            }
           },
           "encrypted": {
             "type": "boolean"

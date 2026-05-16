@@ -4,8 +4,6 @@ import {
   IsAlphanumeric, IsBoolean, IsNotEmpty, IsOptional, IsString, Length, ValidateNested
 } from "class-validator";
 
-import { IsRecordOf } from "../../decorators/is-record-of";
-
 export class FieldManifest {
   @ApiProperty()
   @IsString()
@@ -37,10 +35,11 @@ export class FieldManifest {
   @Type(() => FieldManifest)
   items?: FieldManifest;
 
-  @ApiPropertyOptional({ type: Object, additionalProperties: true })
+  @ApiPropertyOptional({ type: () => [FieldManifest] })
   @IsOptional()
-  @IsRecordOf(FieldManifest)
-  properties?: Record<string, FieldManifest>;
+  @ValidateNested({ each: true })
+  @Type(() => FieldManifest)
+  properties?: FieldManifest[];
 
   @ApiPropertyOptional()
   @IsOptional()
