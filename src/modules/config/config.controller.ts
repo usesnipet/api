@@ -3,7 +3,7 @@ import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
 import { ConfigService } from "./config.service";
-import { Config } from "./models/config.model";
+import { Config } from "./model/config.model";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
 

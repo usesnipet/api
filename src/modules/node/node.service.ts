@@ -130,14 +130,13 @@ export class NodeService extends BaseService {
         const next = new CreateNodeDto({
           nodeId: manifest.id,
           packageId: packageId,
-          name: manifest.metadata?.name ?? manifest.id,
-          description: manifest.metadata?.description ?? null,
-          docs: manifest.metadata?.docs ?? null,
-          icon: manifest.metadata?.icon ?? null,
-          author: manifest.metadata?.author ?? null,
+          name: manifest.name ?? manifest.id,
+          description: manifest.description ?? null,
+          docs: manifest.docs ?? null,
+          icon: manifest.icon ?? null,
           nodeTypeId: resolvedNodeTypeId,
           configId: resolvedConfigId,
-          tags: manifest.metadata?.tags ?? [],
+          tags: manifest.tags ?? [],
         });
 
         if (row) {

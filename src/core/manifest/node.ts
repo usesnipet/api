@@ -1,9 +1,37 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { IsArray, IsOptional, IsString } from "class-validator";
 
-import { BaseManifest } from "./base";
 
-export class NodeManifest extends BaseManifest {
+
+export class NodeManifest {
+  @ApiProperty()
+  @IsString()
+  id!: string;
+
+  @ApiProperty()
+  @IsString()
+  name!: string;
+
+  @ApiProperty()
+  @IsString()
+  description!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  docs?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
   @ApiProperty()
   @IsString()
   type!: string;

@@ -598,6 +598,99 @@
         "tags": [
           "configs"
         ]
+      },
+      "post": {
+        "operationId": "ConfigController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Config"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "configs"
+        ]
+      },
+      "put": {
+        "operationId": "ConfigController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Config"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "configs"
+        ]
+      }
+    },
+    "/api/configs/{id}": {
+      "delete": {
+        "operationId": "ConfigController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "configs"
+        ]
       }
     },
     "/api/tags": {
@@ -1202,8 +1295,10 @@
           "configId",
           "packageId",
           "name",
+          "fieldManifest",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "configTags"
         ]
       },
       "Node": {

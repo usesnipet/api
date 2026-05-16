@@ -32,37 +32,37 @@ export class PackageService extends BaseService {
       const pkgEntity = pkgEntities.find((p) => p.packageId === schema.id);
       if (pkgEntity) {
         if (
-          schema.metadata.name !== pkgEntity.name ||
+          schema.name !== pkgEntity.name ||
           schema.version !== pkgEntity.version ||
-          schema.metadata.description !== pkgEntity.description ||
-          schema.metadata.author !== (pkgEntity.author ?? undefined) ||
-          schema.metadata.docs !== (pkgEntity.docs ?? undefined) ||
-          schema.metadata.icon !== (pkgEntity.icon ?? undefined) ||
-          schema.metadata.tags?.length !== pkgEntity.packageTags.length ||
-          schema.metadata.tags?.some((t) => !pkgEntity.packageTags.some((t2) => t2.tag.name === t))
+          schema.description !== pkgEntity.description ||
+          schema.author !== (pkgEntity.author ?? undefined) ||
+          schema.docs !== (pkgEntity.docs ?? undefined) ||
+          schema.icon !== (pkgEntity.icon ?? undefined) ||
+          schema.tags?.length !== pkgEntity.packageTags.length ||
+          schema.tags?.some((t) => !pkgEntity.packageTags.some((t2) => t2.tag.name === t))
         ) {
           acc.toUpdate.push(new UpdatePackageDto({
             id: pkgEntity.id,
             packageId: schema.id,
-            name: schema.metadata.name,
+            name: schema.name,
             version: schema.version,
-            description: schema.metadata.description,
-            author: schema.metadata.author ?? null,
-            docs: schema.metadata.docs ?? null,
-            icon: schema.metadata.icon ?? null,
-            tags: schema.metadata.tags,
+            description: schema.description,
+            author: schema.author ?? null,
+            docs: schema.docs ?? null,
+            icon: schema.icon ?? null,
+            tags: schema.tags,
           }));
         }
       } else {
         acc.toCreate.push(new CreatePackageDto({
           packageId: schema.id,
-          name: schema.metadata.name,
+          name: schema.name,
           version: schema.version,
-          description: schema.metadata.description,
-          author: schema.metadata.author ?? null,
-          docs: schema.metadata.docs ?? null,
-          icon: schema.metadata.icon ?? null,
-          tags: schema.metadata.tags,
+          description: schema.description,
+          author: schema.author ?? null,
+          docs: schema.docs ?? null,
+          icon: schema.icon ?? null,
+          tags: schema.tags,
         }));
       }
       return acc;

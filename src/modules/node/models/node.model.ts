@@ -1,4 +1,4 @@
-import { Config } from "@/modules/config/models/config.model";
+import { Config } from "@/modules/config/model/config.model";
 import { NodeType } from "@/modules/node-type/models/node-type.model";
 import { Package } from "@/modules/package/models/package.model";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";

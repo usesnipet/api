@@ -10,7 +10,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { CreateConfigDto } from "./dto/create-config.dto";
 import { UpdateConfigDto } from "./dto/update-config.dto";
-import { Config } from "./models/config.model";
+import { Config } from "./model/config.model";
 
 function insertRowFromDto(rest: Omit<CreateConfigDto, "tags">) {
   return {
@@ -30,7 +30,7 @@ export class ConfigService extends BaseService {
   async find(filter: FilterOptions<Config>, opts?: ReadOpts): Promise<Config[]> {
     const drizzleFilter = DrizzleFilterConverter.toFindMany(filter);
     const queryResult = await this.db(opts).query.config.findMany(drizzleFilter);
-    return queryResult.map((row) => new Config(row));
+    return queryResult.map((row) => Config.fromRow(row));
   }
 
   async create(dto: CreateConfigDto, opts?: CreateOpts): Promise<Config>;
@@ -49,13 +49,13 @@ export class ConfigService extends BaseService {
             tagsPerRow[i]?.length ? this.addTags(entity.id, tagsPerRow[i]!, txOpts) : Promise.resolve(),
           ),
         );
-        return entities.map((entity) => new Config(entity));
+        return entities.map((entity) => Config.fromRow(entity));
       }
 
       const { tags, ...rest } = dto;
       const [entity] = await this.db(txOpts).insert(config).values(insertRowFromDto(rest)).returning();
       if (tags?.length) await this.addTags(entity.id, tags, txOpts);
-      return new Config(entity);
+      return Config.fromRow(entity);
     }, opts);
   }
 
@@ -84,7 +84,7 @@ export class ConfigService extends BaseService {
             }
           }
 
-          return new Config(row);
+          return Config.fromRow(row);
         }),
       );
 
@@ -134,27 +134,25 @@ export class ConfigService extends BaseService {
           const fieldsChanged =
             JSON.stringify(manifest.fields) !== JSON.stringify(row.fieldManifest);
           if (
-            (manifest.metadata?.name ?? row.name) !== row.name ||
-            (manifest.metadata?.description ?? null) !== row.description ||
-            (manifest.metadata?.docs ?? null) !== row.docs ||
-            (manifest.metadata?.icon ?? null) !== row.icon ||
-            (manifest.metadata?.author ?? null) !== row.author ||
+            (manifest.name ?? row.name) !== row.name ||
+            (manifest.description ?? null) !== row.description ||
+            (manifest.docs ?? null) !== row.docs ||
+            (manifest.icon ?? null) !== row.icon ||
             fieldsChanged ||
-            manifest.metadata?.tags?.length !== row.configTags.length ||
-            manifest.metadata?.tags?.some((t) => !row.configTags.some((t2) => t2.tag.name === t))
+            manifest.tags?.length !== row.configTags.length ||
+            manifest.tags?.some((t) => !row.configTags.some((t2) => t2.tag.name === t))
           ) {
             acc.toUpdate.push(
               new UpdateConfigDto({
                 id: row.id,
                 configId: manifest.id,
                 packageId: row.packageId,
-                name: manifest.metadata?.name ?? row.name,
-                description: manifest.metadata?.description ?? row.description ?? null,
-                docs: manifest.metadata?.docs ?? row.docs ?? null,
-                icon: manifest.metadata?.icon ?? row.icon ?? null,
-                author: manifest.metadata?.author ?? row.author ?? null,
+                name: manifest.name ?? row.name,
+                description: manifest.description ?? row.description ?? null,
+                docs: manifest.docs ?? row.docs ?? null,
+                icon: manifest.icon ?? row.icon ?? null,
                 fieldManifest: manifest.fields,
-                tags: manifest.metadata?.tags,
+                tags: manifest.tags,
               }),
             );
           }
@@ -166,13 +164,12 @@ export class ConfigService extends BaseService {
             new CreateConfigDto({
               configId: manifest.id,
               packageId: packageEntity.id,
-              name: manifest.metadata?.name ?? manifest.id,
-              description: manifest.metadata?.description ?? null,
-              docs: manifest.metadata?.docs ?? null,
-              icon: manifest.metadata?.icon ?? null,
-              author: manifest.metadata?.author ?? null,
+              name: manifest.name ?? manifest.id,
+              description: manifest.description ?? null,
+              docs: manifest.docs ?? null,
+              icon: manifest.icon ?? null,
               fieldManifest: manifest.fields ?? [],
-              tags: manifest.metadata?.tags,
+              tags: manifest.tags,
             }),
           );
         }

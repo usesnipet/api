@@ -1,10 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
-  IsAlphanumeric, IsBoolean, IsNotEmpty, IsOptional, IsString, Length, ValidateNested
+  IsAlphanumeric, IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, Length, ValidateNested
 } from "class-validator";
 
-import { BaseManifest } from "./base";
 import { FieldManifest } from "./field";
 
 export class NodeTypeComponentManifest {
@@ -25,7 +24,35 @@ export class NodeTypeComponentManifest {
   required?: boolean;
 }
 
-export class NodeTypeManifest extends BaseManifest {
+export class NodeTypeManifest {
+  @ApiProperty()
+  @IsString()
+  id!: string;
+
+  @ApiProperty()
+  @IsString()
+  name!: string;
+
+  @ApiProperty()
+  @IsString()
+  description!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  docs?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
   @ApiPropertyOptional({ type: [FieldManifest] })
   @IsOptional()
   @ValidateNested({ each: true })

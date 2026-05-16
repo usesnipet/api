@@ -1,13 +1,45 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsSemVer, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsOptional, IsSemVer, IsString, ValidateNested } from "class-validator";
 
-import { BaseManifest } from "./base";
 import { ConfigManifest } from "./config";
 import { NodeManifest } from "./node";
 import { NodeTypeManifest } from "./node-type";
 
-export class PackageManifest extends BaseManifest {
+export class PackageManifest {
+  @ApiProperty()
+  @IsString()
+  id!: string;
+
+  @ApiProperty()
+  @IsString()
+  name!: string;
+
+  @ApiProperty()
+  @IsString()
+  description!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  docs?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  author?: string;
+
   @ApiProperty({ type: [NodeTypeManifest] })
   @IsArray()
   @ValidateNested({ each: true })
