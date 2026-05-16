@@ -1,7 +1,7 @@
 import type { NodeRow } from "@/db/schema/node";
 import { Config } from "@/modules/config/model/config.model";
-import { NodeType } from "@/modules/node-type/models/node-type.model";
-import { Package } from "@/modules/package/models/package.model";
+import { NodeType } from "@/modules/node-type/model/node-type.model";
+import { Package } from "@/modules/package/model/package.model";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
@@ -106,8 +106,8 @@ export class Node {
       createdAt: moment(row.createdAt).toDate(),
       updatedAt: moment(row.updatedAt).toDate(),
       nodeTags: row.nodeTags?.map((t) => NodeTag.fromRow(t)) ?? [],
-      package: row.package,
-      nodeType: row.nodeType,
+      package: row.package ? Package.fromRow(row.package) : undefined,
+      nodeType: row.nodeType ? NodeType.fromRow(row.nodeType) : undefined,
       config: row.config ? Config.fromRow(row.config) : undefined,
     });
   }
