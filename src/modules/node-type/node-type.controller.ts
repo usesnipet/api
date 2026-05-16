@@ -2,7 +2,7 @@ import { ApiFilterQueries, Filter } from "@/common/filter";
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
-import { NodeType } from "./models/node-type.model";
+import { NodeType } from "./model/node-type.model";
 import { NodeTypeService } from "./node-type.service";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
@@ -15,9 +15,7 @@ export class NodeTypeController {
   @Get()
   @ApiFilterQueries()
   @ApiOkResponse({ type: [NodeType] })
-  find(
-    @Filter() filter: FilterOptions<NodeType>,
-  ) {
+  find(@Filter() filter: FilterOptions<NodeType>) {
     return this.nodeTypeService.find(filter);
   }
 }

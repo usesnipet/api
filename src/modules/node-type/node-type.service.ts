@@ -10,7 +10,7 @@ import { eq, inArray } from "drizzle-orm";
 
 import { CreateNodeTypeDto } from "./dto/create-node-type.dto";
 import { UpdateNodeTypeDto } from "./dto/update-node-type.dto";
-import { NodeType } from "./models/node-type.model";
+import { NodeType } from "./model/node-type.model";
 
 @Injectable()
 export class NodeTypeService extends BaseService {
@@ -23,7 +23,7 @@ export class NodeTypeService extends BaseService {
   async find(filter: FilterOptions<NodeType>, opts?: ReadOpts): Promise<NodeType[]> {
     const drizzleFilter = DrizzleFilterConverter.toFindMany(filter);
     const queryResult = await this.db(opts).query.nodeType.findMany(drizzleFilter);
-    return queryResult.map((row) => new NodeType(row));
+    return queryResult.map((row) => NodeType.fromRow(row));
   }
 
   async create(dto: CreateNodeTypeDto, opts?: CreateOpts): Promise<NodeType>;
@@ -45,13 +45,13 @@ export class NodeTypeService extends BaseService {
             tagsPerRow[i]?.length ? this.addTags(entity.id, tagsPerRow[i]!, txOpts) : Promise.resolve(),
           ),
         );
-        return entities.map((e) => new NodeType(e));
+        return entities.map((e) => NodeType.fromRow(e));
       }
 
       const { tags, ...rest } = dto;
       const [entity] = await this.db(txOpts).insert(nodeType).values(rest).returning();
       if (tags?.length) await this.addTags(entity.id, tags, txOpts);
-      return new NodeType(entity);
+      return NodeType.fromRow(entity);
     }, opts);
   }
 
@@ -68,7 +68,7 @@ export class NodeTypeService extends BaseService {
 
           const [row] = await this.db(txOpts)
             .update(nodeType)
-            .set({ ...(patch as any), updatedAt: new Date() })
+            .set(patch)
             .where(eq(nodeType.id, id))
             .returning();
 
@@ -80,7 +80,7 @@ export class NodeTypeService extends BaseService {
             }
           }
 
-          return new NodeType(row);
+          return NodeType.fromRow(row);
         }),
       );
 
@@ -129,31 +129,29 @@ export class NodeTypeService extends BaseService {
         const ntEntity = ntEntities.find((nt) => nt.typeId === schema.id);
         if (ntEntity) {
           if (
-            schema.metadata?.name !== ntEntity.name ||
-            schema.metadata?.description !== ntEntity.description ||
-            schema.metadata?.docs !== ntEntity.docs ||
-            schema.metadata?.icon !== ntEntity.icon ||
-            schema.metadata?.author !== ntEntity.author ||
-            schema.inputs !== ntEntity.inputs ||
-            schema.outputs !== ntEntity.outputs ||
-            schema.components !== ntEntity.components ||
-            schema.metadata.tags?.length !== ntEntity.nodeTypeTags.length ||
-            schema.metadata.tags?.some((t) => !ntEntity.nodeTypeTags.some((t2) => t2.tag.name === t))
+            schema.name !== ntEntity.name ||
+            (schema.description ?? null) !== (ntEntity.description ?? null) ||
+            (schema.docs ?? null) !== (ntEntity.docs ?? null) ||
+            (schema.icon ?? null) !== (ntEntity.icon ?? null) ||
+            JSON.stringify(schema.inputs ?? []) !== JSON.stringify(ntEntity.inputs ?? []) ||
+            JSON.stringify(schema.outputs ?? []) !== JSON.stringify(ntEntity.outputs ?? []) ||
+            JSON.stringify(schema.components ?? []) !== JSON.stringify(ntEntity.components ?? []) ||
+            (schema.tags?.length ?? 0) !== ntEntity.nodeTypeTags.length ||
+            (schema.tags ?? []).some((t) => !ntEntity.nodeTypeTags.some((t2) => t2.tag.name === t))
           ) {
             acc.toUpdate.push(
               new UpdateNodeTypeDto({
                 id: ntEntity.id,
                 typeId: schema.id,
                 packageId: ntEntity.packageId,
-                name: schema.metadata.name,
-                description: schema.metadata.description,
-                docs: schema.metadata.docs,
-                icon: schema.metadata.icon,
-                author: schema.metadata.author,
-                inputs: schema.inputs,
-                outputs: schema.outputs,
-                components: schema.components,
-                tags: schema.metadata.tags,
+                name: schema.name,
+                description: schema.description ?? null,
+                docs: schema.docs ?? null,
+                icon: schema.icon ?? null,
+                inputs: schema.inputs ?? [],
+                outputs: schema.outputs ?? [],
+                components: schema.components ?? [],
+                tags: schema.tags,
               }),
             );
           }
@@ -164,16 +162,15 @@ export class NodeTypeService extends BaseService {
           acc.toCreate.push(
             new CreateNodeTypeDto({
               typeId: schema.id,
-              packageId: packageEntity?.id,
-              name: schema.metadata.name,
-              description: schema.metadata.description,
+              packageId: packageEntity.id,
+              name: schema.name,
+              description: schema.description ?? null,
               inputs: schema.inputs ?? [],
               outputs: schema.outputs ?? [],
               components: schema.components ?? [],
-              author: schema.metadata.author ?? null,
-              docs: schema.metadata.docs ?? null,
-              icon: schema.metadata.icon ?? null,
-              tags: schema.metadata.tags,
+              docs: schema.docs ?? null,
+              icon: schema.icon ?? null,
+              tags: schema.tags,
             }),
           );
         }
