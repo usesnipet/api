@@ -4,6 +4,9 @@ import { Constructable } from "@/types";
 import { FilterOptions, FilterOptionsInit } from "../filter-options";
 import { getEntityFields } from "../get-entity-fields";
 
+import { extractOrderFromQuery } from "./parse-order-query";
+import { extractWhereFromQuery } from "./parse-where-query";
+
 export type FilterHttpConfig = {
   select?: string[];
   where?: string[];
@@ -108,59 +111,14 @@ function mergeFieldAccess(
   return out.length ? out : undefined;
 }
 
-function parseJsonIfPossible(value: unknown): unknown {
-  if (typeof value !== 'string') return value;
-  const trimmed = value.trim();
-  if (!trimmed) return undefined;
-  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      return value;
-    }
-  }
-  return value;
-}
-
-function parseOrder(value: unknown): Array<{ field: string; direction?: 'asc' | 'desc' }> | undefined {
-  if (value === undefined || value === null) return undefined;
-
-  const parsed = parseJsonIfPossible(value);
-  if (Array.isArray(parsed)) {
-    return parsed
-      .map((item) => {
-        if (!item) return undefined;
-        if (typeof item === 'string') {
-          const [field, direction] = item.split(':');
-          return field ? { field: field.trim(), direction: (direction?.trim() as any) || undefined } : undefined;
-        }
-        if (typeof item === 'object') {
-          const o = item as any;
-          if (!o.field) return undefined;
-          return { field: String(o.field), direction: (o.direction as any) || undefined };
-        }
-        return undefined;
-      })
-      .filter(Boolean) as any;
-  }
-
-  if (typeof parsed === 'string') {
-    const parts = parsed.split(',').map((s) => s.trim()).filter(Boolean);
-    if (!parts.length) return undefined;
-    return parts.map((p) => {
-      const [field, direction] = p.split(':');
-      return { field: field.trim(), direction: (direction?.trim() as any) || undefined };
-    });
-  }
-
-  return undefined;
-}
-
-function parseWhere(value: unknown): Record<string, any> | undefined {
-  if (value === undefined || value === null) return undefined;
-  const parsed = parseJsonIfPossible(value);
-  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed as any;
-  return undefined;
+function sanitizeOrder(
+  order: Array<{ field: string; direction?: "asc" | "desc" }> | undefined,
+  access?: string[],
+): Array<{ field: string; direction?: "asc" | "desc" }> | undefined {
+  if (!order?.length) return undefined;
+  const allowed = access?.length ? new Set(access) : undefined;
+  const out = order.filter((o) => o?.field && (!allowed || allowed.has(o.field)));
+  return out.length ? out : undefined;
 }
 
 function sanitizeWhere(
@@ -179,24 +137,17 @@ function sanitizeWhere(
 export class HttpFilterConverter {
   static fromQuery<TEntity extends object = any>(
     cls: Constructable<TEntity>,
-    query: {
-      where?: unknown;
-      select?: string | string[];
-      order?: unknown;
-      relations?: string | string[];
-      limit?: number;
-      offset?: number;
-    },
+    query: Record<string, unknown>,
     config: FilterHttpConfig = {}
   ): FilterOptions<TEntity> {
     const fields = getEntityFields(cls);
     const whereAccess = mergeFieldAccess(config.where, fields.columns);
     const orderAccess = mergeFieldAccess(config.order, fields.columns);
 
-    const whereRaw = parseWhere(query.where) as any;
-    const selectRaw = toStringArray(query.select);
-    const orderRaw = parseOrder(query.order) as any;
-    const relationsRaw = toStringArray(query.relations);
+    const whereRaw = extractWhereFromQuery(query);
+    const selectRaw = toStringArray(query.select as string | string[] | undefined);
+    const orderRaw = extractOrderFromQuery(query);
+    const relationsRaw = toStringArray(query.relations as string | string[] | undefined);
 
     const limit = Math.min(toNumber(query.limit) ?? env.MAX_FIND_LIMIT, env.MAX_FIND_LIMIT);
     const offset = toNumber(query.offset) ?? 0;
@@ -205,12 +156,7 @@ export class HttpFilterConverter {
       where: sanitizeWhere(whereRaw, whereAccess) as any,
       select: resolveSelect(selectRaw, config.select, fields.columns) as any,
       relations: resolveRelations(relationsRaw, config.relations, fields.relations) as any,
-      order: orderRaw
-        ?.filter((o) => o?.field)
-        .filter((o) => {
-          const allowed = applyAccessList([o.field], orderAccess);
-          return Boolean(allowed?.length);
-        }) as any,
+      order: sanitizeOrder(orderRaw, orderAccess) as any,
       limit,
       offset,
     };

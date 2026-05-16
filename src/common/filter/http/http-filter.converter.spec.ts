@@ -84,13 +84,53 @@ describe("HttpFilterConverter", () => {
     expect(withQuery.relations).toEqual(["tag"]);
   });
 
-  it("restricts order to entity columns", () => {
+  it("parses where bracket notation and applies config.where allow list", () => {
     const filter = HttpFilterConverter.fromQuery(
       Flow,
-      { order: "name,bad:desc" },
+      {
+        "where[name][eq]": "mayron",
+        "where[secret][eq]": "hidden",
+      },
+      { where: ["name"] },
+    );
+
+    expect(filter.where).toEqual({
+      name: { op: "eq", value: "mayron" },
+    });
+  });
+
+  it("parses where shorthand and in operator from nested query.where", () => {
+    const filter = HttpFilterConverter.fromQuery(
+      Flow,
+      {
+        where: {
+          name: "mayron",
+          id: { in: ["uuid-1", "uuid-2"] },
+        },
+      },
       {},
     );
 
-    expect(filter.order).toEqual([{ field: "name", direction: undefined }]);
+    expect(filter.where).toEqual({
+      name: "mayron",
+      id: { op: "in", value: ["uuid-1", "uuid-2"] },
+    });
+  });
+
+  it("parses order bracket notation and applies allow list", () => {
+    const filter = HttpFilterConverter.fromQuery(
+      Flow,
+      {
+        "order[name]": "asc",
+        "order[secret]": "desc",
+        "order[bad]": "asc",
+      },
+      { order: ["name", "secret"] },
+    );
+
+    expect(filter.order).toEqual([
+      { field: "name", direction: "asc" },
+      { field: "secret", direction: "desc" },
+    ]);
   });
 });

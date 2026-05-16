@@ -5,13 +5,11 @@ import { ApiQuery } from "@nestjs/swagger";
 export function ApiFilterQueries() {
   return applyDecorators(
     ApiQuery({
-      name: "where",
+      name: "where[field]",
       required: false,
       description:
-        "JSON object: each key is an entity field; value is a primitive or `{ \"op\": \"eq\"|\"ne\"|\"gt\"|\"gte\"|\"lt\"|\"lte\"|\"like\"|\"ilike\"|\"in\"|\"contains\", \"value\": ... }`. Must be URL-encoded when sent as a single query string.",
-      schema: {
-        type: "string",
-      },
+        "Filter by field. Shorthand: `where[name]=my-name` (equals). With operator: `where[name][eq]=my-name`, `where[name][contains]=ame`, `where[name][in]=a&where[name][in]=b`. Ops: eq, ne, gt, gte, lt, lte, like, ilike, in, contains.",
+      schema: { type: "string" },
     }),
     ApiQuery({
       name: "select",
@@ -26,11 +24,11 @@ export function ApiFilterQueries() {
       schema: { type: "array", items: { type: "string" } },
     }),
     ApiQuery({
-      name: "order",
+      name: "order[field]",
       required: false,
       description:
-        "Comma-separated `field:asc|desc`.",
-      schema: { type: "array", items: { type: "string" } },
+        "Sort by field. Shorthand: `order[name]=asc`. Explicit: `order[name][direction]=desc`. Multiple: `order[name]=asc&order[createdAt]=desc`.",
+      schema: { type: "string" },
     }),
     ApiQuery({
       name: "limit",
