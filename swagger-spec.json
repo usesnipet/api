@@ -598,99 +598,6 @@
         "tags": [
           "configs"
         ]
-      },
-      "post": {
-        "operationId": "ConfigController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Config"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "configs"
-        ]
-      },
-      "put": {
-        "operationId": "ConfigController_update",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Config"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "configs"
-        ]
-      }
-    },
-    "/api/configs/{id}": {
-      "delete": {
-        "operationId": "ConfigController_delete",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "configs"
-        ]
       }
     },
     "/api/tags": {
@@ -789,6 +696,93 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      },
+      "post": {
+        "operationId": "TagController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      },
+      "put": {
+        "operationId": "TagController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTagDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "tags"
+        ]
+      }
+    },
+    "/api/tags/{id}": {
+      "delete": {
+        "operationId": "TagController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -1073,7 +1067,8 @@
           "version",
           "name",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "packageTags"
         ]
       },
       "FieldManifest": {
@@ -1174,10 +1169,6 @@
             "type": "object",
             "nullable": true
           },
-          "author": {
-            "type": "object",
-            "nullable": true
-          },
           "inputs": {
             "type": "array",
             "items": {
@@ -1216,8 +1207,12 @@
           "typeId",
           "packageId",
           "name",
+          "inputs",
+          "outputs",
+          "components",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "nodeTypeTags"
         ]
       },
       "ConfigTag": {
@@ -1262,10 +1257,6 @@
             "nullable": true
           },
           "icon": {
-            "type": "object",
-            "nullable": true
-          },
-          "author": {
             "type": "object",
             "nullable": true
           },
@@ -1317,19 +1308,15 @@
             "type": "string"
           },
           "description": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "docs": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "icon": {
-            "type": "string",
-            "nullable": true
-          },
-          "author": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "nodeTypeId": {
@@ -1368,13 +1355,24 @@
           "nodeId",
           "packageId",
           "name",
-          "description",
-          "docs",
-          "icon",
-          "author",
           "nodeTypeId",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "nodeTags"
+        ]
+      },
+      "UpdateTagDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
         ]
       }
     }

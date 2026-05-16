@@ -20,7 +20,15 @@
       "description": "Semantic version of the package manifest.",
       "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
     },
-    "metadata": { "$ref": "#/$defs/metadata" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "docs": { "type": "string", "description": "Documentation URL." },
+    "icon": { "type": "string" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "author": { "type": "string" },
     "nodeTypes": {
       "type": "array",
       "items": { "$ref": "#/$defs/nodeType" }
@@ -99,11 +107,18 @@
     },
     "nodeType": {
       "type": "object",
-      "required": ["id", "metadata"],
+      "required": ["id", "name"],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string" },
-        "metadata": { "$ref": "#/$defs/metadata" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "docs": { "type": "string", "description": "Documentation URL." },
+        "icon": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "inputs": { "$ref": "#/$defs/ioMap" },
         "outputs": { "$ref": "#/$defs/ioMap" },
         "components": {
@@ -114,26 +129,40 @@
     },
     "config": {
       "type": "object",
-      "required": ["id", "metadata"],
+      "required": ["id", "name"],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string" },
-        "metadata": { "$ref": "#/$defs/metadata" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "docs": { "type": "string", "description": "Documentation URL." },
+        "icon": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "fields": { "$ref": "#/$defs/ioMap" }
       }
     },
     "node": {
       "type": "object",
-      "required": ["id", "type", "metadata"],
+      "required": ["id", "type", "name"],
       "additionalProperties": false,
       "properties": {
         "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "docs": { "type": "string", "description": "Documentation URL." },
+        "icon": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "type": { "type": "string", "description": "References a node type id." },
         "config": {
           "type": "string",
           "description": "References a config id when the node type requires configuration."
-        },
-        "metadata": { "$ref": "#/$defs/metadata" }
+        }
       }
     }
   }
