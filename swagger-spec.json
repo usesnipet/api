@@ -1258,15 +1258,15 @@
             "type": "string"
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "docs": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "icon": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "nodeTypeId": {
@@ -1278,11 +1278,13 @@
           },
           "createdAt": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "updatedAt": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "nodeTags": {
             "type": "array",
@@ -1305,7 +1307,17 @@
           "nodeId",
           "packageId",
           "name",
-          "nodeTypeId"
+          "description",
+          "docs",
+          "icon",
+          "nodeTypeId",
+          "configId",
+          "createdAt",
+          "updatedAt",
+          "nodeTags",
+          "package",
+          "nodeType",
+          "config"
         ]
       },
       "UpdateTagDto": {

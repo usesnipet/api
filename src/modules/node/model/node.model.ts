@@ -2,7 +2,7 @@ import type { NodeRow } from "@/db/schema/node";
 import { Config } from "@/modules/config/model/config.model";
 import { NodeType } from "@/modules/node-type/model/node-type.model";
 import { Package } from "@/modules/package/model/package.model";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
   IsArray, IsDate, IsOptional, IsString, IsUUID, MaxLength, MinLength, ValidateNested
@@ -32,58 +32,58 @@ export class Node {
   @MaxLength(255)
   name: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  description: string | null;
+  description?: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  docs: string | null;
+  docs?: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsString()
-  icon: string | null;
+  icon?: string;
 
   @ApiProperty()
   @IsUUID()
   nodeTypeId: string;
 
-  @ApiPropertyOptional({ nullable: true })
+  @ApiProperty({ nullable: true })
   @IsOptional()
   @IsUUID()
   configId: string | null;
 
-  @ApiPropertyOptional()
+  @ApiProperty({ nullable: true })
   @IsDate()
   createdAt?: Date;
 
-  @ApiPropertyOptional()
+  @ApiProperty({ nullable: true })
   @IsDate()
   updatedAt?: Date;
 
-  @ApiPropertyOptional({ type: [NodeTag] })
+  @ApiProperty({ type: [NodeTag] })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => NodeTag)
   nodeTags?: NodeTag[];
 
-  @ApiPropertyOptional({ type: Package })
+  @ApiProperty({ type: Package })
   @IsOptional()
   @ValidateNested()
   @Type(() => Package)
   package?: Package;
 
-  @ApiPropertyOptional({ type: NodeType })
+  @ApiProperty({ type: NodeType })
   @IsOptional()
   @ValidateNested()
   @Type(() => NodeType)
   nodeType?: NodeType;
 
-  @ApiPropertyOptional({ type: Config })
+  @ApiProperty({ type: Config })
   @IsOptional()
   @ValidateNested()
   @Type(() => Config)
@@ -99,9 +99,9 @@ export class Node {
       nodeId: row.nodeId,
       packageId: row.packageId,
       name: row.name,
-      description: row.description,
-      docs: row.docs,
-      icon: row.icon,
+      description: row.description ?? undefined,
+      docs: row.docs ?? undefined,
+      icon: row.icon ?? undefined,
       nodeTypeId: row.nodeTypeId,
       configId: row.configId,
       createdAt: row.createdAt ? moment(row.createdAt).toDate() : undefined,
