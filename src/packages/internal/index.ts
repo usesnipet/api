@@ -1,16 +1,10 @@
-import { PackageManifest } from "@/core/manifest/package";
-import { plainToInstance } from "class-transformer";
-import { validateSync } from "class-validator";
+import { parsePackageManifest } from "@snipet/runner";
 
 import manifestJson from "./manifest.json";
 import { fileSystemStorageRunner, logRunner, sleepRunner } from "./runners";
 
 const { $schema: _packageJsonSchema, ...manifest } = manifestJson;
-const pkg = plainToInstance(PackageManifest, manifest);
-const errors = validateSync(pkg as any, { whitelist: true, forbidUnknownValues: false });
-if (errors.length) {
-  throw new Error(`InternalPackage manifest is invalid: ${errors.map((e) => e.toString()).join("; ")}`);
-}
+const pkg = parsePackageManifest(manifest);
 
 export const InternalPackage = {
   manifest: pkg,

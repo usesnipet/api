@@ -1,12 +1,10 @@
-import { FieldManifest } from "@/core/manifest/field";
-import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
+import { NodeTypeComponentManifest, NodeTypeInputManifest, NodeTypeOutputManifest } from "@/runner";
 import { index, jsonb, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import moment from "moment";
 
 import { packageTable } from "./package";
 
 import type { NodeTypeTagRow } from "./entity-tags";
-
 export const nodeType = pgTable(
   'node_type',
   {
@@ -19,8 +17,8 @@ export const nodeType = pgTable(
     description: text('description'),
     docs: text('docs'),
     icon: text('icon'),
-    inputs: jsonb('inputs').$type<Array<FieldManifest>>().default([]),
-    outputs: jsonb('outputs').$type<Array<FieldManifest>>().default([]),
+    inputs: jsonb('inputs').$type<Array<NodeTypeInputManifest>>().default([]),
+    outputs: jsonb('outputs').$type<Array<NodeTypeOutputManifest>>().default([]),
     components: jsonb('components').$type<Array<NodeTypeComponentManifest>>().default([]),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })

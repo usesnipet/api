@@ -1,4 +1,4 @@
-import { RunnerContext, RunnerDef } from "@/core/runtime/runner";
+import type { RunnerContext, RunnerDef } from "@snipet/runner";
 import * as fs from "fs";
 import * as path from "path";
 

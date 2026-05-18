@@ -1,10 +1,7 @@
-import { FlowManifest } from "@/core/manifest/flow";
 import { FlowRow } from "@/db/schema/flow";
+import { FlowManifest } from "@/runner";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import {
-  IsBoolean, IsDate, IsOptional, IsString, IsUUID, MaxLength, MinLength, ValidateNested
-} from "class-validator";
+import { IsBoolean, IsDate, IsOptional, IsString, IsUUID, MaxLength, MinLength } from "class-validator";
 import moment from "moment";
 
 export class Flow {
@@ -28,9 +25,7 @@ export class Flow {
   @IsBoolean()
   active: boolean;
 
-  @ApiProperty({ type: FlowManifest })
-  @ValidateNested()
-  @Type(() => FlowManifest)
+  @ApiProperty({ type: () => FlowManifest })
   code: FlowManifest;
 
   @ApiProperty()
@@ -51,7 +46,7 @@ export class Flow {
       name: row.name,
       description: row.description ?? undefined,
       active: row.active,
-      code: new FlowManifest(row.code),
+      code: FlowManifest.fromManifest(row.code),
       createdAt: moment(row.createdAt).toDate(),
       updatedAt: moment(row.updatedAt).toDate(),
     });

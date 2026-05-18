@@ -767,7 +767,8 @@
             "type": "string"
           },
           "config": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": true
           },
           "x": {
             "type": "number"
@@ -836,12 +837,14 @@
         "type": "object",
         "properties": {
           "nodes": {
+            "default": [],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FlowNodeRefManifest"
             }
           },
           "connections": {
+            "default": [],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FlowConnectionManifest"
@@ -1019,61 +1022,6 @@
           "packageTags"
         ]
       },
-      "FieldManifest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "defaultValue": {
-            "type": "object"
-          },
-          "items": {
-            "$ref": "#/components/schemas/FieldManifest"
-          },
-          "properties": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FieldManifest"
-            }
-          },
-          "encrypted": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "name",
-          "type",
-          "description"
-        ]
-      },
-      "NodeTypeComponentManifest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "required": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "name",
-          "type"
-        ]
-      },
       "NodeTypeTag": {
         "type": "object",
         "properties": {
@@ -1122,19 +1070,22 @@
           "inputs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FieldManifest"
+              "type": "object",
+              "additionalProperties": true
             }
           },
           "outputs": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FieldManifest"
+              "type": "object",
+              "additionalProperties": true
             }
           },
           "components": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NodeTypeComponentManifest"
+              "type": "object",
+              "additionalProperties": true
             }
           },
           "createdAt": {
@@ -1213,7 +1164,8 @@
           "fieldManifest": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FieldManifest"
+              "type": "object",
+              "additionalProperties": true
             }
           },
           "createdAt": {

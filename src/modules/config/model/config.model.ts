@@ -1,4 +1,4 @@
-import { FieldManifest } from "@/core/manifest/field";
+import { FieldManifest } from "@/runner";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
@@ -45,10 +45,8 @@ export class Config {
   @IsString()
   icon: string | null;
 
-  @ApiProperty({ type: [FieldManifest] })
+  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => FieldManifest)
   fieldManifest: FieldManifest[];
 
   @ApiProperty()

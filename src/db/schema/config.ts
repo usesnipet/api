@@ -1,11 +1,10 @@
-import { FieldManifest } from "@/core/manifest/field";
+import { FieldManifest } from "@/runner";
 import { index, jsonb, pgTable, text, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
 import moment from "moment";
 
 import { packageTable } from "./package";
 
 import type { ConfigTagRow } from "./entity-tags";
-
 export const config = pgTable(
   'config',
   {

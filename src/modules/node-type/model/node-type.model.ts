@@ -1,17 +1,9 @@
-import { FieldManifest } from "@/core/manifest/field";
-import { NodeTypeComponentManifest } from "@/core/manifest/node-type";
 import type { NodeTypeRow } from "@/db/schema/node-type";
+import { NodeTypeComponentManifest, NodeTypeInputManifest, NodeTypeOutputManifest } from "@/runner";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
-  IsArray,
-  IsDate,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-  MinLength,
-  ValidateNested,
+  IsArray, IsDate, IsOptional, IsString, IsUUID, MaxLength, MinLength, ValidateNested
 } from "class-validator";
 import moment from "moment";
 
@@ -53,22 +45,16 @@ export class NodeType {
   @IsString()
   icon: string | null;
 
-  @ApiProperty({ type: [FieldManifest] })
+  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => FieldManifest)
-  inputs: FieldManifest[];
+  inputs: NodeTypeInputManifest[];
 
-  @ApiProperty({ type: [FieldManifest] })
+  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => FieldManifest)
-  outputs: FieldManifest[];
+  outputs: NodeTypeOutputManifest[];
 
-  @ApiProperty({ type: [NodeTypeComponentManifest] })
+  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => NodeTypeComponentManifest)
   components: NodeTypeComponentManifest[];
 
   @ApiProperty()
@@ -98,9 +84,9 @@ export class NodeType {
       description: row.description,
       docs: row.docs,
       icon: row.icon,
-      inputs: row.inputs ?? [],
-      outputs: row.outputs ?? [],
-      components: row.components ?? [],
+      inputs: row.inputs?.map((i) => NodeTypeInputManifest.fromManifest(i)) ?? [],
+      outputs: row.outputs?.map((o) => NodeTypeOutputManifest.fromManifest(o)) ?? [],
+      components: row.components?.map((c) => NodeTypeComponentManifest.fromManifest(c)) ?? [],
       createdAt: moment(row.createdAt).toDate(),
       updatedAt: moment(row.updatedAt).toDate(),
       nodeTypeTags: row.nodeTypeTags?.map((t) => NodeTypeTag.fromRow(t)) ?? [],

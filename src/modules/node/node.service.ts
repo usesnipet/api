@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { PackageManifest } from "@/core/manifest/package";
+import type { PackageManifest } from "@snipet/runner";
 import { ConfigRow } from "@/db/schema/config";
 import { nodeTag } from "@/db/schema/entity-tags";
 import { node, NodeRow } from "@/db/schema/node";

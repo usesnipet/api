@@ -1,4 +1,4 @@
-import { RunnerContext, RunnerDef } from "@/core/runtime/runner";
+import type { RunnerContext, RunnerDef } from "@snipet/runner";
 
 export const logRunner: RunnerDef = {
   id: "internal:node:log",

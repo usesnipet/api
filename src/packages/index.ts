@@ -1,5 +1,4 @@
-import { RunnerDef } from "@/core/runtime/runner";
-import { PackageManifest } from "@/core/manifest/package";
+import type { PackageManifest, RunnerDef } from "@snipet/runner";
 
 import { InternalPackage } from "./internal";
 

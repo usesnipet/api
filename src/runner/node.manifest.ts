@@ -1,43 +1,37 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsArray, IsOptional, IsString } from "class-validator";
-
-
+import { nodeManifestSchema } from "@snipet/runner";
 
 export class NodeManifest {
   @ApiProperty()
-  @IsString()
   id!: string;
 
   @ApiProperty()
-  @IsString()
   name!: string;
 
   @ApiProperty()
-  @IsString()
   description!: string;
 
   @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
   docs?: string;
 
   @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
   icon?: string;
 
   @ApiPropertyOptional({ type: [String] })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
   tags?: string[];
 
   @ApiProperty()
-  @IsString()
   type!: string;
 
   @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
   config?: string;
+
+  constructor(data: NodeManifest) {
+    nodeManifestSchema.parse(data);
+    Object.assign(this, data);
+  }
+
+  static fromManifest(manifest: NodeManifest): NodeManifest {
+    return new NodeManifest(manifest);
+  }
 }

@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import { PackageManifest } from "@/core/manifest/package";
+import type { PackageManifest } from "@snipet/runner";
 import { packageTag } from "@/db/schema/entity-tags";
 import { packageTable } from "@/db/schema/package";
 import { Injectable, Logger } from "@nestjs/common";
