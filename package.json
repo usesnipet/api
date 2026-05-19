@@ -25,7 +25,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@snipet/runner": "file:../runner",
+    "@aws-sdk/client-dynamodb": "^3.1049.0",
+    "@aws-sdk/client-lambda": "^3.1049.0",
+    "@aws-sdk/client-s3": "^3.1049.0",
+    "@aws-sdk/client-secrets-manager": "^3.1049.0",
+    "@aws-sdk/client-ses": "^3.1049.0",
+    "@aws-sdk/client-sns": "^3.1049.0",
+    "@aws-sdk/client-sqs": "^3.1049.0",
+    "@aws-sdk/lib-dynamodb": "^3.1049.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
@@ -33,6 +40,7 @@
     "@nestjs/schedule": "^6.0.1",
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/swagger": "^11.2.1",
+    "@snipet/runner": "file:../runner",
     "argon2": "^0.44.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",

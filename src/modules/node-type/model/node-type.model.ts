@@ -45,16 +45,22 @@ export class NodeType {
   @IsString()
   icon: string | null;
 
-  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
+  @ApiProperty({ type: () => [NodeTypeInputManifest] })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NodeTypeInputManifest)
   inputs: NodeTypeInputManifest[];
 
-  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
+  @ApiProperty({ type: () => [NodeTypeOutputManifest] })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NodeTypeOutputManifest)
   outputs: NodeTypeOutputManifest[];
 
-  @ApiProperty({ type: "array", items: { type: "object", additionalProperties: true } })
+  @ApiProperty({ type: () => [NodeTypeComponentManifest] })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NodeTypeComponentManifest)
   components: NodeTypeComponentManifest[];
 
   @ApiProperty()

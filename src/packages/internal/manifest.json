@@ -1,5 +1,5 @@
 {
-  "$schema": "./package.schema.json",
+  "$schema": "../package.schema.json",
   "id": "internal",
   "version": "1.0.0",
   "name": "Internal",
@@ -37,7 +37,14 @@
           "name": "milliseconds",
           "type": "number",
           "description": "The number of milliseconds to sleep",
-          "required": true
+          "required": true,
+          "inputWidget": {
+            "type": "number",
+            "placeholder": "Enter the number of milliseconds to sleep",
+            "label": "Milliseconds",
+            "description": "The number of milliseconds to sleep"
+          },
+          "defaultValue": 1000
         }
       ],
       "outputs": [

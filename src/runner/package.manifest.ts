@@ -2,8 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { packageManifestSchema } from "@snipet/runner";
 
 import { ConfigManifest } from "./config.manifest";
-import { NodeManifest } from "./node.manifest";
 import { NodeTypeManifest } from "./node-type.manifest";
+import { NodeManifest } from "./node.manifest";
 
 export class PackageManifest {
   @ApiProperty()
@@ -40,7 +40,7 @@ export class PackageManifest {
   version!: string;
 
   constructor(data: PackageManifest) {
-    packageManifestSchema.parse(data);
+    packageManifestSchema.omit({ nodes: true, configs: true, nodeTypes: true }).parse(data);
     Object.assign(this, data);
   }
 

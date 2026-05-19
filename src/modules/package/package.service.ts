@@ -1,9 +1,9 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import type { PackageManifest } from "@snipet/runner";
 import { packageTag } from "@/db/schema/entity-tags";
 import { packageTable } from "@/db/schema/package";
+import { PackageManifest } from "@/runner";
 import { Injectable, Logger } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 import moment from "moment";

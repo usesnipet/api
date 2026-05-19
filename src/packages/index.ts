@@ -1,5 +1,8 @@
-import type { PackageManifest, RunnerDef } from "@snipet/runner";
+import type { RunnerDef } from "@snipet/runner";
 
+import { PackageManifest } from "@/runner";
+
+import { AwsPackage } from "./aws";
 import { InternalPackage } from "./internal";
 
 export type PackageRegistry = Array<{
@@ -9,4 +12,5 @@ export type PackageRegistry = Array<{
 
 export const packages: PackageRegistry = [
   InternalPackage,
+  AwsPackage,
 ];

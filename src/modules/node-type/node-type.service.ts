@@ -1,10 +1,10 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import type { NodeTypeManifest } from "@snipet/runner";
 import { nodeTypeTag } from "@/db/schema/entity-tags";
-import { nodeType, NodeTypeRow } from "@/db/schema/node-type";
+import { nodeType } from "@/db/schema/node-type";
 import { PackageRow } from "@/db/schema/package";
+import { NodeTypeInputManifest, NodeTypeOutputManifest, PackageManifest } from "@/runner";
 import { Injectable, Logger } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 
@@ -115,8 +115,9 @@ export class NodeTypeService extends BaseService {
    * Upserts node types from in-process package manifests into the database.
    * Removes DB rows for synced packages whose `type_id` no longer appears in any manifest.
    */
-  async syncNodeTypes(dbPackages: PackageRow[], nodeTypes: NodeTypeManifest[]): Promise<NodeTypeRow[]> {
-    const ntIds = new Set(nodeTypes.map((nt) => nt.id));
+  async syncNodeTypes(dbPackages: PackageRow[], packages: PackageManifest[]): Promise<NodeType[]> {
+    const nodeTypesWithPackageId = packages.map((pkg) => pkg.nodeTypes.map((nt) => ({ ...nt, packageId: pkg.id }))).flat();
+    const ntIds = new Set(nodeTypesWithPackageId.map((nt) => nt.id));
     const ntEntities = await this.db().query.nodeType.findMany({
       where(fields, { inArray }) {
         return inArray(fields.typeId, Array.from(ntIds));
@@ -124,7 +125,7 @@ export class NodeTypeService extends BaseService {
       with: { nodeTypeTags: { with: { tag: true } } },
     });
 
-    const { toCreate, toUpdate } = nodeTypes.reduce(
+    const { toCreate, toUpdate } = nodeTypesWithPackageId.reduce(
       (acc, schema) => {
         const ntEntity = ntEntities.find((nt) => nt.typeId === schema.id);
         if (ntEntity) {
@@ -148,16 +149,21 @@ export class NodeTypeService extends BaseService {
                 description: schema.description ?? null,
                 docs: schema.docs ?? null,
                 icon: schema.icon ?? null,
-                inputs: schema.inputs ?? [],
-                outputs: schema.outputs ?? [],
+                inputs: schema.inputs?.map((i) => NodeTypeInputManifest.fromManifest(i as NodeTypeInputManifest)) ?? [],
+                outputs: schema.outputs?.map((o) => NodeTypeOutputManifest.fromManifest(o as NodeTypeOutputManifest)) ?? [],
                 components: schema.components ?? [],
                 tags: schema.tags,
               }),
             );
           }
         } else {
-          const packageEntity = dbPackages.find((p) => p.packageId === schema.id);
-          if (!packageEntity) throw new Error(`Package not found for node type ${schema.id}`);
+          const packageEntity = dbPackages.find((p) => p.packageId === schema.packageId);
+          if (!packageEntity) {
+            console.log(dbPackages);
+
+            console.log(`Package not found for node type ${schema.id}`);
+            throw new Error(`Package not found for node type ${schema.id}`);
+          }
 
           acc.toCreate.push(
             new CreateNodeTypeDto({
@@ -165,8 +171,8 @@ export class NodeTypeService extends BaseService {
               packageId: packageEntity.id,
               name: schema.name,
               description: schema.description ?? null,
-              inputs: schema.inputs ?? [],
-              outputs: schema.outputs ?? [],
+              inputs: schema.inputs?.map((i) => NodeTypeInputManifest.fromManifest(i as NodeTypeInputManifest)) ?? [],
+              outputs: schema.outputs?.map((o) => NodeTypeOutputManifest.fromManifest(o as NodeTypeOutputManifest)) ?? [],
               components: schema.components ?? [],
               docs: schema.docs ?? null,
               icon: schema.icon ?? null,
@@ -192,11 +198,11 @@ export class NodeTypeService extends BaseService {
       this.logger.log(`Deleting ${toDelete.length} node types`);
       await this.delete(toDelete.map((nt) => nt.id));
     }
-    return await this.db().query.nodeType.findMany({
+    return (await this.db().query.nodeType.findMany({
       where(fields, { inArray }) {
         return inArray(fields.typeId, Array.from(ntIds));
       },
       with: { nodeTypeTags: { with: { tag: true } } },
-    });
+    })).map((row) => NodeType.fromRow(row));
   }
 }

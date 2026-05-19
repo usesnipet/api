@@ -1,25 +1,54 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
-  nodeTypeComponentManifestSchema,
-  nodeTypeInputManifestSchema,
-  nodeTypeInputWidgetManifestSchema,
-  nodeTypeManifestSchema,
-  nodeTypeOutputManifestSchema,
+  nodeTypeComponentManifestSchema, nodeTypeInputManifestSchema, nodeTypeManifestSchema,
+  nodeTypeOutputManifestSchema
 } from "@snipet/runner";
+import { z } from "zod";
 
 export enum InputWidget {
   TEXT = "text",
   NUMBER = "number",
-  BOOLEAN = "boolean",
+  CHECKBOX = "checkbox",
+  SELECT = "select",
+  DATE = "date",
+  TIME = "time",
+  FILE = "file",
+  JSON = "json",
 }
-
+const nodeTypeInputWidgetManifestSchema = z.object({
+  type: z.enum([
+    InputWidget.TEXT,
+    InputWidget.NUMBER,
+    InputWidget.CHECKBOX,
+    InputWidget.SELECT,
+    InputWidget.DATE,
+    InputWidget.TIME,
+    InputWidget.FILE,
+    InputWidget.JSON,
+  ]),
+  options: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
+  placeholder: z.string().optional(),
+  label: z.string().optional(),
+  description: z.string().optional(),
+});
 export class NodeTypeInputWidgetManifest {
   @ApiProperty({ enum: InputWidget })
   type!: InputWidget;
 
+  @ApiPropertyOptional()
+  options?: { label: string; value: string }[];
+
+  @ApiPropertyOptional()
+  placeholder?: string;
+
+  @ApiPropertyOptional()
+  label?: string;
+
+  @ApiPropertyOptional()
+  description?: string;
+
   constructor(data: NodeTypeInputWidgetManifest) {
-    nodeTypeInputWidgetManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(this, nodeTypeInputWidgetManifestSchema.parse(data));
   }
 
   static fromManifest(manifest: NodeTypeInputWidgetManifest): NodeTypeInputWidgetManifest {
@@ -47,8 +76,9 @@ export class NodeTypeInputManifest {
   inputWidget?: NodeTypeInputWidgetManifest;
 
   constructor(data: NodeTypeInputManifest) {
-    nodeTypeInputManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(this, nodeTypeInputManifestSchema.extend({
+      inputWidget: nodeTypeInputWidgetManifestSchema.optional(),
+    }).parse(data));
   }
 
   static fromManifest(manifest: NodeTypeInputManifest): NodeTypeInputManifest {
@@ -73,8 +103,7 @@ export class NodeTypeOutputManifest {
   defaultValue?: unknown;
 
   constructor(data: NodeTypeOutputManifest) {
-    nodeTypeOutputManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(this, nodeTypeOutputManifestSchema.parse(data));
   }
 
   static fromManifest(manifest: NodeTypeOutputManifest): NodeTypeOutputManifest {
@@ -93,8 +122,7 @@ export class NodeTypeComponentManifest {
   required?: boolean;
 
   constructor(data: NodeTypeComponentManifest) {
-    nodeTypeComponentManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(this, nodeTypeComponentManifestSchema.parse(data));
   }
 
   static fromManifest(manifest: NodeTypeComponentManifest): NodeTypeComponentManifest {
@@ -131,8 +159,7 @@ export class NodeTypeManifest {
   components?: NodeTypeComponentManifest[];
 
   constructor(data: NodeTypeManifest) {
-    nodeTypeManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(this, nodeTypeManifestSchema.parse(data));
   }
 
   static fromManifest(manifest: NodeTypeManifest): NodeTypeManifest {

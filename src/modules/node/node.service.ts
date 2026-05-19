@@ -1,20 +1,20 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import type { PackageManifest } from "@snipet/runner";
-import { ConfigRow } from "@/db/schema/config";
 import { nodeTag } from "@/db/schema/entity-tags";
 import { node, NodeRow } from "@/db/schema/node";
-import { NodeTypeRow } from "@/db/schema/node-type";
 import { PackageRow } from "@/db/schema/package";
-import { Injectable, Logger } from "@nestjs/common";
+import { PackageManifest } from "@/runner";
+import { Logger } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
+
+import { Config } from "../config/model/config.model";
+import { NodeType } from "../node-type/model/node-type.model";
 
 import { CreateNodeDto } from "./dto/create-node.dto";
 import { UpdateNodeDto } from "./dto/update-node.dto";
 import { Node } from "./model/node.model";
 
-@Injectable()
 export class NodeService extends BaseService {
   private readonly logger = new Logger(NodeService.name);
 
@@ -97,11 +97,11 @@ export class NodeService extends BaseService {
    */
   async syncNodes(
     dbPackages: PackageRow[],
-    dbNodeTypes: NodeTypeRow[],
-    dbConfigs: ConfigRow[],
-    packageManifests: PackageManifest[],
+    dbNodeTypes: NodeType[],
+    dbConfigs: Config[],
+    packages: PackageManifest[],
   ): Promise<NodeRow[]> {
-    const nodeManifests = packageManifests.map((p) => p.nodes.map((n) => ({ ...n, packageId: p.id }))).flat();
+    const nodeManifests = packages.map((p) => p.nodes.map((n) => ({ ...n, packageId: p.id }))).flat();
     const ids = new Set(nodeManifests.map((n) => n.id));
 
     const entities = await this.db().query.node.findMany({
@@ -123,8 +123,14 @@ export class NodeService extends BaseService {
         if (!packageId) throw new Error(`Package not found for node ${manifest.id}`);
 
         const resolvedNodeTypeId = nodeTypeIdByTypeId.get(manifest.type);
-        if (!resolvedNodeTypeId) throw new Error(`Node type not found for node ${manifest.id} (type=${manifest.type})`);
 
+        if (!resolvedNodeTypeId) {
+          console.log(nodeTypeIdByTypeId);
+
+          console.log(manifest);
+
+          throw new Error(`Node type not found for node ${manifest.id} (type=${manifest.type})`);
+        }
         const resolvedConfigId = manifest.config ? (configDbIdByConfigId.get(manifest.config) ?? null) : null;
 
         const next = new CreateNodeDto({

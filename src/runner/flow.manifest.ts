@@ -1,11 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
-  flowConnectionInManifestSchema,
-  flowConnectionManifestSchema,
-  flowConnectionOutManifestSchema,
-  flowManifestSchema,
-  flowNodeRefManifestSchema,
+  flowConnectionInManifestSchema, flowConnectionManifestSchema, flowConnectionOutManifestSchema,
+  flowManifestSchema, flowNodeRefManifestSchema
 } from "@snipet/runner";
+import { z } from "zod";
 
 export class FlowNodeRefManifest {
   @ApiProperty()
@@ -17,6 +15,9 @@ export class FlowNodeRefManifest {
   @ApiPropertyOptional({ type: "object", additionalProperties: true })
   config?: Record<string, unknown>;
 
+  @ApiPropertyOptional({ type: "object", additionalProperties: true })
+  vars?: Record<string, unknown>;
+
   @ApiProperty()
   x!: number;
 
@@ -24,8 +25,12 @@ export class FlowNodeRefManifest {
   y!: number;
 
   constructor(data: FlowNodeRefManifest) {
-    flowNodeRefManifestSchema.parse(data);
-    Object.assign(this, data);
+    Object.assign(
+      this,
+      flowNodeRefManifestSchema.extend({
+        vars: z.record(z.string(), z.unknown()).optional(),
+      }).parse(data)
+    );
   }
 
   static fromManifest(manifest: FlowNodeRefManifest): FlowNodeRefManifest {

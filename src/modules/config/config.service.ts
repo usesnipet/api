@@ -1,10 +1,10 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { addTags, removeTags, TagJoinSpec } from "@/common/tags";
-import type { ConfigManifest } from "@snipet/runner";
-import { config, ConfigRow } from "@/db/schema/config";
+import { config } from "@/db/schema/config";
 import { configTag } from "@/db/schema/entity-tags";
 import { PackageRow } from "@/db/schema/package";
+import { PackageManifest } from "@/runner";
 import { Injectable, Logger } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 
@@ -118,8 +118,9 @@ export class ConfigService extends BaseService {
   /**
    * Upserts config definitions from in-process package manifests into the database.
    */
-  async syncConfigs(dbPackages: PackageRow[], configManifests: ConfigManifest[]): Promise<ConfigRow[]> {
-    const ids = new Set(configManifests.map((c) => c.id));
+  async syncConfigs(dbPackages: PackageRow[], packages: PackageManifest[]): Promise<Config[]> {
+    const configsWithPackageId = packages.map((pkg) => pkg.configs.map((c) => ({ ...c, packageId: pkg.id }))).flat();
+    const ids = new Set(configsWithPackageId.map((c) => c.id));
     const entities = await this.db().query.config.findMany({
       where(fields, { inArray }) {
         return inArray(fields.configId, Array.from(ids));
@@ -127,7 +128,7 @@ export class ConfigService extends BaseService {
       with: { configTags: { with: { tag: true } } },
     });
 
-    const { toCreate, toUpdate } = configManifests.reduce(
+    const { toCreate, toUpdate } = configsWithPackageId.reduce(
       (acc, manifest) => {
         const row = entities.find((e) => e.configId === manifest.id);
         if (row) {
@@ -157,7 +158,7 @@ export class ConfigService extends BaseService {
             );
           }
         } else {
-          const packageEntity = dbPackages.find((p) => p.packageId === manifest.id);
+          const packageEntity = dbPackages.find((p) => p.packageId === manifest.packageId);
           if (!packageEntity) throw new Error(`Package not found for config ${manifest.id}`);
 
           acc.toCreate.push(
@@ -191,6 +192,10 @@ export class ConfigService extends BaseService {
       this.logger.log(`Deleting ${toDelete.length} configs`);
       await this.delete(toDelete.map((entity) => entity.id));
     }
-    return await this.db().query.config.findMany({ with: { configTags: { with: { tag: true } } } });
+    return (await this.db()
+      .query
+      .config
+      .findMany({ with: { configTags: { with: { tag: true } } } }))
+      .map((row) => Config.fromRow(row));
   }
 }

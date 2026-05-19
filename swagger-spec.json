@@ -770,6 +770,10 @@
             "type": "object",
             "additionalProperties": true
           },
+          "vars": {
+            "type": "object",
+            "additionalProperties": true
+          },
           "x": {
             "type": "number"
           },
@@ -1022,6 +1026,115 @@
           "packageTags"
         ]
       },
+      "NodeTypeInputWidgetManifest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "number",
+              "checkbox",
+              "select",
+              "date",
+              "time",
+              "file",
+              "json"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "placeholder": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "NodeTypeInputManifest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "defaultValue": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "inputWidget": {
+            "$ref": "#/components/schemas/NodeTypeInputWidgetManifest"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "description"
+        ]
+      },
+      "NodeTypeOutputManifest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "defaultValue": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "description"
+        ]
+      },
+      "NodeTypeComponentManifest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
       "NodeTypeTag": {
         "type": "object",
         "properties": {
@@ -1070,22 +1183,19 @@
           "inputs": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/NodeTypeInputManifest"
             }
           },
           "outputs": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/NodeTypeOutputManifest"
             }
           },
           "components": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/NodeTypeComponentManifest"
             }
           },
           "createdAt": {
