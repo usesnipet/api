@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1778202518300,
-      "tag": "0000_wealthy_shatterstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1778202813463,
-      "tag": "0001_handy_rattler",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1778325916096,
-      "tag": "0002_zippy_phil_sheldon",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1778496110250,
-      "tag": "0003_aromatic_venus",
+      "when": 1779484696323,
+      "tag": "0000_bumpy_terror",
       "breakpoints": true
     }
   ]
