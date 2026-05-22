@@ -53,9 +53,6 @@ importers:
       '@nestjs/swagger':
         specifier: ^11.2.1
         version: 11.2.3(@nestjs/common@11.1.9(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.9)(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)
-      '@snipet/runner':
-        specifier: file:../runner
-        version: file:../runner
       argon2:
         specifier: ^0.44.0
         version: 0.44.0
@@ -1564,10 +1561,6 @@ packages:
   '@smithy/util-utf8@2.3.0':
     resolution: {integrity: sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A==}
     engines: {node: '>=14.0.0'}
-
-  '@snipet/runner@file:../runner':
-    resolution: {directory: ../runner, type: directory}
-    engines: {node: '>=16.14.0'}
 
   '@stylistic/eslint-plugin-ts@4.4.1':
     resolution: {integrity: sha512-2r6cLcmdF6til66lx8esBYvBvsn7xCmLT50gw/n1rGGlTq/OxeNjBIh4c3VEaDGMa/5TybrZTia6sQUHdIWx1w==}
@@ -5666,11 +5659,6 @@ snapshots:
     dependencies:
       '@smithy/util-buffer-from': 2.2.0
       tslib: 2.8.1
-
-  '@snipet/runner@file:../runner':
-    dependencies:
-      neverthrow: 8.2.0
-      zod: 4.1.13
 
   '@stylistic/eslint-plugin-ts@4.4.1(eslint@9.39.1)(typescript@5.9.3)':
     dependencies:
