@@ -1,8 +1,11 @@
 import type { ExtractTablesWithRelations } from "drizzle-orm";
-import type { NodePgDatabase, NodePgTransaction } from "drizzle-orm/node-postgres";
+import type { NodePgClient, NodePgDatabase, NodePgTransaction } from "drizzle-orm/node-postgres";
 import type { schemas } from "./schema";
+import { Pool } from "pg";
 
-export type Database = NodePgDatabase<typeof schemas>;
+export type Database = NodePgDatabase<typeof schemas> & {
+  $client: NodePgClient extends typeof schemas ? Pool : typeof schemas;
+};
 
 export type DatabaseTransaction = NodePgTransaction<
   typeof schemas,

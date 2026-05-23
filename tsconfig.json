@@ -25,7 +25,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/types/*": ["src/types/*"],
-      "@generated/*": ["src/@generated/*"]
+      "@generated/*": ["src/@generated/*"],
+      "@test/*": ["./test/*"]
     },
   }
 }

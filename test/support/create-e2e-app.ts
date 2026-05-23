@@ -1,0 +1,26 @@
+import { schemas } from "@/db";
+import { ApiKeyModule } from "@/modules/api-key/api-key.module";
+import { DatabaseModule } from "@/modules/database/database.module";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { Test } from "@nestjs/testing";
+
+export async function buildE2EApp(connectionString: string): Promise<INestApplication> {
+  const moduleRef = await Test.createTestingModule({
+    imports: [
+      DatabaseModule.register({
+        pg: { connection: "pool", config: { connectionString } },
+        config: { schema: schemas },
+      }),
+      ApiKeyModule,
+    ],
+  }).compile();
+
+  const app = moduleRef.createNestApplication();
+  app.setGlobalPrefix("api");
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: false }),
+  );
+  await app.init();
+
+  return app;
+}
