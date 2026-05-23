@@ -9,12 +9,14 @@ import { AppController } from "./app.controller";
 import { schemas } from "./db";
 import { env } from "./env";
 import { ApiKeyModule } from "./modules/api-key/api-key.module";
+import { ConfigSchemaModule } from "./modules/config-schema";
 import { DatabaseModule } from "./modules/database/database.module";
 
 @Module({
   controllers: [AppController],
   imports: [
     ScheduleModule.forRoot(),
+    ConfigSchemaModule,
     ApiKeyModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
