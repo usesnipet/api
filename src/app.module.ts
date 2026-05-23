@@ -11,6 +11,7 @@ import { env } from "./env";
 import { ApiKeyModule } from "./modules/api-key/api-key.module";
 import { ConfigSchemaModule } from "./modules/config-schema";
 import { DatabaseModule } from "./modules/database/database.module";
+import { KnowledgeSourceModule } from "./modules/knowledge-source/knowledge-source.module";
 
 @Module({
   controllers: [AppController],
@@ -18,6 +19,7 @@ import { DatabaseModule } from "./modules/database/database.module";
     ScheduleModule.forRoot(),
     ConfigSchemaModule,
     ApiKeyModule,
+    KnowledgeSourceModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
       config: { schema: schemas },

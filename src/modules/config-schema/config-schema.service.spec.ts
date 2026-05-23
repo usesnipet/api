@@ -51,4 +51,14 @@ describe("ConfigSchemaService", () => {
     const twice = service.encrypt(openAiSchema, once);
     expect(twice.apiKey).toBe(once.apiKey);
   });
+
+  it("omitEncryptedFields removes encrypted field paths from a copy", () => {
+    const stored = service.prepareForStorage(openAiSchema, {
+      apiKey: "sk-test",
+      baseUrl: "https://api.openai.com",
+    });
+    const publicConfig = service.omitEncryptedFields(openAiSchema, stored);
+    expect(publicConfig).toEqual({ baseUrl: "https://api.openai.com" });
+    expect(stored.apiKey).toBeDefined();
+  });
 });

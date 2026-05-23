@@ -13,7 +13,7 @@ import {
   encryptValue,
   isEncryptedValue,
 } from "./config-schema.crypto";
-import { cloneJson, getAtPath, setAtPath } from "./config-schema.paths";
+import { cloneJson, getAtPath, setAtPath, unsetAtPath } from "./config-schema.paths";
 import {
   X_ENCRYPTED_FIELDS,
   type ConfigSchema,
@@ -69,6 +69,20 @@ export class ConfigSchemaService {
         continue;
       }
       setAtPath(result, path, encryptValue(value, this.encryptionKey));
+    }
+    return result;
+  }
+
+  /**
+   * Returns a copy of config without fields listed in x-encryptedFields (for API responses).
+   */
+  omitEncryptedFields(
+    schema: ConfigSchema,
+    data: Record<string, unknown>
+  ): Record<string, unknown> {
+    const result = cloneJson(data);
+    for (const path of this.getEncryptedFieldPaths(schema)) {
+      unsetAtPath(result, path);
     }
     return result;
   }

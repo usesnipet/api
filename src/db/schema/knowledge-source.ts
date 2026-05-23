@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { jsonb, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const knowledgeSource = pgTable("knowledge_source", {
@@ -14,3 +15,7 @@ export const knowledgeSource = pgTable("knowledge_source", {
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export const knowledgeSourceRelations = relations(knowledgeSource, () => ({}));
+
+export type KnowledgeSourceRow = typeof knowledgeSource.$inferSelect;
