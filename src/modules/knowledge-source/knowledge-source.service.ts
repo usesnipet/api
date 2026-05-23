@@ -2,12 +2,14 @@ import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/com
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { buildProviderCatalog } from "@/common/provider";
 import { knowledgeSource as knowledgeSourceTable, KnowledgeSourceRow } from "@/db/schema/knowledge-source";
+import { sourceItem } from "@/db/schema/source-item";
 import { ConfigSchemaService } from "@/modules/config-schema";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
+import { assertProviderAndConfigMutable } from "./knowledge-source-update.policy";
 import { KnowledgeSource } from "./model/knowledge-source.model";
 import { ProviderCatalogEntryModel } from "./model/provider-catalog-entry.model";
 import { SourceProviderRegistry } from "./providers/source-provider.registry";
@@ -73,6 +75,9 @@ export class KnowledgeSourceService extends BaseService {
       throw new NotFoundException(`Knowledge source ${id} not found`);
     }
 
+    const hasSourceItems = await this.hasSourceItems(id, opts);
+    assertProviderAndConfigMutable(hasSourceItems, rest);
+
     const provider = rest.provider ?? existing.provider;
     if (rest.provider !== undefined) {
       this.sourceProviderRegistry.assertKnown(rest.provider);
@@ -92,10 +97,10 @@ export class KnowledgeSourceService extends BaseService {
     }
 
     const [row] = await this.db(opts)
-    .update(knowledgeSourceTable)
-    .set(values)
-    .where(eq(knowledgeSourceTable.id, id))
-    .returning();
+      .update(knowledgeSourceTable)
+      .set(values)
+      .where(eq(knowledgeSourceTable.id, id))
+      .returning();
 
     return this.toModel(row);
   }
@@ -109,6 +114,19 @@ export class KnowledgeSourceService extends BaseService {
     if (result.length === 0) {
       throw new NotFoundException(`Knowledge source ${id} not found`);
     }
+  }
+
+  private async hasSourceItems(
+    knowledgeSourceId: string,
+    opts?: ReadOpts
+  ): Promise<boolean> {
+    const [row] = await this.db(opts)
+      .select({ id: sourceItem.id })
+      .from(sourceItem)
+      .where(eq(sourceItem.knowledgeSourceId, knowledgeSourceId))
+      .limit(1);
+
+    return row !== undefined;
   }
 
   private toModel(row: KnowledgeSourceRow): KnowledgeSource {
