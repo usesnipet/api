@@ -38,10 +38,8 @@ export async function setupE2EEnvironment(): Promise<void> {
 export async function teardownE2EEnvironment(): Promise<void> {
   if (app) {
     const { TransactionManager } = jest.requireActual("@/modules/database/transaction-manager") as typeof import("@/modules/database/transaction-manager");
-    const pool = app.get(TransactionManager).root.$client as any;
+    const pool = app.get(TransactionManager).root.$client as unknown as import("pg").Pool;
     await app.close();
-    console.log(pool);
-
     await pool.end();
     app = null;
   }

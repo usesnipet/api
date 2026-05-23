@@ -1,4 +1,5 @@
 import "@/modules/api-key/api-key.e2e.test";
+import "@/modules/knowledge-source/knowledge-source.e2e.test";
 
 import { setupE2EEnvironment, teardownE2EEnvironment } from "./support/e2e-environment";
 
