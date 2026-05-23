@@ -1,5 +1,5 @@
 import { apiKey as apiKeyTable } from "@/db/schema/api-key";
-import { getE2EApp, ROOT_TEST_API_KEY } from "@test/support/e2e-environment";
+import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
 describe("ApiKey (e2e)", () => {

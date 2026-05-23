@@ -2,8 +2,7 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "modulePaths": ["<rootDir>"],
   "moduleNameMapper": {
-    "@/(.*)$": "<rootDir>/src/$1",
-    "@test/(.*)$": "<rootDir>/test/$1"
+    "@/(.*)$": "<rootDir>/$1"
   },
   "rootDir": "../",
   "testMatch": ["<rootDir>/test/index.e2e.spec.ts"],

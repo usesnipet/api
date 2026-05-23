@@ -1,6 +1,5 @@
-import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { INestApplication } from "@nestjs/common";
-import { Pool } from "pg";
+import { PostgreSqlContainer } from "@testcontainers/postgresql";
 
 import { migrateTestDatabase } from "./migrate-database";
 
@@ -39,8 +38,10 @@ export async function setupE2EEnvironment(): Promise<void> {
 export async function teardownE2EEnvironment(): Promise<void> {
   if (app) {
     const { TransactionManager } = jest.requireActual("@/modules/database/transaction-manager") as typeof import("@/modules/database/transaction-manager");
-    const pool = app.get(TransactionManager).root.$client as Pool;
+    const pool = app.get(TransactionManager).root.$client as any;
     await app.close();
+    console.log(pool);
+
     await pool.end();
     app = null;
   }
