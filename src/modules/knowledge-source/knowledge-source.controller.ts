@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { ApiKeyAuth } from "@/decorators/auth";
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -12,7 +11,6 @@ import { ProviderCatalogEntryModel } from "./model/provider-catalog-entry.model"
 import type { FilterOptions } from "@/common/filter/filter-options";
 
 @ApiTags("knowledge-source")
-@ApiKeyAuth()
 @Controller("knowledge-source")
 export class KnowledgeSourceController {
   constructor(private readonly knowledgeSourceService: KnowledgeSourceService) {}

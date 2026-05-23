@@ -1,3 +1,4 @@
+import { Public } from "@/decorators/public";
 import { Controller, Get } from "@nestjs/common";
 import { ApiProperty, ApiResponse } from "@nestjs/swagger";
 import { readFileSync } from "node:fs";
@@ -10,6 +11,7 @@ class SystemInfo {
 
 @Controller()
 export class AppController {
+  @Public()
   @Get("system")
   @ApiResponse({
     status: 200,

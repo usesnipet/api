@@ -17,6 +17,8 @@
             }
           }
         },
+        "security": [],
+        "summary": "",
         "tags": [
           "App"
         ]
@@ -106,11 +108,6 @@
             }
           }
         },
-        "security": [
-          {
-            "x-api-key": []
-          }
-        ],
         "tags": [
           "api-key"
         ]
@@ -140,11 +137,6 @@
             }
           }
         },
-        "security": [
-          {
-            "x-api-key": []
-          }
-        ],
         "tags": [
           "api-key"
         ]
@@ -168,11 +160,6 @@
             "description": ""
           }
         },
-        "security": [
-          {
-            "x-api-key": []
-          }
-        ],
         "tags": [
           "api-key"
         ]
@@ -196,13 +183,202 @@
             "description": ""
           }
         },
-        "security": [
-          {
-            "x-api-key": []
-          }
-        ],
         "tags": [
           "api-key"
+        ]
+      }
+    },
+    "/api/knowledge-source/providers": {
+      "get": {
+        "operationId": "KnowledgeSourceController_listProviders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderCatalogEntryModel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-source"
+        ]
+      }
+    },
+    "/api/knowledge-source": {
+      "get": {
+        "operationId": "KnowledgeSourceController_find",
+        "parameters": [
+          {
+            "name": "where[field]",
+            "required": false,
+            "in": "query",
+            "description": "Filter by field. Shorthand: `where[name]=my-name` (equals). With operator: `where[name][eq]=my-name`, `where[name][contains]=ame`, `where[name][in]=a&where[name][in]=b`. Ops: eq, ne, gt, gte, lt, lte, like, ilike, in, contains.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated field names",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "relations",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated relation paths (e.g. `myRelation`, `myRelation.myNestedRelation`).",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "order[field]",
+            "required": false,
+            "in": "query",
+            "description": "Sort by field. Shorthand: `order[name]=asc`. Explicit: `order[name][direction]=desc`. Multiple: `order[name]=asc&order[createdAt]=desc`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of rows",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 200
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of rows to skip",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KnowledgeSource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-source"
+        ]
+      },
+      "post": {
+        "operationId": "KnowledgeSourceController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKnowledgeSourceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeSource"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-source"
+        ]
+      },
+      "put": {
+        "operationId": "KnowledgeSourceController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKnowledgeSourceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeSource"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-source"
+        ]
+      }
+    },
+    "/api/knowledge-source/{id}": {
+      "delete": {
+        "operationId": "KnowledgeSourceController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "knowledge-source"
         ]
       }
     }
@@ -340,7 +516,126 @@
           "updatedAt",
           "key"
         ]
+      },
+      "ProviderCatalogEntryModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "s3"
+          },
+          "label": {
+            "type": "string",
+            "example": "S3 / MinIO"
+          },
+          "configSchema": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "configSchema"
+        ]
+      },
+      "KnowledgeSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "example": "s3"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Provider config; encrypted fields are omitted in responses"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "provider",
+          "config",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateKnowledgeSourceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "example": "s3"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Provider config; encrypted fields are omitted in responses"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "provider",
+          "config"
+        ]
+      },
+      "UpdateKnowledgeSourceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string",
+            "example": "s3"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Provider config; encrypted fields are omitted in responses"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
       }
     }
-  }
+  },
+  "security": [
+    {
+      "x-api-key": []
+    }
+  ]
 }

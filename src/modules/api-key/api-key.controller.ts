@@ -1,5 +1,4 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { ApiKeyAuth } from "@/decorators/auth";
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
@@ -10,7 +9,6 @@ import { ApiKey } from "./model/api-key.model";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
 @ApiTags("api-key")
-@ApiKeyAuth()
 @Controller("api-key")
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
