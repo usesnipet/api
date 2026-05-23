@@ -2,17 +2,17 @@
 set -eu
 
 if [ "${SKIP_TESTS:-}" = "1" ] || [ "${SKIP_API_TESTS:-}" = "1" ]; then
-  echo "Testes ignorados (SKIP_TESTS ou SKIP_API_TESTS=1)."
+  echo "Tests skipped (SKIP_TESTS or SKIP_API_TESTS=1)."
   exit 0
 fi
 
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$root"
 
-echo "Executando testes unitários…"
+echo "Running unit tests…"
 pnpm test
 
-echo "Executando testes e2e…"
+echo "Running e2e tests…"
 pnpm run test:e2e
 
-echo "Todos os testes passaram."
+echo "All tests passed."

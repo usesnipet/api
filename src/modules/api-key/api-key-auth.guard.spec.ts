@@ -28,7 +28,7 @@ describe("ApiKeyAuthGuard", () => {
     jest.clearAllMocks();
   });
 
-  it("permite rota pública sem header", async () => {
+  it("allows public routes without header", async () => {
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(true);
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
@@ -39,7 +39,7 @@ describe("ApiKeyAuthGuard", () => {
     ]);
   });
 
-  it("exige x-api-key quando a rota não é pública", async () => {
+  it("requires x-api-key when the route is not public", async () => {
     jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(false);
 
     await expect(guard.canActivate(context)).rejects.toBeInstanceOf(UnauthorizedException);

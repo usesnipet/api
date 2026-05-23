@@ -53,10 +53,10 @@ function normalizeCondition(condition: FilterCondition): { op: string; value: an
 
 export class DrizzleFilterConverter {
   /**
-   * Converte `FilterOptions` para as opções do `db.query.<table>.findMany({ ... })`.
+   * Converts `FilterOptions` into options for `db.query.<table>.findMany({ ... })`.
    *
-   * Observação: essa função assume que `tableFields` é o objeto `fields` recebido
-   * nas callbacks `where/orderBy/columns` do Drizzle Query API.
+   * Note: this function assumes `tableFields` is the `fields` object passed to
+   * Drizzle Query API `where` / `orderBy` / `columns` callbacks.
    */
   static toFindMany<TEntity extends object = any>(
     filter?: FilterOptions<TEntity>

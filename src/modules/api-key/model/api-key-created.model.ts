@@ -5,7 +5,7 @@ import { ApiKey } from "./api-key.model";
 
 export class ApiKeyCreated extends ApiKey {
   @ApiProperty({
-    description: "Segredo completo; retornado apenas uma vez na criação",
+    description: "Full secret; returned only once on creation",
     example: "sk_live_a1b2c3d4e5f6",
   })
   @IsString()

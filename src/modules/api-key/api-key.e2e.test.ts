@@ -3,18 +3,18 @@ import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
 describe("ApiKey (e2e)", () => {
-  it("rejeita requisições sem x-api-key", async () => {
+  it("rejects requests without x-api-key", async () => {
     await request(getE2EApp().getHttpServer()).get("/api/api-key").expect(401);
   });
 
-  it("rejeita chave inválida", async () => {
+  it("rejects invalid API key", async () => {
     await request(getE2EApp().getHttpServer())
       .get("/api/api-key")
       .set("x-api-key", "sk_test_invalid_key_1234567890")
       .expect(401);
   });
 
-  it("cria e lista chaves com a root key", async () => {
+  it("creates and lists keys with the root key", async () => {
     const app = getE2EApp();
 
     const created = await request(app.getHttpServer())
@@ -44,7 +44,7 @@ describe("ApiKey (e2e)", () => {
     }
   });
 
-  it("autentica com chave recém-criada e atualiza lastUsedAt", async () => {
+  it("authenticates with a newly created key and updates lastUsedAt", async () => {
     const app = getE2EApp();
 
     const created = await request(app.getHttpServer())
@@ -72,7 +72,7 @@ describe("ApiKey (e2e)", () => {
     expect(row?.lastUsedAt).toBeInstanceOf(Date);
   });
 
-  it("revoga chave e impede uso posterior", async () => {
+  it("revokes a key and blocks subsequent use", async () => {
     const app = getE2EApp();
 
     const created = await request(app.getHttpServer())
@@ -91,7 +91,7 @@ describe("ApiKey (e2e)", () => {
     await request(app.getHttpServer()).get("/api/api-key").set("x-api-key", key).expect(401);
   });
 
-  it("não permite revogar a root key", async () => {
+  it("does not allow revoking the root key", async () => {
     const app = getE2EApp();
 
     const listed = await request(app.getHttpServer())
@@ -108,7 +108,7 @@ describe("ApiKey (e2e)", () => {
       .expect(400);
   });
 
-  it("remove chave por id", async () => {
+  it("deletes a key by id", async () => {
     const app = getE2EApp();
 
     const created = await request(app.getHttpServer())

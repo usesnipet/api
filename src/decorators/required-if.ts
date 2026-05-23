@@ -32,7 +32,7 @@ export function RequiredIf(
         defaultMessage(args: ValidationArguments) {
           const [property] = args.constraints;
 
-          return `${args.property} é obrigatório quando ${property} atender à condição`;
+          return `${args.property} is required when ${property} meets the condition`;
         },
       },
     });

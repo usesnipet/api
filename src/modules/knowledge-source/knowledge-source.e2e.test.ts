@@ -19,7 +19,7 @@ export async function deleteAllKnowledgeSources(): Promise<void> {
 
 export const s3KnowledgeSourcePayload = {
   name: "Docs",
-  description: "Documentação no S3",
+  description: "Documentation in S3",
   provider: "s3",
   config: {
     bucket: "snipet-docs",
@@ -35,13 +35,13 @@ describe("KnowledgeSource (e2e)", () => {
     await deleteAllKnowledgeSources();
   });
 
-  it("rejeita requisições sem x-api-key", async () => {
+  it("rejects requests without x-api-key", async () => {
     await request(getE2EApp().getHttpServer())
       .get("/api/knowledge-source")
       .expect(401);
   });
 
-  it("lista providers disponíveis", async () => {
+  it("lists available providers", async () => {
     const response = await withRootApiKey(
       request(getE2EApp().getHttpServer()).get("/api/knowledge-source/providers"),
     ).expect(200);
@@ -53,7 +53,7 @@ describe("KnowledgeSource (e2e)", () => {
     );
   });
 
-  it("cria fonte S3 e omite campos criptografados na resposta", async () => {
+  it("creates an S3 source and omits encrypted fields in the response", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -64,7 +64,7 @@ describe("KnowledgeSource (e2e)", () => {
 
     expect(created.body).toMatchObject({
       name: "Docs",
-      description: "Documentação no S3",
+      description: "Documentation in S3",
       provider: "s3",
       config: {
         bucket: "snipet-docs",
@@ -76,7 +76,7 @@ describe("KnowledgeSource (e2e)", () => {
     expect(created.body.id).toBeDefined();
   });
 
-  it("lista fontes de conhecimento", async () => {
+  it("lists knowledge sources", async () => {
     const app = getE2EApp();
 
     await withRootApiKey(
@@ -96,7 +96,7 @@ describe("KnowledgeSource (e2e)", () => {
     });
   });
 
-  it("atualiza name e description", async () => {
+  it("updates name and description", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -111,19 +111,19 @@ describe("KnowledgeSource (e2e)", () => {
       .send({
         id: created.body.id,
         name: "Docs v2",
-        description: "Bucket atualizado",
+        description: "Updated bucket",
       })
       .expect(200);
 
     expect(updated.body).toMatchObject({
       id: created.body.id,
       name: "Docs v2",
-      description: "Bucket atualizado",
+      description: "Updated bucket",
       provider: "s3",
     });
   });
 
-  it("permite alterar config antes da primeira sincronização", async () => {
+  it("allows config changes before the first synchronization", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -150,7 +150,7 @@ describe("KnowledgeSource (e2e)", () => {
     });
   });
 
-  it("bloqueia alteração de config após existirem source items", async () => {
+  it("blocks config changes after source items exist", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -174,12 +174,12 @@ describe("KnowledgeSource (e2e)", () => {
     )
       .send({
         id: created.body.id,
-        config: { bucket: "outro-bucket", region: "us-east-1" },
+        config: { bucket: "other-bucket", region: "us-east-1" },
       })
       .expect(409);
   });
 
-  it("remove fonte por id", async () => {
+  it("deletes a knowledge source by id", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -199,7 +199,7 @@ describe("KnowledgeSource (e2e)", () => {
     expect(listed.body).toHaveLength(0);
   });
 
-  it("retorna 404 ao remover fonte inexistente", async () => {
+  it("returns 404 when deleting a non-existent knowledge source", async () => {
     await withRootApiKey(
       request(getE2EApp().getHttpServer()).delete(
         "/api/knowledge-source/00000000-0000-4000-8000-000000000099",
