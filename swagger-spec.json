@@ -156,8 +156,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": ""
+          "204": {
+            "description": "API key revoked successfully"
           }
         },
         "tags": [
@@ -179,8 +179,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "API key deleted successfully"
           }
         },
         "tags": [

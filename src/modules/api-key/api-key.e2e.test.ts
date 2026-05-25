@@ -86,7 +86,7 @@ describe("ApiKey (e2e)", () => {
     await request(app.getHttpServer())
       .post(`/api/api-key/${id}/revoke`)
       .set("x-api-key", ROOT_TEST_API_KEY)
-      .expect(201);
+      .expect(204);
 
     await request(app.getHttpServer()).get("/api/api-key").set("x-api-key", key).expect(401);
   });
@@ -122,7 +122,7 @@ describe("ApiKey (e2e)", () => {
     await request(app.getHttpServer())
       .delete(`/api/api-key/${id}`)
       .set("x-api-key", ROOT_TEST_API_KEY)
-      .expect(200);
+      .expect(204);
 
     await request(app.getHttpServer()).get("/api/api-key").set("x-api-key", key).expect(401);
 
