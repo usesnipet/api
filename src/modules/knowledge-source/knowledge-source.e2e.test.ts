@@ -100,6 +100,23 @@ describe("KnowledgeSource (e2e)", () => {
     });
   });
 
+  it("returns canEdit true on find when no source items exist", async () => {
+    const app = getE2EApp();
+
+    await withRootApiKey(
+      request(app.getHttpServer()).post("/api/knowledge-source"),
+    )
+      .send(s3KnowledgeSourcePayload)
+      .expect(201);
+
+    const listed = await withRootApiKey(
+      request(app.getHttpServer()).get("/api/knowledge-source"),
+    ).expect(200);
+
+    expect(listed.body).toHaveLength(1);
+    expect(listed.body[0].canEdit).toBe(true);
+  });
+
   it("updates name and description", async () => {
     const app = getE2EApp();
 
