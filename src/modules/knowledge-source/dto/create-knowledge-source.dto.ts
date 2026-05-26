@@ -6,6 +6,7 @@ export class CreateKnowledgeSourceDto extends OmitType(KnowledgeSource, [
   "id",
   "createdAt",
   "updatedAt",
+  "canEdit",
 ] as const) {
   constructor(data?: CreateKnowledgeSourceDto) {
     super();

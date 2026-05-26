@@ -654,6 +654,10 @@
           "updatedAt": {
             "format": "date-time",
             "type": "string"
+          },
+          "canEdit": {
+            "type": "boolean",
+            "description": "Whether provider and config can still be changed (false after the first sync). Present on list responses only."
           }
         },
         "required": [
@@ -663,7 +667,8 @@
           "provider",
           "config",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "canEdit"
         ]
       },
       "CreateKnowledgeSourceDto": {

@@ -5,7 +5,7 @@ import { knowledgeSource as knowledgeSourceTable, KnowledgeSourceRow } from "@/d
 import { sourceItem } from "@/db/schema/source-item";
 import { ConfigSchemaService } from "@/modules/config-schema";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
@@ -36,7 +36,18 @@ export class KnowledgeSourceService extends BaseService {
     const rows = await this.db(opts).query.knowledgeSource.findMany(
       DrizzleFilterConverter.toFindMany(filter)
     );
-    return rows.map((row) => this.toModel(row));
+    if (rows.length === 0) return [];
+
+    const lockedIds = await this.knowledgeSourceIdsWithSourceItems(
+      rows.map((row) => row.id),
+      opts
+    );
+
+    return rows.map((row) => {
+      const model = this.toModel(row);
+      model.canEdit = !lockedIds.has(row.id);
+      return model;
+    });
   }
 
   async create(
@@ -120,13 +131,25 @@ export class KnowledgeSourceService extends BaseService {
     knowledgeSourceId: string,
     opts?: ReadOpts
   ): Promise<boolean> {
-    const [row] = await this.db(opts)
-      .select({ id: sourceItem.id })
-      .from(sourceItem)
-      .where(eq(sourceItem.knowledgeSourceId, knowledgeSourceId))
-      .limit(1);
+    const locked = await this.knowledgeSourceIdsWithSourceItems(
+      [knowledgeSourceId],
+      opts
+    );
+    return locked.has(knowledgeSourceId);
+  }
 
-    return row !== undefined;
+  private async knowledgeSourceIdsWithSourceItems(
+    knowledgeSourceIds: string[],
+    opts?: ReadOpts
+  ): Promise<Set<string>> {
+    if (knowledgeSourceIds.length === 0) return new Set();
+
+    const rows = await this.db(opts)
+      .selectDistinct({ knowledgeSourceId: sourceItem.knowledgeSourceId })
+      .from(sourceItem)
+      .where(inArray(sourceItem.knowledgeSourceId, knowledgeSourceIds));
+
+    return new Set(rows.map((row) => row.knowledgeSourceId));
   }
 
   private toModel(row: KnowledgeSourceRow): KnowledgeSource {

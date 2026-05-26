@@ -50,6 +50,12 @@ export class KnowledgeSource {
   @Type(() => Date)
   updatedAt!: Date;
 
+  @ApiProperty({
+    description:
+      "Whether provider and config can still be changed (false after the first sync). Present on list responses only.",
+  })
+  canEdit?: boolean;
+
   constructor(data: KnowledgeSource) {
     Object.assign(this, data);
   }

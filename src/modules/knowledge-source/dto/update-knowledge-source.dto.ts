@@ -8,7 +8,7 @@ import { KnowledgeSource } from "../model/knowledge-source.model";
  * After sync, only `name` and `description` are accepted; structural fields return 409.
  */
 export class UpdateKnowledgeSourceDto extends PartialType(
-  OmitType(KnowledgeSource, ["id", "createdAt", "updatedAt"] as const)
+  OmitType(KnowledgeSource, ["id", "createdAt", "updatedAt", "canEdit"] as const)
 ) {
   @ApiProperty()
   @IsUUID()
