@@ -1,6 +1,7 @@
 import { X_ENCRYPTED_FIELDS, type ConfigSchema } from "@/modules/config-schema";
 
 import type { SourceProviderDefinition } from "../source-provider.types";
+import { s3SourceIcon } from "./s3.icon";
 import { S3SourceProvider } from "./s3.source-provider";
 
 import type { S3SourceConfig } from "./s3.config";
@@ -24,6 +25,7 @@ export const s3SourceConfigSchema: ConfigSchema = {
 export const s3SourceDefinition: SourceProviderDefinition<S3SourceConfig> = {
   id: "s3",
   label: "S3 / MinIO",
+  icon: s3SourceIcon,
   configSchema: s3SourceConfigSchema,
   create(config) {
     return new S3SourceProvider(config);

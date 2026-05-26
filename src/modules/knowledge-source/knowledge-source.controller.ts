@@ -1,6 +1,6 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put } from "@nestjs/common";
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Res } from "@nestjs/common";
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
@@ -9,6 +9,7 @@ import { KnowledgeSource } from "./model/knowledge-source.model";
 import { ProviderCatalogEntryModel } from "./model/provider-catalog-entry.model";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
+import type { Response } from "express";
 
 @ApiTags("knowledge-source")
 @Controller("knowledge-source")
@@ -41,7 +42,9 @@ export class KnowledgeSourceController {
   }
 
   @Delete(":id")
-  delete(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
-    return this.knowledgeSourceService.delete(id);
+  @ApiNoContentResponse({ description: "Knowledge source deleted successfully" })
+  async delete(@Param("id", ParseUUIDPipe) id: string, @Res() res: Response): Promise<void> {
+    await this.knowledgeSourceService.delete(id);
+    res.status(204).end();
   }
 }

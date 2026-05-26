@@ -373,8 +373,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Knowledge source deleted successfully"
           }
         },
         "tags": [
@@ -528,6 +528,11 @@
             "type": "string",
             "example": "S3 / MinIO"
           },
+          "icon": {
+            "type": "string",
+            "description": "Inline SVG markup for the provider",
+            "example": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"></svg>"
+          },
           "configSchema": {
             "type": "object",
             "additionalProperties": true
@@ -536,6 +541,7 @@
         "required": [
           "id",
           "label",
+          "icon",
           "configSchema"
         ]
       },

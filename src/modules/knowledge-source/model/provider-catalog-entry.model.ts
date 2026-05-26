@@ -13,6 +13,13 @@ export class ProviderCatalogEntryModel {
   @IsString()
   label!: string;
 
+  @ApiProperty({
+    description: "Inline SVG markup for the provider",
+    example: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"></svg>",
+  })
+  @IsString()
+  icon!: string;
+
   @ApiProperty({ type: "object", additionalProperties: true })
   @IsObject()
   configSchema!: ConfigSchema;

@@ -13,7 +13,7 @@ export async function deleteAllKnowledgeSources(): Promise<void> {
   for (const row of listed.body as { id: string }[]) {
     await withRootApiKey(
       request(app.getHttpServer()).delete(`/api/knowledge-source/${row.id}`),
-    ).expect(200);
+    ).expect(204);
   }
 }
 
@@ -48,7 +48,11 @@ describe("KnowledgeSource (e2e)", () => {
 
     expect(response.body).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "s3", label: "S3 / MinIO" }),
+        expect.objectContaining({
+          id: "s3",
+          label: "S3 / MinIO",
+          icon: expect.stringContaining("<svg"),
+        }),
       ]),
     );
   });
@@ -190,7 +194,7 @@ describe("KnowledgeSource (e2e)", () => {
 
     await withRootApiKey(
       request(app.getHttpServer()).delete(`/api/knowledge-source/${created.body.id}`),
-    ).expect(200);
+    ).expect(204);
 
     const listed = await withRootApiKey(
       request(app.getHttpServer()).get("/api/knowledge-source"),
