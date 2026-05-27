@@ -1,24 +1,15 @@
 import { env } from "@/env";
 import { BadRequestException, Injectable } from "@nestjs/common";
-import type { ErrorObject } from "ajv";
 
+import { compileConfigSchemaValidator, createConfigSchemaAjv, formatAjvErrors } from "./config-schema.ajv";
 import {
-  compileConfigSchemaValidator,
-  createConfigSchemaAjv,
-  formatAjvErrors,
-} from "./config-schema.ajv";
-import {
-  decryptValue,
-  deriveConfigEncryptionKey,
-  encryptValue,
-  isEncryptedValue,
+  decryptValue, deriveConfigEncryptionKey, encryptValue, isEncryptedValue
 } from "./config-schema.crypto";
 import { cloneJson, getAtPath, setAtPath, unsetAtPath } from "./config-schema.paths";
-import {
-  X_ENCRYPTED_FIELDS,
-  type ConfigSchema,
-  type ConfigValidationResult,
-} from "./config-schema.types";
+import { ConfigSchema, X_ENCRYPTED_FIELDS } from "./config-schema.types";
+
+import type { ConfigValidationResult } from "./config-schema.types";
+import type { ErrorObject } from "ajv";
 
 @Injectable()
 export class ConfigSchemaService {
@@ -138,5 +129,26 @@ export class ConfigSchemaService {
       const path = error.instancePath || "/";
       return `${path} ${error.message ?? "is invalid"}`.trim();
     });
+  }
+
+  /**
+   * Merges a partial plain config patch into a base config. Encrypted fields omitted
+   * or empty in the patch are kept from base (for connection tests while editing).
+   */
+  mergePlainConfig(
+    schema: ConfigSchema,
+    base: Record<string, unknown>,
+    patch: Record<string, unknown>
+  ): Record<string, unknown> {
+    const merged = cloneJson(base);
+
+    for (const [key, value] of Object.entries(patch)) {
+      if (value !== undefined && value !== null && value !== "") {
+        merged[key] = value;
+      }
+    }
+
+    this.assertValid(schema, merged);
+    return merged;
   }
 }

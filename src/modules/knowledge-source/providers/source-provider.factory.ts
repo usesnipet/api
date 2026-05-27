@@ -21,4 +21,10 @@ export class SourceProviderFactory {
     );
     return definition.create(config);
   }
+
+  createFromPlain(provider: string, plainConfig: Record<string, unknown>): SourceProvider {
+    const definition = this.registry.get(provider);
+    this.configSchema.assertValid(definition.configSchema, plainConfig);
+    return definition.create(plainConfig as never);
+  }
 }

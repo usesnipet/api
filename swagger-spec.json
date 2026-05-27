@@ -431,6 +431,52 @@
         ]
       }
     },
+    "/api/knowledge-source/test-connection": {
+      "post": {
+        "operationId": "KnowledgeSourceController_testConnection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestKnowledgeSourceConnectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestKnowledgeSourceConnectionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "tags": [
+          "knowledge-source"
+        ]
+      }
+    },
     "/api/knowledge-source/{id}": {
       "delete": {
         "operationId": "KnowledgeSourceController_delete",
@@ -453,6 +499,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -669,6 +718,39 @@
           "createdAt",
           "updatedAt",
           "canEdit"
+        ]
+      },
+      "TestKnowledgeSourceConnectionDto": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "example": "s3"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Provider config; encrypted fields are omitted in responses"
+          },
+          "knowledgeSourceId": {
+            "type": "string",
+            "description": "When editing, merges omitted encrypted config fields from this knowledge source"
+          }
+        },
+        "required": [
+          "provider",
+          "config"
+        ]
+      },
+      "TestKnowledgeSourceConnectionResponseDto": {
+        "type": "object",
+        "properties": {
+          "duration": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "duration"
         ]
       },
       "CreateKnowledgeSourceDto": {

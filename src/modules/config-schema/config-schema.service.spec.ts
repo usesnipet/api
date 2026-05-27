@@ -52,6 +52,15 @@ describe("ConfigSchemaService", () => {
     expect(twice.apiKey).toBe(once.apiKey);
   });
 
+  it("mergePlainConfig keeps encrypted fields from base when omitted in patch", () => {
+    const base = { apiKey: "sk-stored", baseUrl: "https://api.openai.com" };
+    const merged = service.mergePlainConfig(openAiSchema, base, { baseUrl: "https://other.example" });
+    expect(merged).toEqual({
+      apiKey: "sk-stored",
+      baseUrl: "https://other.example",
+    });
+  });
+
   it("omitEncryptedFields removes encrypted field paths from a copy", () => {
     const stored = service.prepareForStorage(openAiSchema, {
       apiKey: "sk-test",

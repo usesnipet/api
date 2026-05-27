@@ -17,6 +17,11 @@ export async function deleteAllKnowledgeSources(): Promise<void> {
   }
 }
 
+export const mockKnowledgeSourceConnectionPayload = {
+  provider: "mock",
+  config: { outcome: "success" },
+} as const;
+
 export const s3KnowledgeSourcePayload = {
   name: "Docs",
   description: "Documentation in S3",
@@ -98,6 +103,53 @@ describe("KnowledgeSource (e2e)", () => {
       name: "Docs",
       provider: "s3",
     });
+  });
+
+  it("returns 200 when test-connection config is valid", async () => {
+    const response = await withRootApiKey(
+      request(getE2EApp().getHttpServer()).post("/api/knowledge-source/test-connection"),
+    )
+      .send(mockKnowledgeSourceConnectionPayload)
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      duration: expect.any(Number),
+    });
+    expect(response.body.duration).toBeGreaterThanOrEqual(0);
+  });
+
+  it("returns 422 when mock test-connection is configured to fail", async () => {
+    await withRootApiKey(
+      request(getE2EApp().getHttpServer()).post("/api/knowledge-source/test-connection"),
+    )
+      .send({
+        provider: "mock",
+        config: { outcome: "failure" },
+      })
+      .expect(422);
+  });
+
+  it("returns 400 when test-connection config is invalid", async () => {
+    await withRootApiKey(
+      request(getE2EApp().getHttpServer()).post("/api/knowledge-source/test-connection"),
+    )
+      .send({
+        provider: "s3",
+        config: { region: "us-east-1" },
+      })
+      .expect(400);
+  });
+
+  it("returns 404 when test-connection references a missing knowledge source", async () => {
+    await withRootApiKey(
+      request(getE2EApp().getHttpServer()).post("/api/knowledge-source/test-connection"),
+    )
+      .send({
+        provider: "s3",
+        config: s3KnowledgeSourcePayload.config,
+        knowledgeSourceId: "00000000-0000-4000-8000-000000000099",
+      })
+      .expect(404);
   });
 
   it("returns canEdit true on find when no source items exist", async () => {

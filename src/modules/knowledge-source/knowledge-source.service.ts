@@ -4,21 +4,26 @@ import { buildProviderCatalog } from "@/common/provider";
 import { knowledgeSource as knowledgeSourceTable, KnowledgeSourceRow } from "@/db/schema/knowledge-source";
 import { sourceItem } from "@/db/schema/source-item";
 import { ConfigSchemaService } from "@/modules/config-schema";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
+import {
+  TestKnowledgeSourceConnectionDto, TestKnowledgeSourceConnectionResponseDto
+} from "./dto/test-knowledge-source-connection.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
 import { assertProviderAndConfigMutable } from "./knowledge-source-update.policy";
 import { KnowledgeSource } from "./model/knowledge-source.model";
 import { ProviderCatalogEntryModel } from "./model/provider-catalog-entry.model";
+import { SourceProviderFactory } from "./providers/source-provider.factory";
 import { SourceProviderRegistry } from "./providers/source-provider.registry";
 
 @Injectable()
 export class KnowledgeSourceService extends BaseService {
   constructor(
     private readonly configSchema: ConfigSchemaService,
-    private readonly sourceProviderRegistry: SourceProviderRegistry
+    private readonly sourceProviderRegistry: SourceProviderRegistry,
+    private readonly sourceProviderFactory: SourceProviderFactory
   ) {
     super();
   }
@@ -116,6 +121,26 @@ export class KnowledgeSourceService extends BaseService {
     return this.toModel(row);
   }
 
+  async testConnection(
+    dto: TestKnowledgeSourceConnectionDto
+  ): Promise<TestKnowledgeSourceConnectionResponseDto> {
+    const startTime = Date.now();
+    this.sourceProviderRegistry.assertKnown(dto.provider);
+    const plainConfig = await this.resolvePlainConfigForTest(dto);
+    const provider = this.sourceProviderFactory.createFromPlain(
+      dto.provider,
+      plainConfig
+    );
+
+    try {
+      await provider.testConnection();
+      const endTime = Date.now();
+      return new TestKnowledgeSourceConnectionResponseDto(endTime - startTime);
+    } catch (error) {
+      throw new UnprocessableEntityException(this.formatConnectionError(error));
+    }
+  }
+
   async delete(id: string, opts?: DeleteOpts): Promise<void> {
     const result = await this.db(opts)
       .delete(knowledgeSourceTable)
@@ -127,14 +152,8 @@ export class KnowledgeSourceService extends BaseService {
     }
   }
 
-  private async hasSourceItems(
-    knowledgeSourceId: string,
-    opts?: ReadOpts
-  ): Promise<boolean> {
-    const locked = await this.knowledgeSourceIdsWithSourceItems(
-      [knowledgeSourceId],
-      opts
-    );
+  private async hasSourceItems(knowledgeSourceId: string, opts?: ReadOpts): Promise<boolean> {
+    const locked = await this.knowledgeSourceIdsWithSourceItems([knowledgeSourceId], opts);
     return locked.has(knowledgeSourceId);
   }
 
@@ -150,6 +169,53 @@ export class KnowledgeSourceService extends BaseService {
       .where(inArray(sourceItem.knowledgeSourceId, knowledgeSourceIds));
 
     return new Set(rows.map((row) => row.knowledgeSourceId));
+  }
+
+  private async resolvePlainConfigForTest(
+    dto: TestKnowledgeSourceConnectionDto,
+    opts?: ReadOpts
+  ): Promise<Record<string, unknown>> {
+    const definition = this.sourceProviderRegistry.get(dto.provider);
+
+    if (!dto.knowledgeSourceId) {
+      this.configSchema.assertValid(definition.configSchema, dto.config);
+      return dto.config;
+    }
+
+    const [existing] = await this.db(opts)
+      .select()
+      .from(knowledgeSourceTable)
+      .where(eq(knowledgeSourceTable.id, dto.knowledgeSourceId))
+      .limit(1);
+
+    if (!existing) {
+      throw new NotFoundException(
+        `Knowledge source ${dto.knowledgeSourceId} not found`
+      );
+    }
+
+    if (existing.provider !== dto.provider) {
+      this.configSchema.assertValid(definition.configSchema, dto.config);
+      return dto.config;
+    }
+
+    const storedPlain = this.configSchema.prepareForUse(
+      definition.configSchema,
+      existing.config as Record<string, unknown>
+    );
+
+    return this.configSchema.mergePlainConfig(
+      definition.configSchema,
+      storedPlain,
+      dto.config
+    );
+  }
+
+  private formatConnectionError(error: unknown): string {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return "Connection test failed";
   }
 
   private toModel(row: KnowledgeSourceRow): KnowledgeSource {
