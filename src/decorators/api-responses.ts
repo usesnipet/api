@@ -1,9 +1,21 @@
 import { applyDecorators, Type } from "@nestjs/common";
 import {
+  ApiProperty,
   ApiBadRequestResponse, ApiConflictResponse, ApiCreatedResponse, ApiForbiddenResponse,
   ApiInternalServerErrorResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse,
   ApiResponse as ApiResponseDecorator, ApiUnauthorizedResponse, ApiUnprocessableEntityResponse
 } from "@nestjs/swagger";
+
+export class ApiErrorResponse {
+  @ApiProperty({ example: "Validation failed" })
+  message!: string;
+
+  @ApiProperty({ example: "Bad Request" })
+  error!: string;
+
+  @ApiProperty({ example: 400 })
+  statusCode!: number;
+}
 
 export type ApiResponseConfig = {
   type?: Type<unknown> | Function | [Type<unknown>] | string;
@@ -43,9 +55,15 @@ const STATUS_DECORATORS: Partial<Record<number, SwaggerResponseDecorator>> = {
   500: (options) => ApiInternalServerErrorResponse(options),
 };
 
+function isErrorStatus(status: number): boolean {
+  return status >= 400;
+}
+
 function toSwaggerOptions(status: number, config?: ApiResponseConfig): ApiResponseConfig {
+  const defaultType = isErrorStatus(status) ? ApiErrorResponse : undefined;
   return {
     description: DEFAULT_DESCRIPTIONS[status],
+    type: defaultType,
     ...config,
   };
 }
@@ -68,10 +86,10 @@ function toResponseMap(first: number | ApiResponseMap, rest: number[]): ApiRespo
  * Documents HTTP responses for an endpoint in OpenAPI.
  *
  * @example
- * @ApiResponse(200, 400, 401)
+ * @ApiResponses(200, 400, 401)
  *
  * @example
- * @ApiResponse({
+ * @ApiResponses({
  *   200: { type: [ApiKey] },
  *   400: { description: "Invalid filter query" },
  *   401: { description: "Missing or invalid x-api-key" },
