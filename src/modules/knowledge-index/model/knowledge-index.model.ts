@@ -41,7 +41,7 @@ export class KnowledgeIndex {
   @ApiProperty({
     type: "object",
     additionalProperties: true,
-    description: "Provider-specific configuration",
+    description: "Provider config; encrypted fields are omitted in responses",
   })
   @IsObject()
   config!: Record<string, unknown>;
@@ -60,14 +60,17 @@ export class KnowledgeIndex {
     Object.assign(this, data);
   }
 
-  static fromRow(row: KnowledgeIndexRow): KnowledgeIndex {
+  static fromRow(
+    row: KnowledgeIndexRow,
+    config: Record<string, unknown>
+  ): KnowledgeIndex {
     return new KnowledgeIndex({
       id: row.id,
       name: row.name,
       description: row.description,
       provider: row.provider,
       llmConnectionId: row.llmConnectionId ?? null,
-      config: row.config as Record<string, unknown>,
+      config,
       createdAt: moment(row.createdAt).toDate(),
       updatedAt: moment(row.updatedAt).toDate(),
     });

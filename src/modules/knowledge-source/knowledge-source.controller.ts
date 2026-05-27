@@ -1,12 +1,13 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
+import { TestConnectionResponseDto } from "@/common/provider";
 import { ApiResponses } from "@/decorators/api-responses";
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Res } from "@nestjs/common";
+import {
+  Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, Res
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
-import {
-  TestKnowledgeSourceConnectionDto, TestKnowledgeSourceConnectionResponseDto
-} from "./dto/test-knowledge-source-connection.dto";
+import { TestKnowledgeSourceConnectionDto } from "./dto/test-knowledge-source-connection.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
 import { KnowledgeSourceService } from "./knowledge-source.service";
 import { KnowledgeSource } from "./model/knowledge-source.model";
@@ -41,12 +42,12 @@ export class KnowledgeSourceController {
   @Post("test-connection")
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
-    200: { type: TestKnowledgeSourceConnectionResponseDto },
+    200: { type: TestConnectionResponseDto },
     400: {}, 401: {}, 404: {}, 422: {}, 500: {},
   })
   testConnection(
     @Body() dto: TestKnowledgeSourceConnectionDto
-  ): Promise<TestKnowledgeSourceConnectionResponseDto> {
+  ): Promise<TestConnectionResponseDto> {
     return this.knowledgeSourceService.testConnection(dto);
   }
 

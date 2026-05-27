@@ -3,6 +3,7 @@ import { schemas } from "@/db";
 import { ApiKeyModule } from "@/modules/api-key/api-key.module";
 import { ConfigSchemaModule } from "@/modules/config-schema";
 import { DatabaseModule } from "@/modules/database/database.module";
+import { KnowledgeIndexModule } from "@/modules/knowledge-index/knowledge-index.module";
 import { KnowledgeSourceModule } from "@/modules/knowledge-source/knowledge-source.module";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
@@ -16,6 +17,7 @@ export async function buildE2EApp(connectionString: string): Promise<INestApplic
       }),
       ConfigSchemaModule,
       ApiKeyModule,
+      KnowledgeIndexModule,
       KnowledgeSourceModule,
       ProviderModule.forRoot(),
     ],

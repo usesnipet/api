@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional, PickType } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsUUID } from "class-validator";
+import { ApiPropertyOptional, PickType } from "@nestjs/swagger";
+import { IsOptional, IsUUID } from "class-validator";
 
 import { CreateKnowledgeSourceDto } from "./create-knowledge-source.dto";
 
@@ -18,15 +18,5 @@ export class TestKnowledgeSourceConnectionDto extends PickType(
   constructor(data?: TestKnowledgeSourceConnectionDto) {
     super();
     if (data) Object.assign(this, data);
-  }
-}
-
-export class TestKnowledgeSourceConnectionResponseDto {
-  @ApiProperty()
-  @IsNumber()
-  duration!: number;
-
-  constructor(duration: number) {
-    this.duration = duration;
   }
 }

@@ -1,5 +1,6 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
+import { TestConnectionResponseDto } from "@/common/provider";
 import { ProviderConfigService } from "@/common/provider/provider-config.service";
 import { knowledgeSource as knowledgeSourceTable, KnowledgeSourceRow } from "@/db/schema/knowledge-source";
 import { sourceItem } from "@/db/schema/source-item";
@@ -7,9 +8,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
-import {
-  TestKnowledgeSourceConnectionDto, TestKnowledgeSourceConnectionResponseDto
-} from "./dto/test-knowledge-source-connection.dto";
+import { TestKnowledgeSourceConnectionDto } from "./dto/test-knowledge-source-connection.dto";
 import { UpdateKnowledgeSourceDto } from "./dto/update-knowledge-source.dto";
 import { assertProviderAndConfigMutable } from "./knowledge-source-update.policy";
 import { KnowledgeSource } from "./model/knowledge-source.model";
@@ -29,9 +28,7 @@ export class KnowledgeSourceService extends BaseService {
   }
 
   listProviders(): ProviderCatalogEntryModel[] {
-    return this.providerConfigService.listCatalog(this.sourceProviderRegistry).map(
-      (entry) => new ProviderCatalogEntryModel(entry)
-    );
+    return this.providerConfigService.listCatalog(this.sourceProviderRegistry);
   }
 
   async find(
@@ -125,7 +122,7 @@ export class KnowledgeSourceService extends BaseService {
 
   async testConnection(
     dto: TestKnowledgeSourceConnectionDto
-  ): Promise<TestKnowledgeSourceConnectionResponseDto> {
+  ): Promise<TestConnectionResponseDto> {
     const storedConfig = await this.resolveStoredConfigForConnectionTest(dto);
     const plainConfig = this.providerConfigService.resolvePlainConfigForTest(
       this.sourceProviderRegistry,
@@ -133,14 +130,12 @@ export class KnowledgeSourceService extends BaseService {
       dto.config,
       storedConfig
     );
-    const result = await this.providerConfigService.testConnection(
+    return await this.providerConfigService.testConnection(
       this.sourceProviderRegistry,
       this.sourceProviderFactory,
       dto.provider,
       plainConfig
     );
-
-    return new TestKnowledgeSourceConnectionResponseDto(result.duration);
   }
 
   async delete(id: string, opts?: DeleteOpts): Promise<void> {

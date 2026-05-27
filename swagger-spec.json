@@ -308,6 +308,60 @@
         ]
       }
     },
+    "/api/knowledge-index/providers": {
+      "get": {
+        "operationId": "KnowledgeIndexController_listProviders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderCatalogEntryModel"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-index"
+        ]
+      }
+    },
     "/api/knowledge-index": {
       "get": {
         "operationId": "KnowledgeIndexController_find",
@@ -531,6 +585,87 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "knowledge-index"
+        ]
+      }
+    },
+    "/api/knowledge-index/test-connection": {
+      "post": {
+        "operationId": "KnowledgeIndexController_testConnection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestKnowledgeIndexConnectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestConnectionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
             "content": {
               "application/json": {
                 "schema": {
@@ -929,7 +1064,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TestKnowledgeSourceConnectionResponseDto"
+                  "$ref": "#/components/schemas/TestConnectionResponseDto"
                 }
               }
             }
@@ -1210,6 +1345,34 @@
           "key"
         ]
       },
+      "ProviderCatalogEntryModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "s3"
+          },
+          "label": {
+            "type": "string",
+            "example": "S3 / MinIO"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Inline SVG markup for the provider",
+            "example": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"></svg>"
+          },
+          "configSchema": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "configSchema"
+        ]
+      },
       "KnowledgeIndex": {
         "type": "object",
         "properties": {
@@ -1234,7 +1397,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider-specific configuration"
+            "description": "Provider config; encrypted fields are omitted in responses"
           },
           "createdAt": {
             "format": "date-time",
@@ -1253,6 +1416,39 @@
           "config",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "TestKnowledgeIndexConnectionDto": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "example": "pgvector"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Provider config; encrypted fields are omitted in responses"
+          },
+          "knowledgeIndexId": {
+            "type": "string",
+            "description": "When editing, merges omitted encrypted config fields from this knowledge index"
+          }
+        },
+        "required": [
+          "provider",
+          "config"
+        ]
+      },
+      "TestConnectionResponseDto": {
+        "type": "object",
+        "properties": {
+          "duration": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "duration"
         ]
       },
       "CreateKnowledgeIndexDto": {
@@ -1276,7 +1472,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider-specific configuration"
+            "description": "Provider config; encrypted fields are omitted in responses"
           }
         },
         "required": [
@@ -1307,7 +1503,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider-specific configuration"
+            "description": "Provider config; encrypted fields are omitted in responses"
           },
           "id": {
             "type": "string"
@@ -1315,34 +1511,6 @@
         },
         "required": [
           "id"
-        ]
-      },
-      "ProviderCatalogEntryModel": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "s3"
-          },
-          "label": {
-            "type": "string",
-            "example": "S3 / MinIO"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Inline SVG markup for the provider",
-            "example": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"></svg>"
-          },
-          "configSchema": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "required": [
-          "id",
-          "label",
-          "icon",
-          "configSchema"
         ]
       },
       "KnowledgeSource": {
@@ -1410,17 +1578,6 @@
         "required": [
           "provider",
           "config"
-        ]
-      },
-      "TestKnowledgeSourceConnectionResponseDto": {
-        "type": "object",
-        "properties": {
-          "duration": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "duration"
         ]
       },
       "CreateKnowledgeSourceDto": {

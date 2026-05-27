@@ -11,7 +11,7 @@ export const knowledgeIndex = pgTable("knowledge_index", {
   llmConnectionId: uuid("llm_connection_id").references(() => llmConnection.id, {
     onDelete: "set null",
   }),
-  config: jsonb("config").notNull().default({}),
+  config: jsonb("config").notNull().default({}).$type<Record<string, unknown>>(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

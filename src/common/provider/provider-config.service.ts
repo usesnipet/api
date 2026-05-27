@@ -1,12 +1,10 @@
 import { ConfigSchemaService } from "@/modules/config-schema";
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 
+import { TestConnectionResponseDto } from "./dto/test-connection-respose.dto";
+import { ProviderCatalogEntryModel } from "./model";
 import { ProviderRegistry } from "./provider.registry";
 import { Provider, ProviderDefinition } from "./provider.types";
-
-export type TestConnectionResult = {
-  duration: number;
-};
 
 @Injectable()
 export class ProviderConfigService<TDefinition extends ProviderDefinition = ProviderDefinition> {
@@ -14,8 +12,10 @@ export class ProviderConfigService<TDefinition extends ProviderDefinition = Prov
     protected readonly configSchema: ConfigSchemaService
   ) {}
 
-  listCatalog(registry: ProviderRegistry<TDefinition>): ProviderDefinition[] {
-    return registry.list();
+  listCatalog(registry: ProviderRegistry<TDefinition>): ProviderCatalogEntryModel[] {
+    return registry.list().map(
+      (entry) => new ProviderCatalogEntryModel(entry)
+    );
   }
 
   assertKnown(registry: ProviderRegistry<TDefinition>, providerId: string): void {
@@ -93,14 +93,14 @@ export class ProviderConfigService<TDefinition extends ProviderDefinition = Prov
     factory: { createFromPlain: (providerId: string, plainConfig: Record<string, unknown>) => Provider },
     providerId: string,
     plainConfig: Record<string, unknown>
-  ): Promise<TestConnectionResult> {
+  ): Promise<TestConnectionResponseDto> {
     const startTime = Date.now();
     this.assertKnown(registry, providerId);
     const provider = factory.createFromPlain(providerId, plainConfig);
 
     try {
       await provider.testConnection();
-      return { duration: Date.now() - startTime };
+      return new TestConnectionResponseDto(Date.now() - startTime);
     } catch (error) {
       throw new UnprocessableEntityException(this.formatConnectionError(error));
     }

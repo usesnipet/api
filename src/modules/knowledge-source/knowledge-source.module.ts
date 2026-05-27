@@ -12,6 +12,6 @@ import { SourceProviderRegistry } from "./providers/source-provider.registry";
     SourceProviderRegistry,
     SourceProviderFactory,
   ],
-  exports: [KnowledgeSourceService, SourceProviderFactory, SourceProviderRegistry],
+  exports: [KnowledgeSourceService],
 })
 export class KnowledgeSourceModule {}
