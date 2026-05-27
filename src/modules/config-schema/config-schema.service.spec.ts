@@ -2,7 +2,11 @@ import { BadRequestException } from "@nestjs/common";
 
 import { ConfigSchemaService } from "./config-schema.service";
 import { isEncryptedValue } from "./config-schema.crypto";
-import { X_ENCRYPTED_FIELDS, type ConfigSchema } from "./config-schema.types";
+import {
+  ENCRYPTED_FIELD_PLACEHOLDER,
+  X_ENCRYPTED_FIELDS,
+  type ConfigSchema,
+} from "./config-schema.types";
 
 const openAiSchema: ConfigSchema = {
   type: "object",
@@ -61,13 +65,28 @@ describe("ConfigSchemaService", () => {
     });
   });
 
-  it("omitEncryptedFields removes encrypted field paths from a copy", () => {
+  it("mergePlainConfig keeps encrypted fields from base when patch sends placeholder", () => {
+    const base = { apiKey: "sk-stored", baseUrl: "https://api.openai.com" };
+    const merged = service.mergePlainConfig(openAiSchema, base, {
+      apiKey: ENCRYPTED_FIELD_PLACEHOLDER,
+      baseUrl: "https://other.example",
+    });
+    expect(merged).toEqual({
+      apiKey: "sk-stored",
+      baseUrl: "https://other.example",
+    });
+  });
+
+  it("maskEncryptedFieldsForResponse masks stored encrypted fields and omits empty ones", () => {
     const stored = service.prepareForStorage(openAiSchema, {
       apiKey: "sk-test",
       baseUrl: "https://api.openai.com",
     });
-    const publicConfig = service.omitEncryptedFields(openAiSchema, stored);
-    expect(publicConfig).toEqual({ baseUrl: "https://api.openai.com" });
-    expect(stored.apiKey).toBeDefined();
+    const publicConfig = service.maskEncryptedFieldsForResponse(openAiSchema, stored);
+    expect(publicConfig).toEqual({
+      apiKey: ENCRYPTED_FIELD_PLACEHOLDER,
+      baseUrl: "https://api.openai.com",
+    });
+    expect(stored.apiKey).toMatch(/^\$enc\$v1\$/);
   });
 });

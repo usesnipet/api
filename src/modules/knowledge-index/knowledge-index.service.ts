@@ -100,9 +100,10 @@ export class KnowledgeIndexService extends BaseService {
       values.llmConnectionId = rest.llmConnectionId;
     }
     if (rest.config !== undefined) {
-      values.config = this.providerConfigService.prepareForStorage(
+      values.config = this.providerConfigService.prepareForUpdate(
         this.indexProviderRegistry,
         provider,
+        existing.config,
         rest.config
       );
     }

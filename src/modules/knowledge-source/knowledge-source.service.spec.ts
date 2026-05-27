@@ -1,5 +1,5 @@
 import { ProviderConfigService } from "@/common/provider/provider-config.service";
-import { ConfigSchemaService } from "@/modules/config-schema";
+import { ConfigSchemaService, ENCRYPTED_FIELD_PLACEHOLDER } from "@/modules/config-schema";
 
 import { KnowledgeSourceService } from "./knowledge-source.service";
 import { SourceProviderRegistry } from "./providers/source-provider.registry";
@@ -10,7 +10,7 @@ describe("KnowledgeSourceService", () => {
   const providerConfigService = new ProviderConfigService(configSchema);
   const sourceProviderRegistry = new SourceProviderRegistry();
 
-  it("toModel omits encrypted config fields", () => {
+  it("toModel masks encrypted config fields with a placeholder", () => {
     const stored = configSchema.prepareForStorage(s3SourceConfigSchema, {
       bucket: "docs",
       region: "us-east-1",
@@ -46,8 +46,11 @@ describe("KnowledgeSourceService", () => {
       updatedAt: new Date(),
     });
 
-    expect(model.config).toEqual({ bucket: "docs", region: "us-east-1" });
-    expect(model.config).not.toHaveProperty("accessKeyId");
-    expect(model.config).not.toHaveProperty("secretAccessKey");
+    expect(model.config).toEqual({
+      bucket: "docs",
+      region: "us-east-1",
+      accessKeyId: ENCRYPTED_FIELD_PLACEHOLDER,
+      secretAccessKey: ENCRYPTED_FIELD_PLACEHOLDER,
+    });
   });
 });

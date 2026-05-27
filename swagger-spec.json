@@ -1930,7 +1930,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "createdAt": {
             "format": "date-time",
@@ -1961,11 +1961,11 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "knowledgeIndexId": {
             "type": "string",
-            "description": "When editing, merges omitted encrypted config fields from this knowledge index"
+            "description": "When editing, merges encrypted config fields from this knowledge index when omitted or sent as asterisk placeholders"
           }
         },
         "required": [
@@ -2005,7 +2005,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           }
         },
         "required": [
@@ -2036,7 +2036,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "id": {
             "type": "string"
@@ -2065,7 +2065,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "createdAt": {
             "format": "date-time",
@@ -2101,11 +2101,11 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "knowledgeSourceId": {
             "type": "string",
-            "description": "When editing, merges omitted encrypted config fields from this knowledge source"
+            "description": "When editing, merges encrypted config fields from this knowledge source when omitted or sent as asterisk placeholders"
           }
         },
         "required": [
@@ -2129,7 +2129,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           }
         },
         "required": [
@@ -2155,7 +2155,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "id": {
             "type": "string"
@@ -2181,7 +2181,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "enabled": {
             "type": "boolean"
@@ -2247,11 +2247,11 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "llmConnectionId": {
             "type": "string",
-            "description": "When editing, merges omitted encrypted config fields from this LLM connection"
+            "description": "When editing, merges encrypted config fields from this LLM connection when omitted or sent as asterisk placeholders"
           }
         },
         "required": [
@@ -2272,7 +2272,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "enabled": {
             "type": "boolean"
@@ -2298,7 +2298,7 @@
           "config": {
             "type": "object",
             "additionalProperties": true,
-            "description": "Provider config; encrypted fields are omitted in responses"
+            "description": "Provider config; encrypted fields are masked with asterisks in responses"
           },
           "enabled": {
             "type": "boolean"

@@ -1,6 +1,8 @@
 import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
+import { ENCRYPTED_FIELD_PLACEHOLDER } from "../config-schema";
+
 export function withRootApiKey(req: request.Test): request.Test {
   return req.set("x-api-key", ROOT_TEST_API_KEY);
 }
@@ -62,7 +64,7 @@ describe("KnowledgeSource (e2e)", () => {
     );
   });
 
-  it("creates an S3 source and omits encrypted fields in the response", async () => {
+  it("creates an S3 source and masks encrypted fields in the response", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -78,10 +80,10 @@ describe("KnowledgeSource (e2e)", () => {
       config: {
         bucket: "snipet-docs",
         region: "us-east-1",
+        accessKeyId: ENCRYPTED_FIELD_PLACEHOLDER,
+        secretAccessKey: ENCRYPTED_FIELD_PLACEHOLDER,
       },
     });
-    expect(created.body.config).not.toHaveProperty("accessKeyId");
-    expect(created.body.config).not.toHaveProperty("secretAccessKey");
     expect(created.body.id).toBeDefined();
   });
 
@@ -220,6 +222,8 @@ describe("KnowledgeSource (e2e)", () => {
     expect(updated.body.config).toEqual({
       bucket: "snipet-docs-v2",
       region: "sa-east-1",
+      accessKeyId: ENCRYPTED_FIELD_PLACEHOLDER,
+      secretAccessKey: ENCRYPTED_FIELD_PLACEHOLDER,
     });
   });
 

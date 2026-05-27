@@ -1,9 +1,10 @@
-import type { ConfigSchema } from "@/modules/config-schema";
+import { X_ENCRYPTED_FIELDS } from "@/modules/config-schema";
 
-import type { IndexProviderDefinition } from "../index-provider.types";
 import { mockIndexIcon } from "./mock.icon";
 import { MockIndexProvider } from "./mock.index-provider";
 
+import type { ConfigSchema } from "@/modules/config-schema";
+import type { IndexProviderDefinition } from "../index-provider.types";
 import type { MockIndexConfig } from "./mock.config";
 
 export const mockIndexConfigSchema: ConfigSchema = {
@@ -12,7 +13,9 @@ export const mockIndexConfigSchema: ConfigSchema = {
   required: ["outcome"],
   properties: {
     outcome: { type: "string", enum: ["success", "failure"] },
+    privateKey: { type: "string", minLength: 1 },
   },
+  [X_ENCRYPTED_FIELDS]: ["privateKey"],
 };
 
 export const mockIndexDefinition: IndexProviderDefinition<MockIndexConfig> = {

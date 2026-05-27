@@ -9,7 +9,7 @@ export class TestLlmConnectionConnectionDto extends PickType(CreateLlmConnection
 ] as const) {
   @ApiPropertyOptional({
     description:
-      "When editing, merges omitted encrypted config fields from this LLM connection",
+      "When editing, merges encrypted config fields from this LLM connection when omitted or sent as asterisk placeholders",
   })
   @IsOptional()
   @IsUUID()

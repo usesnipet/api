@@ -1,5 +1,5 @@
 import { ProviderConfigService } from "@/common/provider/provider-config.service";
-import { ConfigSchemaService } from "@/modules/config-schema";
+import { ConfigSchemaService, ENCRYPTED_FIELD_PLACEHOLDER } from "@/modules/config-schema";
 
 import { KnowledgeIndexService } from "./knowledge-index.service";
 import { IndexProviderRegistry } from "./providers/index-provider.registry";
@@ -10,7 +10,7 @@ describe("KnowledgeIndexService", () => {
   const providerConfigService = new ProviderConfigService(configSchema);
   const indexProviderRegistry = new IndexProviderRegistry();
 
-  it("toModel omits encrypted config fields", () => {
+  it("toModel masks encrypted config fields with a placeholder", () => {
     const stored = configSchema.prepareForStorage(pgvectorIndexConfigSchema, {
       host: "localhost",
       port: 5432,
@@ -54,7 +54,7 @@ describe("KnowledgeIndexService", () => {
       port: 5432,
       database: "vectors",
       user: "postgres",
+      password: ENCRYPTED_FIELD_PLACEHOLDER,
     });
-    expect(model.config).not.toHaveProperty("password");
   });
 });

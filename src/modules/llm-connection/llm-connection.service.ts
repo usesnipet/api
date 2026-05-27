@@ -83,9 +83,10 @@ export class LlmConnectionService extends BaseService {
     if (rest.provider !== undefined) values.provider = rest.provider;
     if (rest.enabled !== undefined) values.enabled = rest.enabled;
     if (rest.config !== undefined) {
-      values.config = this.providerConfigService.prepareForStorage(
+      values.config = this.providerConfigService.prepareForUpdate(
         this.llmProviderRegistry,
         rest.provider ?? existing.provider,
+        existing.config,
         rest.config
       );
     }

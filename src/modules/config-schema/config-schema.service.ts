@@ -6,7 +6,12 @@ import {
   decryptValue, deriveConfigEncryptionKey, encryptValue, isEncryptedValue
 } from "./config-schema.crypto";
 import { cloneJson, getAtPath, setAtPath, unsetAtPath } from "./config-schema.paths";
-import { ConfigSchema, X_ENCRYPTED_FIELDS } from "./config-schema.types";
+import {
+  ConfigSchema,
+  ENCRYPTED_FIELD_PLACEHOLDER,
+  isEncryptedFieldPlaceholder,
+  X_ENCRYPTED_FIELDS,
+} from "./config-schema.types";
 
 import type { ConfigValidationResult } from "./config-schema.types";
 import type { ErrorObject } from "ajv";
@@ -65,15 +70,21 @@ export class ConfigSchemaService {
   }
 
   /**
-   * Returns a copy of config without fields listed in x-encryptedFields (for API responses).
+   * Returns a copy of config with encrypted fields masked (for API responses).
+   * Fields with no stored value are omitted so the client can tell they are empty.
    */
-  omitEncryptedFields(
+  maskEncryptedFieldsForResponse(
     schema: ConfigSchema,
     data: Record<string, unknown>
   ): Record<string, unknown> {
     const result = cloneJson(data);
     for (const path of this.getEncryptedFieldPaths(schema)) {
-      unsetAtPath(result, path);
+      const value = getAtPath(result, path);
+      if (value === undefined || value === null || value === "") {
+        unsetAtPath(result, path);
+        continue;
+      }
+      setAtPath(result, path, ENCRYPTED_FIELD_PLACEHOLDER);
     }
     return result;
   }
@@ -132,8 +143,8 @@ export class ConfigSchemaService {
   }
 
   /**
-   * Merges a partial plain config patch into a base config. Encrypted fields omitted
-   * or empty in the patch are kept from base (for connection tests while editing).
+   * Merges a partial plain config patch into a base config. Encrypted fields omitted,
+   * empty, or sent as asterisk placeholders in the patch are kept from base.
    */
   mergePlainConfig(
     schema: ConfigSchema,
@@ -143,7 +154,12 @@ export class ConfigSchemaService {
     const merged = cloneJson(base);
 
     for (const [key, value] of Object.entries(patch)) {
-      if (value !== undefined && value !== null && value !== "") {
+      if (
+        value !== undefined
+        && value !== null
+        && value !== ""
+        && !isEncryptedFieldPlaceholder(value)
+      ) {
         merged[key] = value;
       }
     }

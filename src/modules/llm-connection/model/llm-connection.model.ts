@@ -32,7 +32,7 @@ export class LlmConnection {
   @ApiProperty({
     type: "object",
     additionalProperties: true,
-    description: "Provider config; encrypted fields are omitted in responses",
+    description: "Provider config; encrypted fields are masked with asterisks in responses",
   })
   @IsObject()
   config!: Record<string, unknown>;

@@ -1,6 +1,8 @@
 import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
+import { ENCRYPTED_FIELD_PLACEHOLDER } from "../config-schema";
+
 export function withRootApiKey(req: request.Test): request.Test {
   return req.set("x-api-key", ROOT_TEST_API_KEY);
 }
@@ -17,9 +19,16 @@ export async function deleteAllKnowledgeIndexes(): Promise<void> {
   }
 }
 
-export const mockKnowledgeIndexConnectionPayload = {
+export const mockKnowledgeIndexPayload = {
+  name: "Mock index",
+  description: "Mock knowledge index for e2e",
   provider: "mock",
-  config: { outcome: "success" },
+  config: { outcome: "success", privateKey: "secret" },
+} as const;
+
+export const mockKnowledgeIndexConnectionPayload = {
+  provider: mockKnowledgeIndexPayload.provider,
+  config: mockKnowledgeIndexPayload.config,
 } as const;
 
 export const pgvectorKnowledgeIndexPayload = {
@@ -79,7 +88,7 @@ describe("KnowledgeIndex (e2e)", () => {
     );
   });
 
-  it("creates a pgvector index and omits encrypted fields in the response", async () => {
+  it("creates a pgvector index and masks encrypted fields in the response", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -97,9 +106,9 @@ describe("KnowledgeIndex (e2e)", () => {
         port: 5432,
         database: "vectors",
         user: "postgres",
+        password: ENCRYPTED_FIELD_PLACEHOLDER,
       },
     });
-    expect(created.body.config).not.toHaveProperty("password");
     expect(created.body.id).toBeDefined();
     expect(created.body.llmConnectionId).toBeNull();
   });
@@ -271,8 +280,50 @@ describe("KnowledgeIndex (e2e)", () => {
       port: 5433,
       database: "vectors-v2",
       user: "app",
+      password: ENCRYPTED_FIELD_PLACEHOLDER,
     });
-    expect(updated.body.config).not.toHaveProperty("password");
+  });
+
+  it("keeps stored password when update sends placeholder asterisks", async () => {
+    const app = getE2EApp();
+
+    const created = await withRootApiKey(
+      request(app.getHttpServer()).post("/api/knowledge-index"),
+    )
+      .send({
+        ...mockKnowledgeIndexPayload,
+        config: {
+          ...mockKnowledgeIndexPayload.config,
+          outcome: "failure",
+        },
+      })
+      .expect(201);
+
+    const updated = await withRootApiKey(
+      request(app.getHttpServer()).put("/api/knowledge-index"),
+    )
+      .send({
+        id: created.body.id,
+        config: {
+          outcome: "success",
+        },
+      })
+      .expect(200);
+
+    await withRootApiKey(
+      request(app.getHttpServer()).post("/api/knowledge-index/test-connection"),
+    )
+      .send({
+        provider: "mock",
+        knowledgeIndexId: created.body.id,
+        config: {
+          outcome: "success",
+          privateKey: ENCRYPTED_FIELD_PLACEHOLDER,
+        },
+      })
+      .expect(200);
+
+    expect(updated.body.config.privateKey).toBe(ENCRYPTED_FIELD_PLACEHOLDER);
   });
 
   it("deletes a knowledge index by id", async () => {

@@ -1,6 +1,8 @@
 import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
+import { ENCRYPTED_FIELD_PLACEHOLDER } from "../config-schema";
+
 export function withRootApiKey(req: request.Test): request.Test {
   return req.set("x-api-key", ROOT_TEST_API_KEY);
 }
@@ -65,7 +67,7 @@ describe("LlmConnection (e2e)", () => {
     );
   });
 
-  it("creates an OpenAI connection and omits encrypted fields in the response", async () => {
+  it("creates an OpenAI connection and masks encrypted fields in the response", async () => {
     const app = getE2EApp();
 
     const created = await withRootApiKey(
@@ -79,10 +81,10 @@ describe("LlmConnection (e2e)", () => {
       provider: "openai",
       enabled: true,
       config: {
+        apiKey: ENCRYPTED_FIELD_PLACEHOLDER,
         baseUrl: "https://api.openai.com/v1",
       },
     });
-    expect(created.body.config).not.toHaveProperty("apiKey");
     expect(created.body.id).toBeDefined();
   });
 

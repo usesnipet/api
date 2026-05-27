@@ -9,7 +9,7 @@ export class TestKnowledgeSourceConnectionDto extends PickType(
 ) {
   @ApiPropertyOptional({
     description:
-      "When editing, merges omitted encrypted config fields from this knowledge source",
+      "When editing, merges encrypted config fields from this knowledge source when omitted or sent as asterisk placeholders",
   })
   @IsOptional()
   @IsUUID()

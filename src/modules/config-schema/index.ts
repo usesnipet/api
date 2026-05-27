@@ -7,6 +7,8 @@ export {
   isEncryptedValue,
 } from "./config-schema.crypto";
 export {
+  ENCRYPTED_FIELD_PLACEHOLDER,
+  isEncryptedFieldPlaceholder,
   X_ENCRYPTED_FIELDS,
   type ConfigSchema,
   type ConfigValidationResult,

@@ -6,7 +6,7 @@ import { CreateKnowledgeIndexDto } from "./create-knowledge-index.dto";
 export class TestKnowledgeIndexConnectionDto extends PickType(CreateKnowledgeIndexDto, ["provider", "config"] as const) {
   @ApiPropertyOptional({
     description:
-      "When editing, merges omitted encrypted config fields from this knowledge index",
+      "When editing, merges encrypted config fields from this knowledge index when omitted or sent as asterisk placeholders",
   })
   @IsOptional()
   @IsUUID()

@@ -1,5 +1,5 @@
 import { ConfigSchemaService } from "@/modules/config-schema";
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable, Logger, UnprocessableEntityException } from "@nestjs/common";
 
 import { TestConnectionResponseDto } from "./dto/test-connection-respose.dto";
 import { ProviderCatalogEntryModel } from "./model";
@@ -8,6 +8,7 @@ import { Provider, ProviderDefinition } from "./provider.types";
 
 @Injectable()
 export class ProviderConfigService<TDefinition extends ProviderDefinition = ProviderDefinition> {
+  private readonly logger = new Logger(ProviderConfigService.name);
   constructor(
     protected readonly configSchema: ConfigSchemaService
   ) {}
@@ -42,10 +43,21 @@ export class ProviderConfigService<TDefinition extends ProviderDefinition = Prov
   prepareForResponse(registry: ProviderRegistry<TDefinition>, providerId: string, stored: Record<string, unknown>): Record<string, unknown> {
     this.assertKnown(registry, providerId);
     const definition = this.getDefinition(registry, providerId);
-    return this.configSchema.omitEncryptedFields(
+    return this.configSchema.maskEncryptedFieldsForResponse(
       definition.configSchema,
       stored
     );
+  }
+
+  prepareForUpdate(
+    registry: ProviderRegistry<TDefinition>,
+    providerId: string,
+    stored: Record<string, unknown>,
+    patch: Record<string, unknown>
+  ): Record<string, unknown> {
+    const storedPlain = this.prepareForUse(registry, providerId, stored);
+    const merged = this.mergePlainConfig(registry, providerId, storedPlain, patch);
+    return this.prepareForStorage(registry, providerId, merged);
   }
 
   prepareForUse(registry: ProviderRegistry<TDefinition>, providerId: string, stored: Record<string, unknown>): Record<string, unknown> {
@@ -102,14 +114,8 @@ export class ProviderConfigService<TDefinition extends ProviderDefinition = Prov
       await provider.testConnection();
       return new TestConnectionResponseDto(Date.now() - startTime);
     } catch (error) {
-      throw new UnprocessableEntityException(this.formatConnectionError(error));
+      this.logger.error(error);
+      throw new UnprocessableEntityException(error.message);
     }
-  }
-
-  private formatConnectionError(error: unknown): string {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-    return "Connection test failed";
   }
 }

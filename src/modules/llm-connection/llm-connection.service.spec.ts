@@ -1,5 +1,5 @@
 import { ProviderConfigService } from "@/common/provider/provider-config.service";
-import { ConfigSchemaService } from "@/modules/config-schema";
+import { ConfigSchemaService, ENCRYPTED_FIELD_PLACEHOLDER } from "@/modules/config-schema";
 
 import { LlmConnectionService } from "./llm-connection.service";
 import { LlmProviderRegistry } from "./providers/llm-provider.registry";
@@ -10,7 +10,7 @@ describe("LlmConnectionService", () => {
   const providerConfigService = new ProviderConfigService(configSchema);
   const llmProviderRegistry = new LlmProviderRegistry();
 
-  it("toModel omits encrypted config fields", () => {
+  it("toModel masks encrypted config fields with a placeholder", () => {
     const stored = configSchema.prepareForStorage(openAiLlmConfigSchema, {
       apiKey: "sk-test-key",
       baseUrl: "https://api.openai.com/v1",
@@ -45,8 +45,8 @@ describe("LlmConnectionService", () => {
     });
 
     expect(model.config).toEqual({
+      apiKey: ENCRYPTED_FIELD_PLACEHOLDER,
       baseUrl: "https://api.openai.com/v1",
     });
-    expect(model.config).not.toHaveProperty("apiKey");
   });
 });

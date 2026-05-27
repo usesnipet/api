@@ -104,9 +104,10 @@ export class KnowledgeSourceService extends BaseService {
     if (rest.description !== undefined) values.description = rest.description;
     if (rest.provider !== undefined) values.provider = rest.provider;
     if (rest.config !== undefined) {
-      values.config = this.providerConfigService.prepareForStorage(
+      values.config = this.providerConfigService.prepareForUpdate(
         this.sourceProviderRegistry,
         provider,
+        existing.config,
         rest.config
       );
     }
