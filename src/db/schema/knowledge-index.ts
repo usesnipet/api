@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { jsonb, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { llmConnection } from "./llm-connection";
@@ -19,3 +20,7 @@ export const knowledgeIndex = pgTable("knowledge_index", {
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export const knowledgeIndexRelations = relations(knowledgeIndex, () => ({}));
+
+export type KnowledgeIndexRow = typeof knowledgeIndex.$inferSelect;
