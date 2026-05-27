@@ -1389,11 +1389,6 @@
             "type": "string",
             "example": "pgvector"
           },
-          "llmConnectionId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
-          },
           "config": {
             "type": "object",
             "additionalProperties": true,
@@ -1464,11 +1459,6 @@
             "type": "string",
             "example": "pgvector"
           },
-          "llmConnectionId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
-          },
           "config": {
             "type": "object",
             "additionalProperties": true,
@@ -1494,11 +1484,6 @@
           "provider": {
             "type": "string",
             "example": "pgvector"
-          },
-          "llmConnectionId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
           },
           "config": {
             "type": "object",
