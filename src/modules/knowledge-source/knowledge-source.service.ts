@@ -1,10 +1,9 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
-import { buildProviderCatalog } from "@/common/provider";
+import { ProviderConfigService } from "@/common/provider/provider-config.service";
 import { knowledgeSource as knowledgeSourceTable, KnowledgeSourceRow } from "@/db/schema/knowledge-source";
 import { sourceItem } from "@/db/schema/source-item";
-import { ConfigSchemaService } from "@/modules/config-schema";
-import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { eq, inArray } from "drizzle-orm";
 
 import { CreateKnowledgeSourceDto } from "./dto/create-knowledge-source.dto";
@@ -17,11 +16,12 @@ import { KnowledgeSource } from "./model/knowledge-source.model";
 import { ProviderCatalogEntryModel } from "./model/provider-catalog-entry.model";
 import { SourceProviderFactory } from "./providers/source-provider.factory";
 import { SourceProviderRegistry } from "./providers/source-provider.registry";
+import { SourceProviderDefinition } from "./providers/source-provider.types";
 
 @Injectable()
 export class KnowledgeSourceService extends BaseService {
   constructor(
-    private readonly configSchema: ConfigSchemaService,
+    private readonly providerConfigService: ProviderConfigService<SourceProviderDefinition>,
     private readonly sourceProviderRegistry: SourceProviderRegistry,
     private readonly sourceProviderFactory: SourceProviderFactory
   ) {
@@ -29,7 +29,7 @@ export class KnowledgeSourceService extends BaseService {
   }
 
   listProviders(): ProviderCatalogEntryModel[] {
-    return buildProviderCatalog(this.sourceProviderRegistry).map(
+    return this.providerConfigService.listCatalog(this.sourceProviderRegistry).map(
       (entry) => new ProviderCatalogEntryModel(entry)
     );
   }
@@ -59,10 +59,9 @@ export class KnowledgeSourceService extends BaseService {
     dto: CreateKnowledgeSourceDto,
     opts?: CreateOpts
   ): Promise<KnowledgeSource> {
-    this.sourceProviderRegistry.assertKnown(dto.provider);
-    const definition = this.sourceProviderRegistry.get(dto.provider);
-    const storedConfig = this.configSchema.prepareForStorage(
-      definition.configSchema,
+    const config = this.providerConfigService.prepareForStorage(
+      this.sourceProviderRegistry,
+      dto.provider,
       dto.config
     );
 
@@ -70,7 +69,7 @@ export class KnowledgeSourceService extends BaseService {
       name: dto.name,
       description: dto.description,
       provider: dto.provider,
-      config: storedConfig,
+      config,
     }).returning();
 
     return this.toModel(row);
@@ -96,18 +95,21 @@ export class KnowledgeSourceService extends BaseService {
 
     const provider = rest.provider ?? existing.provider;
     if (rest.provider !== undefined) {
-      this.sourceProviderRegistry.assertKnown(rest.provider);
+      this.providerConfigService.assertKnown(
+        this.sourceProviderRegistry,
+        rest.provider
+      );
     }
 
-    const definition = this.sourceProviderRegistry.get(provider);
     const values: Partial<typeof knowledgeSourceTable.$inferInsert> = {};
 
     if (rest.name !== undefined) values.name = rest.name;
     if (rest.description !== undefined) values.description = rest.description;
     if (rest.provider !== undefined) values.provider = rest.provider;
     if (rest.config !== undefined) {
-      values.config = this.configSchema.prepareForStorage(
-        definition.configSchema,
+      values.config = this.providerConfigService.prepareForStorage(
+        this.sourceProviderRegistry,
+        provider,
         rest.config
       );
     }
@@ -124,21 +126,21 @@ export class KnowledgeSourceService extends BaseService {
   async testConnection(
     dto: TestKnowledgeSourceConnectionDto
   ): Promise<TestKnowledgeSourceConnectionResponseDto> {
-    const startTime = Date.now();
-    this.sourceProviderRegistry.assertKnown(dto.provider);
-    const plainConfig = await this.resolvePlainConfigForTest(dto);
-    const provider = this.sourceProviderFactory.createFromPlain(
+    const storedConfig = await this.resolveStoredConfigForConnectionTest(dto);
+    const plainConfig = this.providerConfigService.resolvePlainConfigForTest(
+      this.sourceProviderRegistry,
+      dto.provider,
+      dto.config,
+      storedConfig
+    );
+    const result = await this.providerConfigService.testConnection(
+      this.sourceProviderRegistry,
+      this.sourceProviderFactory,
       dto.provider,
       plainConfig
     );
 
-    try {
-      await provider.testConnection();
-      const endTime = Date.now();
-      return new TestKnowledgeSourceConnectionResponseDto(endTime - startTime);
-    } catch (error) {
-      throw new UnprocessableEntityException(this.formatConnectionError(error));
-    }
+    return new TestKnowledgeSourceConnectionResponseDto(result.duration);
   }
 
   async delete(id: string, opts?: DeleteOpts): Promise<void> {
@@ -171,16 +173,11 @@ export class KnowledgeSourceService extends BaseService {
     return new Set(rows.map((row) => row.knowledgeSourceId));
   }
 
-  private async resolvePlainConfigForTest(
+  private async resolveStoredConfigForConnectionTest(
     dto: TestKnowledgeSourceConnectionDto,
     opts?: ReadOpts
-  ): Promise<Record<string, unknown>> {
-    const definition = this.sourceProviderRegistry.get(dto.provider);
-
-    if (!dto.knowledgeSourceId) {
-      this.configSchema.assertValid(definition.configSchema, dto.config);
-      return dto.config;
-    }
+  ): Promise<Record<string, unknown> | undefined> {
+    if (!dto.knowledgeSourceId) return undefined;
 
     const [existing] = await this.db(opts)
       .select()
@@ -194,35 +191,16 @@ export class KnowledgeSourceService extends BaseService {
       );
     }
 
-    if (existing.provider !== dto.provider) {
-      this.configSchema.assertValid(definition.configSchema, dto.config);
-      return dto.config;
-    }
+    if (existing.provider !== dto.provider) return undefined;
 
-    const storedPlain = this.configSchema.prepareForUse(
-      definition.configSchema,
-      existing.config as Record<string, unknown>
-    );
-
-    return this.configSchema.mergePlainConfig(
-      definition.configSchema,
-      storedPlain,
-      dto.config
-    );
-  }
-
-  private formatConnectionError(error: unknown): string {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-    return "Connection test failed";
+    return existing.config;
   }
 
   private toModel(row: KnowledgeSourceRow): KnowledgeSource {
-    const definition = this.sourceProviderRegistry.get(row.provider);
-    const config = this.configSchema.omitEncryptedFields(
-      definition.configSchema,
-      row.config as Record<string, unknown>
+    const config = this.providerConfigService.prepareForResponse(
+      this.sourceProviderRegistry,
+      row.provider,
+      row.config
     );
     return KnowledgeSource.fromRow(row, config);
   }

@@ -6,6 +6,7 @@ import { APP_INTERCEPTOR } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
 
 import { AppController } from "./app.controller";
+import { ProviderModule } from "./common/provider/provider.module";
 import { schemas } from "./db";
 import { env } from "./env";
 import { ApiKeyModule } from "./modules/api-key/api-key.module";
@@ -17,6 +18,7 @@ import { KnowledgeSourceModule } from "./modules/knowledge-source/knowledge-sour
 @Module({
   controllers: [AppController],
   imports: [
+    ProviderModule.forRoot(),
     ScheduleModule.forRoot(),
     ConfigSchemaModule,
     ApiKeyModule,

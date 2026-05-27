@@ -6,7 +6,7 @@ export const knowledgeSource = pgTable("knowledge_source", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description").notNull(),
   provider: varchar("provider", { length: 255 }).notNull(),
-  config: jsonb("config").notNull().default({}),
+  config: jsonb("config").notNull().default({}).$type<Record<string, unknown>>(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

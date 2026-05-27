@@ -1,3 +1,5 @@
+import type { Provider } from "@/common/provider";
+
 export interface SourceItemDescriptor {
   externalId: string;
   hash: string;
@@ -5,8 +7,7 @@ export interface SourceItemDescriptor {
   metadata: Record<string, unknown>;
 }
 
-export interface SourceProvider {
-  testConnection(): Promise<void>;
+export interface SourceProvider extends Provider {
   listItems(options?: { cursor?: string }): AsyncIterable<SourceItemDescriptor>;
   readItem(externalId: string): Promise<{
     content: Buffer;

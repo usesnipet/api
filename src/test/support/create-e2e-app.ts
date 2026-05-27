@@ -1,3 +1,4 @@
+import { ProviderModule } from "@/common/provider/provider.module";
 import { schemas } from "@/db";
 import { ApiKeyModule } from "@/modules/api-key/api-key.module";
 import { ConfigSchemaModule } from "@/modules/config-schema";
@@ -16,6 +17,7 @@ export async function buildE2EApp(connectionString: string): Promise<INestApplic
       ConfigSchemaModule,
       ApiKeyModule,
       KnowledgeSourceModule,
+      ProviderModule.forRoot(),
     ],
   }).compile();
 

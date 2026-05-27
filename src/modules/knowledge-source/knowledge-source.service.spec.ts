@@ -1,3 +1,4 @@
+import { ProviderConfigService } from "@/common/provider/provider-config.service";
 import { ConfigSchemaService } from "@/modules/config-schema";
 
 import { KnowledgeSourceService } from "./knowledge-source.service";
@@ -6,6 +7,7 @@ import { s3SourceConfigSchema } from "./providers/s3/s3.definition";
 
 describe("KnowledgeSourceService", () => {
   const configSchema = new ConfigSchemaService();
+  const providerConfigService = new ProviderConfigService(configSchema);
   const sourceProviderRegistry = new SourceProviderRegistry();
 
   it("toModel omits encrypted config fields", () => {
@@ -18,7 +20,7 @@ describe("KnowledgeSourceService", () => {
 
     const service = Object.create(KnowledgeSourceService.prototype) as KnowledgeSourceService;
     Object.assign(service, {
-      configSchema,
+      providerConfigService,
       sourceProviderRegistry,
     });
 

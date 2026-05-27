@@ -1,3 +1,3 @@
-export { buildProviderCatalog } from "./provider-catalog";
 export { ProviderRegistry } from "./provider.registry";
-export type { ProviderCatalogEntry, ProviderDefinition } from "./provider.types";
+export type { ProviderDefinition, Provider } from "./provider.types";
+export type { TestConnectionResult } from "./provider-config.service";
