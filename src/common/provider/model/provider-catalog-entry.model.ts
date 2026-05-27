@@ -25,6 +25,9 @@ export class ProviderCatalogEntryModel {
   configSchema!: ConfigSchema;
 
   constructor(data: ProviderCatalogEntryModel) {
-    Object.assign(this, data);
+    this.id = data.id;
+    this.label = data.label;
+    this.icon = data.icon;
+    this.configSchema = data.configSchema;
   }
 }

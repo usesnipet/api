@@ -1,9 +1,4 @@
-import {
-  GetObjectCommand,
-  HeadBucketCommand,
-  ListObjectsV2Command,
-  S3Client,
-} from "@aws-sdk/client-s3";
+import { GetObjectCommand, HeadBucketCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 import type { SourceItemDescriptor, SourceProvider } from "../source-provider.interface";
 
