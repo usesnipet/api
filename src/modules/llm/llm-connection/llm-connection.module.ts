@@ -8,6 +8,6 @@ import { LlmProviderRegistry } from "./providers/llm-provider.registry";
 @Module({
   controllers: [LlmConnectionController],
   providers: [LlmConnectionService, LlmProviderRegistry, LlmProviderFactory],
-  exports: [LlmConnectionService],
+  exports: [LlmConnectionService, LlmProviderRegistry, LlmProviderFactory],
 })
 export class LlmConnectionModule {}

@@ -1,0 +1,86 @@
+import { ApiResponses } from "@/decorators/api-responses";
+import { Body, Controller, HttpCode, HttpStatus, Post, Res } from "@nestjs/common";
+import { ApiProduces, ApiTags } from "@nestjs/swagger";
+
+import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
+import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
+import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dto";
+import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
+import { StreamTextDto } from "./dto/stream-text.dto";
+import { LlmRunnerService } from "./llm-runner.service";
+
+import type { Response } from "express";
+
+@ApiTags("llm-runner")
+@Controller("llm-runner")
+export class LlmRunnerController {
+  constructor(private readonly llmRunnerService: LlmRunnerService) {}
+
+  @Post("text")
+  @HttpCode(HttpStatus.OK)
+  @ApiResponses({
+    200: { type: GenerateTextResponseDto },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  generateText(@Body() dto: GenerateTextDto): Promise<GenerateTextResponseDto> {
+    return this.llmRunnerService.generateText(dto);
+  }
+
+  @Post("embedding")
+  @HttpCode(HttpStatus.OK)
+  @ApiResponses({
+    200: { type: GenerateEmbeddingResponseDto },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  generateEmbedding(@Body() dto: GenerateEmbeddingDto): Promise<GenerateEmbeddingResponseDto> {
+    return this.llmRunnerService.generateEmbedding(dto);
+  }
+
+  @Post("stream")
+  @HttpCode(HttpStatus.OK)
+  @ApiProduces("text/event-stream")
+  @ApiResponses({
+    200: { description: "Server-sent events stream of text deltas" },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  async streamText(@Body() dto: StreamTextDto, @Res() res: Response): Promise<void> {
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders?.();
+
+    try {
+      for await (const chunk of this.llmRunnerService.streamText(dto)) {
+        res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
+      }
+      res.write("data: [DONE]\n\n");
+      res.end();
+    } catch (error) {
+      if (!res.headersSent) {
+        throw error;
+      }
+      res.write(`event: error\ndata: ${JSON.stringify({ message: String(error) })}\n\n`);
+      res.end();
+    }
+  }
+
+  @Post("video")
+  @HttpCode(HttpStatus.OK)
+  @ApiResponses({
+    200: { type: GenerateVideoResponseDto },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  generateVideo(@Body() dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
+    return this.llmRunnerService.generateVideo(dto);
+  }
+
+  @Post("audio")
+  @HttpCode(HttpStatus.OK)
+  @ApiResponses({
+    200: { type: GenerateAudioResponseDto },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  generateAudio(@Body() dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
+    return this.llmRunnerService.generateAudio(dto);
+  }
+}

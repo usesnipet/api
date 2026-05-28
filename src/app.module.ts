@@ -14,7 +14,7 @@ import { ConfigSchemaModule } from "./modules/config-schema";
 import { DatabaseModule } from "./modules/database/database.module";
 import { KnowledgeIndexModule } from "./modules/knowledge-index/knowledge-index.module";
 import { KnowledgeSourceModule } from "./modules/knowledge-source/knowledge-source.module";
-import { LlmConnectionModule } from "./modules/llm-connection/llm-connection.module";
+import { LlmModule } from "./modules/llm/llm.module";
 
 @Module({
   controllers: [AppController],
@@ -25,7 +25,7 @@ import { LlmConnectionModule } from "./modules/llm-connection/llm-connection.mod
     ApiKeyModule,
     KnowledgeIndexModule,
     KnowledgeSourceModule,
-    LlmConnectionModule,
+    LlmModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
       config: { schema: schemas },

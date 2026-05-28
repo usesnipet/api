@@ -1,7 +1,7 @@
 import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
 import request from "supertest";
 
-import { ENCRYPTED_FIELD_PLACEHOLDER } from "../config-schema";
+import { ENCRYPTED_FIELD_PLACEHOLDER } from "../../config-schema";
 
 export function withRootApiKey(req: request.Test): request.Test {
   return req.set("x-api-key", ROOT_TEST_API_KEY);

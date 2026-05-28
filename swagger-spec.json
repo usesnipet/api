@@ -1720,6 +1720,404 @@
           "llm-connection"
         ]
       }
+    },
+    "/api/llm-runner/text": {
+      "post": {
+        "operationId": "LlmRunnerController_generateText",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTextDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateTextResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
+    },
+    "/api/llm-runner/embedding": {
+      "post": {
+        "operationId": "LlmRunnerController_generateEmbedding",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateEmbeddingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateEmbeddingResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
+    },
+    "/api/llm-runner/stream": {
+      "post": {
+        "operationId": "LlmRunnerController_streamText",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StreamTextDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Server-sent events stream of text deltas"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
+    },
+    "/api/llm-runner/video": {
+      "post": {
+        "operationId": "LlmRunnerController_generateVideo",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateVideoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateVideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
+    },
+    "/api/llm-runner/audio": {
+      "post": {
+        "operationId": "LlmRunnerController_generateAudio",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateAudioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateAudioResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
     }
   },
   "info": {
@@ -2309,6 +2707,278 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "LlmChatMessageDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant"
+            ],
+            "example": "user"
+          },
+          "content": {
+            "type": "string",
+            "example": "Hello"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ]
+      },
+      "GenerateTextDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmChatMessageDto"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "example": 0.7
+          },
+          "maxTokens": {
+            "type": "number",
+            "example": 1024
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId",
+          "messages"
+        ]
+      },
+      "GenerateTextUsageDto": {
+        "type": "object",
+        "properties": {
+          "promptTokens": {
+            "type": "number"
+          },
+          "completionTokens": {
+            "type": "number"
+          },
+          "totalTokens": {
+            "type": "number"
+          }
+        }
+      },
+      "GenerateTextResponseDto": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/GenerateTextUsageDto"
+          }
+        },
+        "required": [
+          "modelId",
+          "content"
+        ]
+      },
+      "GenerateEmbeddingDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "input": {
+            "type": "string",
+            "example": "Snipet knowledge base"
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId",
+          "input"
+        ]
+      },
+      "GenerateEmbeddingUsageModel": {
+        "type": "object",
+        "properties": {
+          "promptTokens": {
+            "type": "number"
+          },
+          "totalTokens": {
+            "type": "number"
+          }
+        }
+      },
+      "GenerateEmbeddingResponseDto": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string"
+          },
+          "embeddings": {
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/GenerateEmbeddingUsageModel"
+          }
+        },
+        "required": [
+          "modelId",
+          "embeddings"
+        ]
+      },
+      "StreamTextDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmChatMessageDto"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "example": 0.7
+          },
+          "maxTokens": {
+            "type": "number",
+            "example": 1024
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId",
+          "messages"
+        ]
+      },
+      "GenerateVideoDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "A cat walking in the rain"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "example": 5
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId",
+          "prompt"
+        ]
+      },
+      "GenerateVideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "processing"
+            ]
+          },
+          "videoUrl": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modelId",
+          "status"
+        ]
+      },
+      "GenerateAudioDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "Read this aloud"
+          },
+          "text": {
+            "type": "string",
+            "example": "Hello from Snipet"
+          },
+          "voice": {
+            "type": "string",
+            "example": "alloy"
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId"
+        ]
+      },
+      "GenerateAudioResponseDto": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string"
+          },
+          "audioBase64": {
+            "type": "string"
+          },
+          "audioUrl": {
+            "type": "string"
+          },
+          "transcript": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modelId"
         ]
       }
     }
