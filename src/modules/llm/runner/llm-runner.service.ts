@@ -1,10 +1,11 @@
 import { BaseService, ReadOpts } from "@/common/crud";
-import { BadRequestException, Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 
+import { LlmErrorCode, LlmException } from "../provider/errors";
 import { LLMModelCapabilities } from "../provider/llm-model-type";
 import { LlmProviderFactory } from "../provider/llm-provider.factory";
 import { LlmProvider } from "../provider/llm-provider.interface";
-import { resolveEnabledLlmProvider } from "../shared/resolve-enabled-llm-provider";
+import { resolveEnabledLlmConnection } from "../shared/resolve-enabled-llm-provider";
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
@@ -23,96 +24,72 @@ export class LlmRunnerService extends BaseService {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
-    try {
-      const result = await provider.generateText!(dto.modelId, {
-        messages: dto.messages,
-        temperature: dto.temperature,
-        maxTokens: dto.maxTokens,
-      });
-      return new GenerateTextResponseDto(result);
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    const result = await provider.generateText!(dto.modelId, {
+      messages: dto.messages,
+      temperature: dto.temperature,
+      maxTokens: dto.maxTokens,
+    });
+    return new GenerateTextResponseDto(result);
   }
 
   async generateEmbedding(dto: GenerateEmbeddingDto): Promise<GenerateEmbeddingResponseDto> {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Embedding);
 
-    try {
-      const result = await provider.generateEmbedding!(dto.modelId, { input: dto.input });
-      return new GenerateEmbeddingResponseDto(result);
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    const result = await provider.generateEmbedding!(dto.modelId, { input: dto.input });
+    return new GenerateEmbeddingResponseDto(result);
   }
 
   async *streamText(dto: StreamTextDto): AsyncIterable<string> {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
-    try {
-      yield* provider.streamText!(dto.modelId, {
-        messages: dto.messages,
-        temperature: dto.temperature,
-        maxTokens: dto.maxTokens,
-      });
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    yield* provider.streamText!(dto.modelId, {
+      messages: dto.messages,
+      temperature: dto.temperature,
+      maxTokens: dto.maxTokens,
+    });
   }
 
   async generateImage(dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Image);
 
-    try {
-      const result = await provider.generateImage!(dto.modelId, {
-        prompt: dto.prompt,
-      });
-      return new GenerateImageResponseDto(result);
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    const result = await provider.generateImage!(dto.modelId, {
+      prompt: dto.prompt,
+    });
+    return new GenerateImageResponseDto(result);
   }
 
   async generateVideo(dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Video);
 
-    try {
-      const result = await provider.generateVideo!(dto.modelId, {
-        prompt: dto.prompt,
-        durationSeconds: dto.durationSeconds,
-      });
-      return new GenerateVideoResponseDto(result);
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    const result = await provider.generateVideo!(dto.modelId, {
+      prompt: dto.prompt,
+      durationSeconds: dto.durationSeconds,
+    });
+    return new GenerateVideoResponseDto(result);
   }
 
   async generateAudio(dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
     const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Audio);
 
-    try {
-      const result = await provider.generateAudio!(dto.modelId, {
-        prompt: dto.prompt,
-        text: dto.text,
-        voice: dto.voice,
-      });
-      return new GenerateAudioResponseDto(result);
-    } catch (error) {
-      throw this.toRunnerException(error);
-    }
+    const result = await provider.generateAudio!(dto.modelId, {
+      prompt: dto.prompt,
+      text: dto.text,
+      voice: dto.voice,
+    });
+    return new GenerateAudioResponseDto(result);
   }
 
   private async resolveProvider(llmConnectionId: string, opts?: ReadOpts) {
-    return resolveEnabledLlmProvider(
+    return resolveEnabledLlmConnection(
       this.db(opts),
       llmConnectionId,
       this.llmProviderFactory,
-    )
+    );
   }
 
   private async assertModelCapability(
@@ -124,17 +101,16 @@ export class LlmRunnerService extends BaseService {
     const capabilities = Array.isArray(expectedCapability) ? expectedCapability : [expectedCapability];
     for (const capability of capabilities) {
       if (!model.capabilities.includes(capability)) {
-        throw new BadRequestException(
-          `Model ${modelId} is not available for type ${capability} on this connection`
+        throw new LlmException(
+          LlmErrorCode.MODEL_CAPABILITY_MISMATCH,
+          `Model ${modelId} does not support capability ${capability}`,
+          {
+            modelId,
+            capability,
+            provider: provider.name,
+          },
         );
       }
     }
-  }
-
-  private toRunnerException(error: unknown): Error {
-    if (error instanceof Error && error.message.toLowerCase().includes("not supported")) {
-      return new UnprocessableEntityException(error.message);
-    }
-    return error instanceof Error ? error : new Error(String(error));
   }
 }

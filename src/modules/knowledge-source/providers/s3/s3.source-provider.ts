@@ -5,6 +5,7 @@ import type { SourceItemDescriptor, SourceProvider } from "../source-provider.in
 import type { S3SourceConfig } from "./s3.config";
 
 export class S3SourceProvider implements SourceProvider {
+  name = "source-s3";
   private readonly client: S3Client;
   private readonly prefix: string;
 

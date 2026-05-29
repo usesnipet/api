@@ -1,10 +1,9 @@
-import { Modality, type Content, type GenerateContentResponseUsageMetadata } from "@google/genai";
-
+import type { Content, GenerateContentResponseUsageMetadata } from "@google/genai";
 import type {
   LlmChatMessage,
   LlmTextGenerateInput,
   LlmTextGenerateResult,
-} from "../llm-provider.interface";
+} from "../../llm-provider.interface";
 
 export function buildContentsFromMessages(messages: LlmChatMessage[]): Content[] {
   return messages.map((message) => ({
@@ -46,7 +45,7 @@ export function mapUsageMetadata(usageMetadata?: GenerateContentResponseUsageMet
 
 export function buildAudioGenerateConfig(voice?: string) {
   return {
-    responseModalities: [Modality.AUDIO],
+    responseModalities: ["audio"],
     ...(voice
       ? {
           speechConfig: {

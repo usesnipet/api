@@ -1,4 +1,4 @@
-import { LLMModelCapabilities } from "../llm-model-type";
+import { LLMModelCapabilities } from "../../llm-model-type";
 
 const OPENAI_EMBEDDING_ID_PREFIXES = ["text-embedding-"] as const;
 

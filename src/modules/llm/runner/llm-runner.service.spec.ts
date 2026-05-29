@@ -1,4 +1,4 @@
-import { NotFoundException } from "@nestjs/common";
+import { LlmException } from "../provider/errors";
 
 import { LlmRunnerService } from "./llm-runner.service";
 
@@ -24,6 +24,6 @@ describe("LlmRunnerService", () => {
         modelId: "mock-text",
         messages: [{ role: "user", content: "hi" }],
       })
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(LlmException);
   });
 });

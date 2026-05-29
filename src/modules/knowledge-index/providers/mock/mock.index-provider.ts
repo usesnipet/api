@@ -3,6 +3,7 @@ import type { IndexProvider } from "../index-provider.interface";
 import type { MockIndexConfig } from "./mock.config";
 
 export class MockIndexProvider implements IndexProvider {
+  name = "index-mock";
   constructor(private readonly config: MockIndexConfig) {}
 
   async testConnection(): Promise<void> {

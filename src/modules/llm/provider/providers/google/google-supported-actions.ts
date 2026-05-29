@@ -1,4 +1,4 @@
-import { LLMModelCapabilities } from "../llm-model-type";
+import { LLMModelCapabilities } from "../../llm-model-type";
 
 export const GOOGLE_TEXT_SUPPORTED_ACTIONS = [
   "generateContent",

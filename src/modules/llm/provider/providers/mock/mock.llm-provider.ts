@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 
-import { LlmModel } from "../model/llm-model.model";
-import { LLMModelCapabilities } from "../llm-model-type";
+import { LLMModelCapabilities } from "../../llm-model-type";
+import { LlmModel } from "../../model/llm-model.model";
 
 import type {
   LlmAudioGenerateInput,
@@ -14,7 +14,7 @@ import type {
   LlmVideoGenerateInput,
   LlmVideoGenerateResult,
   LlmProvider,
-} from "../llm-provider.interface";
+} from "../../llm-provider.interface";
 import type { MockLlmConfig } from "./mock.config";
 
 const MOCK_MODELS: LlmModel[] = [
@@ -31,6 +31,7 @@ const MOCK_MODELS: LlmModel[] = [
 const MOCK_EMBEDDING_VECTOR = [0.1, 0.2, 0.3];
 
 export class MockLlmProvider implements LlmProvider {
+  name = "llm-mock";
   constructor(private readonly config: MockLlmConfig) {}
 
   async testConnection(): Promise<void> {

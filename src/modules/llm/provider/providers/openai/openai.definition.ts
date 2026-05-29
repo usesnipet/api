@@ -1,9 +1,10 @@
-import { X_ENCRYPTED_FIELDS, type ConfigSchema } from "@/modules/config-schema";
+import { X_ENCRYPTED_FIELDS } from "@/modules/config-schema";
 
-import type { LlmProviderDefinition } from "../llm-provider.types";
 import { openAiLlmIcon } from "./openai.icon";
 import { OpenAiLlmProvider } from "./openai.llm-provider";
 
+import type { ConfigSchema } from "@/modules/config-schema";
+import type { LlmProviderDefinition } from "../../llm-provider.types";
 import type { OpenAiLlmConfig } from "./openai.config";
 
 export const openAiLlmConfigSchema: ConfigSchema = {

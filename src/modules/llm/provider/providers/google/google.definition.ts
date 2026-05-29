@@ -1,9 +1,10 @@
-import { X_ENCRYPTED_FIELDS, type ConfigSchema } from "@/modules/config-schema";
+import { X_ENCRYPTED_FIELDS } from "@/modules/config-schema";
 
-import type { LlmProviderDefinition } from "../llm-provider.types";
 import { googleLlmIcon } from "./google.icon";
 import { GoogleLlmProvider } from "./google.llm-provider";
 
+import type { ConfigSchema } from "@/modules/config-schema";
+import type { LlmProviderDefinition } from "../../llm-provider.types";
 import type { GoogleLlmConfig } from "./google.config";
 
 export const googleLlmConfigSchema: ConfigSchema = {

@@ -1,9 +1,10 @@
 import { ProviderConfigService } from "@/common/provider/provider-config.service";
 import { ConfigSchemaService, ENCRYPTED_FIELD_PLACEHOLDER } from "@/modules/config-schema";
 
-import { LlmConnectionService } from "./llm-connection.service";
-import { openAiLlmConfigSchema } from "../provider/openai/openai.definition";
 import { LlmProviderRegistry } from "../provider/llm-provider.registry";
+import { openAiLlmConfigSchema } from "../provider/providers/openai/openai.definition";
+
+import { LlmConnectionService } from "./llm-connection.service";
 
 describe("LlmConnectionService", () => {
   const configSchema = new ConfigSchemaService();

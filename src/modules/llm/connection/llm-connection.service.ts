@@ -11,7 +11,7 @@ import { LlmListModelsOptions } from "../provider/llm-provider.interface";
 import { LlmProviderRegistry } from "../provider/llm-provider.registry";
 import { LlmProviderDefinition } from "../provider/llm-provider.types";
 import { LlmModel } from "../provider/model/llm-model.model";
-import { resolveEnabledLlmProvider } from "../shared/resolve-enabled-llm-provider";
+import { resolveEnabledLlmConnection } from "../shared/resolve-enabled-llm-provider";
 
 import { CreateLlmConnectionDto } from "./dto/create-llm-connection.dto";
 import { TestLlmConnectionConnectionDto } from "./dto/test-llm-connection-connection.dto";
@@ -142,7 +142,7 @@ export class LlmConnectionService extends BaseService {
 
 
   private async resolveProvider(llmConnectionId: string, opts?: ReadOpts) {
-    return resolveEnabledLlmProvider(
+    return resolveEnabledLlmConnection(
       this.db(opts),
       llmConnectionId,
       this.llmProviderFactory,

@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-import { LlmModel } from "../model/llm-model.model";
+import { LlmModel } from "../../model/llm-model.model";
 
 import {
   buildAudioGenerateConfig, buildContentsFromMessages, buildGenerateContentConfig, extractAudioBase64,
@@ -21,13 +21,14 @@ import type {
   LlmTextGenerateResult,
   LlmVideoGenerateInput,
   LlmVideoGenerateResult,
-} from "../llm-provider.interface";
+} from "../../llm-provider.interface";
 import type { GoogleLlmConfig } from "./google.config";
 
 const DEFAULT_PAGE_SIZE = 100;
 const MAX_PAGE_SIZE = 1000;
 
 export class GoogleLlmProvider implements LlmProvider {
+  name = "llm-google";
   private readonly googleGenAI: GoogleGenAI;
 
   constructor(private readonly config: GoogleLlmConfig) {

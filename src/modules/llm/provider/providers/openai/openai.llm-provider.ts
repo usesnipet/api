@@ -1,16 +1,14 @@
 import OpenAI from "openai";
 
-import { LlmModel } from "../model/llm-model.model";
+import { LlmModel } from "../../model/llm-model.model";
 
-import {
-  inferOpenAiModelCapabilities,
-  openAiModelMatchesCapability,
-} from "./openai-model-capabilities";
+import { inferOpenAiModelCapabilities, openAiModelMatchesCapability } from "./openai-model-capabilities";
 
-import type { LlmListModelsOptions, LlmProvider } from "../llm-provider.interface";
+import type { LlmListModelsOptions, LlmProvider } from "../../llm-provider.interface";
 import type { OpenAiLlmConfig } from "./openai.config";
 
 export class OpenAiLlmProvider implements LlmProvider {
+  name = "openai";
   private readonly openai: OpenAI;
 
   constructor(private readonly config: OpenAiLlmConfig) {

@@ -2,9 +2,10 @@ import { ProviderRegistry } from "@/common/provider";
 import { env } from "@/env";
 import { Injectable } from "@nestjs/common";
 
-import { googleLlmDefinition } from "./google/google.definition";
-import { mockLlmDefinition } from "./mock/mock.definition";
-import { openAiLlmDefinition } from "./openai/openai.definition";
+import { googleLlmDefinition } from "./providers/google/google.definition";
+import { mockLlmDefinition } from "./providers/mock/mock.definition";
+import { openAiLlmDefinition } from "./providers/openai/openai.definition";
+
 import type { LlmProviderDefinition } from "./llm-provider.types";
 
 @Injectable()

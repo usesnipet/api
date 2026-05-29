@@ -1,6 +1,7 @@
 import type { ConfigSchema } from "@/modules/config-schema";
 
 export interface Provider {
+  name: string;
   testConnection(): Promise<void>;
 }
 

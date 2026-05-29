@@ -3,6 +3,7 @@ import type { SourceItemDescriptor, SourceProvider } from "../source-provider.in
 import type { MockSourceConfig } from "./mock.config";
 
 export class MockSourceProvider implements SourceProvider {
+  name = "source-mock";
   constructor(private readonly config: MockSourceConfig) {}
 
   async testConnection(): Promise<void> {
