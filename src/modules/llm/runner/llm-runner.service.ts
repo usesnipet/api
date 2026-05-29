@@ -5,9 +5,9 @@ import {
 } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
-import { LLMModelCapabilities } from "../llm-connection/providers/llm-model-type";
-import { LlmProviderFactory } from "../llm-connection/providers/llm-provider.factory";
-import { LlmProvider } from "../llm-connection/providers/llm-provider.interface";
+import { LLMModelCapabilities } from "../connection/providers/llm-model-type";
+import { LlmProviderFactory } from "../connection/providers/llm-provider.factory";
+import { LlmProvider } from "../connection/providers/llm-provider.interface";
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";

@@ -1,11 +1,9 @@
-import { getE2EApp, ROOT_TEST_API_KEY } from "@/test/support/e2e-environment";
+import { getE2EApp } from "@/test/support/e2e-environment";
 import request from "supertest";
 
 import {
-  deleteAllLlmConnections,
-  mockLlmConnectionPayload,
-  withRootApiKey,
-} from "../llm-connection/llm-connection.e2e.test";
+  deleteAllLlmConnections, mockLlmConnectionPayload, withRootApiKey
+} from "../connection/llm-connection.e2e.test";
 
 async function createMockConnection(app: ReturnType<typeof getE2EApp>): Promise<string> {
   const created = await withRootApiKey(

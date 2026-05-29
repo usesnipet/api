@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
-import { LlmConnectionModule } from "../llm-connection/llm-connection.module";
+import { LlmConnectionModule } from "../connection/llm-connection.module";
+
 import { LlmRunnerController } from "./llm-runner.controller";
 import { LlmRunnerService } from "./llm-runner.service";
 
