@@ -1,13 +1,10 @@
-import { BaseService } from "@/common/crud";
-import { llmConnection as llmConnectionTable } from "@/db/schema/llm-connection";
-import {
-  BadRequestException, Injectable, NotFoundException, UnprocessableEntityException
-} from "@nestjs/common";
-import { eq } from "drizzle-orm";
+import { BaseService, ReadOpts } from "@/common/crud";
+import { BadRequestException, Injectable, UnprocessableEntityException } from "@nestjs/common";
 
-import { LLMModelCapabilities } from "../connection/providers/llm-model-type";
-import { LlmProviderFactory } from "../connection/providers/llm-provider.factory";
-import { LlmProvider } from "../connection/providers/llm-provider.interface";
+import { LLMModelCapabilities } from "../provider/llm-model-type";
+import { LlmProviderFactory } from "../provider/llm-provider.factory";
+import { LlmProvider } from "../provider/llm-provider.interface";
+import { resolveEnabledLlmProvider } from "../shared/resolve-enabled-llm-provider";
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
@@ -23,7 +20,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async generateText(dto: GenerateTextDto): Promise<GenerateTextResponseDto> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
     try {
@@ -39,7 +36,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async generateEmbedding(dto: GenerateEmbeddingDto): Promise<GenerateEmbeddingResponseDto> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Embedding);
 
     try {
@@ -51,7 +48,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async *streamText(dto: StreamTextDto): AsyncIterable<string> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
     try {
@@ -66,7 +63,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async generateImage(dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Image);
 
     try {
@@ -80,7 +77,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async generateVideo(dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Video);
 
     try {
@@ -95,7 +92,7 @@ export class LlmRunnerService extends BaseService {
   }
 
   async generateAudio(dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
-    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    const provider = await this.resolveProvider(dto.llmConnectionId);
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Audio);
 
     try {
@@ -110,22 +107,12 @@ export class LlmRunnerService extends BaseService {
     }
   }
 
-  private async resolveRunnerProvider(llmConnectionId: string) {
-    const [row] = await this.db()
-      .select()
-      .from(llmConnectionTable)
-      .where(eq(llmConnectionTable.id, llmConnectionId))
-      .limit(1);
-
-    if (!row) {
-      throw new NotFoundException(`LLM connection ${llmConnectionId} not found`);
-    }
-
-    if (!row.enabled) {
-      throw new NotFoundException(`LLM connection ${llmConnectionId} is disabled`);
-    }
-
-    return this.llmProviderFactory.createFromRow(row);
+  private async resolveProvider(llmConnectionId: string, opts?: ReadOpts) {
+    return resolveEnabledLlmProvider(
+      this.db(opts),
+      llmConnectionId,
+      this.llmProviderFactory,
+    )
   }
 
   private async assertModelCapability(

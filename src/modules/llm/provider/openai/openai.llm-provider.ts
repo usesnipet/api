@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-import { LlmModel } from "../../model/llm-model.model";
+import { LlmModel } from "../model/llm-model.model";
 
 import {
   inferOpenAiModelCapabilities,

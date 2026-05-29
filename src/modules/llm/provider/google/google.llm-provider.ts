@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-import { LlmModel } from "../../model/llm-model.model";
+import { LlmModel } from "../model/llm-model.model";
 
 import {
   buildAudioGenerateConfig, buildContentsFromMessages, buildGenerateContentConfig, extractAudioBase64,

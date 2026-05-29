@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsObject, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
-import { LLMModelCapabilities } from "../providers/llm-model-type";
+import { LLMModelCapabilities } from "../llm-model-type";
 
 export class LlmModel {
   @ApiProperty({ example: "gpt-4o" })

@@ -11,8 +11,9 @@ import { ListLlmModelsQueryDto } from "./dto/list-llm-models-query.dto";
 import { TestLlmConnectionConnectionDto } from "./dto/test-llm-connection-connection.dto";
 import { UpdateLlmConnectionDto } from "./dto/update-llm-connection.dto";
 import { LlmConnectionService } from "./llm-connection.service";
+import { LlmModel } from "../provider/model/llm-model.model";
+
 import { LlmConnection } from "./model/llm-connection.model";
-import { LlmModel } from "./model/llm-model.model";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
 

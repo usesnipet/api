@@ -1,6 +1,6 @@
 import { NotFoundException } from "@nestjs/common";
 
-import { LlmModel } from "../../model/llm-model.model";
+import { LlmModel } from "../model/llm-model.model";
 import { LLMModelCapabilities } from "../llm-model-type";
 
 import type {

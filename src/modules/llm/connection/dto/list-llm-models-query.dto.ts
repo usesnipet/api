@@ -2,7 +2,7 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional, Max, Min } from "class-validator";
 
-import { LLMModelCapabilities } from "../providers/llm-model-type";
+import { LLMModelCapabilities } from "../../provider/llm-model-type";
 
 export class ListLlmModelsQueryDto {
   @ApiPropertyOptional({ enum: LLMModelCapabilities })

@@ -1,6 +1,6 @@
 import type { Provider } from "@/common/provider";
 
-import type { LlmModel } from "../model/llm-model.model";
+import type { LlmModel } from "./model/llm-model.model";
 import type { LLMModelCapabilities } from "./llm-model-type";
 
 export interface LlmListModelsOptions {

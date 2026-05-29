@@ -6,15 +6,17 @@ import { llmConnection as llmConnectionTable, LlmConnectionRow } from "@/db/sche
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
+import { LlmProviderFactory } from "../provider/llm-provider.factory";
+import { LlmListModelsOptions } from "../provider/llm-provider.interface";
+import { LlmProviderRegistry } from "../provider/llm-provider.registry";
+import { LlmProviderDefinition } from "../provider/llm-provider.types";
+import { LlmModel } from "../provider/model/llm-model.model";
+import { resolveEnabledLlmProvider } from "../shared/resolve-enabled-llm-provider";
+
 import { CreateLlmConnectionDto } from "./dto/create-llm-connection.dto";
 import { TestLlmConnectionConnectionDto } from "./dto/test-llm-connection-connection.dto";
 import { UpdateLlmConnectionDto } from "./dto/update-llm-connection.dto";
 import { LlmConnection } from "./model/llm-connection.model";
-import { LlmModel } from "./model/llm-model.model";
-import { LlmProviderFactory } from "./providers/llm-provider.factory";
-import { LlmProviderRegistry } from "./providers/llm-provider.registry";
-import { LlmListModelsOptions } from "./providers/llm-provider.interface";
-import { LlmProviderDefinition } from "./providers/llm-provider.types";
 
 @Injectable()
 export class LlmConnectionService extends BaseService {
@@ -118,12 +120,12 @@ export class LlmConnectionService extends BaseService {
   }
 
   async listModels(id: string, options?: LlmListModelsOptions): Promise<LlmModel[]> {
-    const provider = await this.resolveEnabledProvider(id);
+    const provider = await this.resolveProvider(id);
     return provider.listModels(options);
   }
 
   async getModel(id: string, modelId: string): Promise<LlmModel> {
-    const provider = await this.resolveEnabledProvider(id);
+    const provider = await this.resolveProvider(id);
     return provider.getModel(modelId);
   }
 
@@ -138,23 +140,15 @@ export class LlmConnectionService extends BaseService {
     }
   }
 
-  private async resolveEnabledProvider(id: string) {
-    const [row] = await this.db()
-      .select()
-      .from(llmConnectionTable)
-      .where(eq(llmConnectionTable.id, id))
-      .limit(1);
 
-    if (!row) {
-      throw new NotFoundException(`LLM connection ${id} not found`);
-    }
-
-    if (!row.enabled) {
-      throw new NotFoundException(`LLM connection ${id} is disabled`);
-    }
-
-    return this.llmProviderFactory.createFromRow(row);
+  private async resolveProvider(llmConnectionId: string, opts?: ReadOpts) {
+    return resolveEnabledLlmProvider(
+      this.db(opts),
+      llmConnectionId,
+      this.llmProviderFactory,
+    )
   }
+
 
   private async resolveStoredConfigForConnectionTest(
     dto: TestLlmConnectionConnectionDto,
