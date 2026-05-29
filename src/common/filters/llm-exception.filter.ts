@@ -1,7 +1,10 @@
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from "@nestjs/common";
 
-import { httpStatusToPhrase, llmErrorCodeToHttpStatus } from "./llm-error-to-http-status";
-import { LlmException } from "./llm.exception";
+import {
+  httpStatusToPhrase,
+  llmErrorCodeToHttpStatus,
+} from "@/modules/llm/provider/errors/llm-error-to-http-status";
+import { LlmException } from "@/modules/llm/provider/errors/llm.exception";
 
 import type { Response } from "express";
 

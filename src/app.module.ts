@@ -2,7 +2,8 @@
  * @file This file defines the root module of the NestJS application.
  */
 import { ClassSerializerInterceptor, Module } from "@nestjs/common";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { LlmExceptionFilter } from "@/common/filters/llm-exception.filter";
 import { ScheduleModule } from "@nestjs/schedule";
 
 import { AppController } from "./app.controller";
@@ -35,6 +36,10 @@ import { LlmModule } from "./modules/llm/llm.module";
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: LlmExceptionFilter,
     },
   ],
 })

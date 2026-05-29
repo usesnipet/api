@@ -6,13 +6,14 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 
+import { LLM_ERROR_RESPONSES } from "../provider/errors";
+import { LlmModel } from "../provider/model/llm-model.model";
+
 import { CreateLlmConnectionDto } from "./dto/create-llm-connection.dto";
 import { ListLlmModelsQueryDto } from "./dto/list-llm-models-query.dto";
 import { TestLlmConnectionConnectionDto } from "./dto/test-llm-connection-connection.dto";
 import { UpdateLlmConnectionDto } from "./dto/update-llm-connection.dto";
 import { LlmConnectionService } from "./llm-connection.service";
-import { LlmModel } from "../provider/model/llm-model.model";
-
 import { LlmConnection } from "./model/llm-connection.model";
 
 import type { FilterOptions } from "@/common/filter/filter-options";
@@ -56,7 +57,8 @@ export class LlmConnectionController {
   @Get(":id/models/:modelId")
   @ApiResponses({
     200: { type: LlmModel },
-    400: {}, 401: {}, 404: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   getModel(
     @Param("id", ParseUUIDPipe) id: string,
@@ -69,7 +71,8 @@ export class LlmConnectionController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: TestConnectionResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   testConnection(
     @Body() dto: TestLlmConnectionConnectionDto

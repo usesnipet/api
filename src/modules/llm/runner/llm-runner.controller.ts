@@ -2,7 +2,7 @@ import { ApiResponses } from "@/decorators/api-responses";
 import { Body, Controller, HttpCode, HttpStatus, Post, Res } from "@nestjs/common";
 import { ApiProduces, ApiTags } from "@nestjs/swagger";
 
-import { LlmErrorCode, LlmException } from "../provider/errors";
+import { LlmErrorCode, LlmException, LLM_ERROR_RESPONSES } from "../provider/errors";
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
@@ -22,7 +22,8 @@ export class LlmRunnerController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: GenerateTextResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   generateText(@Body() dto: GenerateTextDto): Promise<GenerateTextResponseDto> {
     return this.llmRunnerService.generateText(dto);
@@ -32,7 +33,8 @@ export class LlmRunnerController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: GenerateEmbeddingResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   generateEmbedding(@Body() dto: GenerateEmbeddingDto): Promise<GenerateEmbeddingResponseDto> {
     return this.llmRunnerService.generateEmbedding(dto);
@@ -43,7 +45,8 @@ export class LlmRunnerController {
   @ApiProduces("text/event-stream")
   @ApiResponses({
     200: { description: "Server-sent events stream of text deltas" },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   async streamText(@Body() dto: StreamTextDto, @Res() res: Response): Promise<void> {
     res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
@@ -81,7 +84,8 @@ export class LlmRunnerController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: GenerateImageResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   generateImage(@Body() dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
     return this.llmRunnerService.generateImage(dto);
@@ -91,7 +95,8 @@ export class LlmRunnerController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: GenerateVideoResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   generateVideo(@Body() dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
     return this.llmRunnerService.generateVideo(dto);
@@ -101,7 +106,8 @@ export class LlmRunnerController {
   @HttpCode(HttpStatus.OK)
   @ApiResponses({
     200: { type: GenerateAudioResponseDto },
-    400: {}, 401: {}, 404: {}, 422: {}, 429: {}, 500: {},
+    401: {}, 500: {},
+    ...LLM_ERROR_RESPONSES,
   })
   generateAudio(@Body() dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
     return this.llmRunnerService.generateAudio(dto);
