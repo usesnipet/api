@@ -2056,6 +2056,87 @@
         ]
       }
     },
+    "/api/llm-runner/image": {
+      "post": {
+        "operationId": "LlmRunnerController_generateImage",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateImageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateImageResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-runner"
+        ]
+      }
+    },
     "/api/llm-runner/video": {
       "post": {
         "operationId": "LlmRunnerController_generateVideo",
@@ -2981,6 +3062,42 @@
           "llmConnectionId",
           "modelId",
           "messages"
+        ]
+      },
+      "GenerateImageDto": {
+        "type": "object",
+        "properties": {
+          "llmConnectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "example": "gpt-4o"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "A cat walking in the rain"
+          }
+        },
+        "required": [
+          "llmConnectionId",
+          "modelId",
+          "prompt"
+        ]
+      },
+      "GenerateImageResponseDto": {
+        "type": "object",
+        "properties": {
+          "modelId": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modelId"
         ]
       },
       "GenerateVideoDto": {

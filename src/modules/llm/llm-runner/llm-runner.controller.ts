@@ -4,13 +4,13 @@ import { ApiProduces, ApiTags } from "@nestjs/swagger";
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
+import { GenerateImageDto, GenerateImageResponseDto } from "./dto/generate-image.dto";
 import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dto";
 import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
 import { StreamTextDto } from "./dto/stream-text.dto";
 import { LlmRunnerService } from "./llm-runner.service";
 
 import type { Response } from "express";
-
 @ApiTags("llm-runner")
 @Controller("llm-runner")
 export class LlmRunnerController {
@@ -62,6 +62,16 @@ export class LlmRunnerController {
       res.write(`event: error\ndata: ${JSON.stringify({ message: String(error) })}\n\n`);
       res.end();
     }
+  }
+
+  @Post("image")
+  @HttpCode(HttpStatus.OK)
+  @ApiResponses({
+    200: { type: GenerateImageResponseDto },
+    400: {}, 401: {}, 404: {}, 422: {}, 500: {},
+  })
+  generateImage(@Body() dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
+    return this.llmRunnerService.generateImage(dto);
   }
 
   @Post("video")

@@ -16,6 +16,7 @@ export interface LlmProvider extends Provider {
   generateEmbedding?(modelId: string, input: LlmEmbeddingInput): Promise<LlmEmbeddingResult>;
   streamText?(modelId: string, input: LlmTextGenerateInput): AsyncIterable<string>;
   generateVideo?(modelId: string, input: LlmVideoGenerateInput): Promise<LlmVideoGenerateResult>;
+  generateImage?(modelId: string, input: LlmImageGenerateInput): Promise<LlmImageGenerateResult>;
   generateAudio?(modelId: string, input: LlmAudioGenerateInput): Promise<LlmAudioGenerateResult>;
 }
 
@@ -51,6 +52,16 @@ export interface LlmEmbeddingResult {
     promptTokens?: number;
     totalTokens?: number;
   };
+}
+
+export interface LlmImageGenerateInput {
+  prompt: string;
+  durationSeconds?: number;
+}
+
+export interface LlmImageGenerateResult {
+  modelId: string;
+  imageUrl?: string;
 }
 
 export interface LlmVideoGenerateInput {

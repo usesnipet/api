@@ -11,6 +11,7 @@ import { LlmProvider } from "../llm-connection/providers/llm-provider.interface"
 
 import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
+import { GenerateImageDto, GenerateImageResponseDto } from "./dto/generate-image.dto";
 import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dto";
 import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
 import { StreamTextDto } from "./dto/stream-text.dto";
@@ -59,6 +60,20 @@ export class LlmRunnerService extends BaseService {
         temperature: dto.temperature,
         maxTokens: dto.maxTokens,
       });
+    } catch (error) {
+      throw this.toRunnerException(error);
+    }
+  }
+
+  async generateImage(dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
+    const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Image);
+
+    try {
+      const result = await provider.generateImage!(dto.modelId, {
+        prompt: dto.prompt,
+      });
+      return new GenerateImageResponseDto(result);
     } catch (error) {
       throw this.toRunnerException(error);
     }
