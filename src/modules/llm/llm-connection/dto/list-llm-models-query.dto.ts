@@ -1,11 +1,27 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsIn, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEnum, IsInt, IsOptional, Max, Min } from "class-validator";
 
-import { LLM_MODEL_TYPES, type LlmModelType } from "../providers/llm-model-type";
+import { LLMModelCapabilities } from "../providers/llm-model-type";
 
 export class ListLlmModelsQueryDto {
-  @ApiPropertyOptional({ enum: LLM_MODEL_TYPES })
+  @ApiPropertyOptional({ enum: LLMModelCapabilities })
   @IsOptional()
-  @IsIn(LLM_MODEL_TYPES)
-  type?: LlmModelType;
+  @IsEnum(LLMModelCapabilities)
+  capability?: LLMModelCapabilities;
+
+  @ApiPropertyOptional({ example: 0, minimum: 0 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  skip?: number;
+
+  @ApiPropertyOptional({ example: 50, minimum: 1, maximum: 1000 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(1000)
+  take?: number;
 }

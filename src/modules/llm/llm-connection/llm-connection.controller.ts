@@ -49,7 +49,19 @@ export class LlmConnectionController {
     @Param("id", ParseUUIDPipe) id: string,
     @Query() query: ListLlmModelsQueryDto
   ): Promise<LlmModel[]> {
-    return this.llmConnectionService.listModels(id, query.type);
+    return this.llmConnectionService.listModels(id, query);
+  }
+
+  @Get(":id/models/:modelId")
+  @ApiResponses({
+    200: { type: LlmModel },
+    400: {}, 401: {}, 404: {}, 500: {},
+  })
+  getModel(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Param("modelId") modelId: string
+  ): Promise<LlmModel> {
+    return this.llmConnectionService.getModel(id, decodeURIComponent(modelId));
   }
 
   @Post("test-connection")

@@ -139,9 +139,11 @@ describe("LlmConnection (e2e)", () => {
       ),
     ).expect(200);
 
-    expect(models.body).toEqual([
-      expect.objectContaining({ modelId: "mock-text", type: "text" }),
-    ]);
+    expect(models.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ modelId: "mock-text", capabilities: ["text"] })
+      ]),
+    );
   });
 
   it("updates name and enabled flag", async () => {

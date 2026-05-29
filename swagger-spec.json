@@ -1502,7 +1502,7 @@
             }
           },
           {
-            "name": "type",
+            "name": "capability",
             "required": false,
             "in": "query",
             "schema": {
@@ -1514,6 +1514,27 @@
                 "video",
                 "audio"
               ]
+            }
+          },
+          {
+            "name": "skip",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 1000,
+              "example": 50,
+              "type": "number"
             }
           }
         ],
@@ -1527,6 +1548,84 @@
                   "items": {
                     "$ref": "#/components/schemas/LlmModel"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "llm-connection"
+        ]
+      }
+    },
+    "/api/llm-connection/{id}/models/{modelId}": {
+      "get": {
+        "operationId": "LlmConnectionController_getModel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "modelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmModel"
                 }
               }
             }
@@ -2610,16 +2709,19 @@
             "type": "string",
             "example": "gpt-4o"
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "text",
-              "embedding",
-              "image",
-              "video",
-              "audio"
-            ],
-            "example": "text"
+          "capabilities": {
+            "type": "array",
+            "example": "text",
+            "items": {
+              "type": "string",
+              "enum": [
+                "text",
+                "embedding",
+                "image",
+                "video",
+                "audio"
+              ]
+            }
           },
           "displayName": {
             "type": "string",
@@ -2632,7 +2734,7 @@
         },
         "required": [
           "modelId",
-          "type"
+          "capabilities"
         ]
       },
       "TestLlmConnectionConnectionDto": {

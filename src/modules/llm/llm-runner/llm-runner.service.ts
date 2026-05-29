@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
+import { LLMModelCapabilities } from "../llm-connection/providers/llm-model-type";
 import { LlmProviderFactory } from "../llm-connection/providers/llm-provider.factory";
 import { LlmProvider } from "../llm-connection/providers/llm-provider.interface";
 
@@ -14,8 +15,6 @@ import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dt
 import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
 import { StreamTextDto } from "./dto/stream-text.dto";
 
-import type { LlmModelType } from "../llm-connection/providers/llm-model-type";
-
 @Injectable()
 export class LlmRunnerService extends BaseService {
   constructor(private readonly llmProviderFactory: LlmProviderFactory) {
@@ -24,7 +23,7 @@ export class LlmRunnerService extends BaseService {
 
   async generateText(dto: GenerateTextDto): Promise<GenerateTextResponseDto> {
     const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
-    await this.assertModelType(provider, dto.modelId, "text");
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
     try {
       const result = await provider.generateText!(dto.modelId, {
@@ -40,7 +39,7 @@ export class LlmRunnerService extends BaseService {
 
   async generateEmbedding(dto: GenerateEmbeddingDto): Promise<GenerateEmbeddingResponseDto> {
     const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
-    await this.assertModelType(provider, dto.modelId, "embedding");
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Embedding);
 
     try {
       const result = await provider.generateEmbedding!(dto.modelId, { input: dto.input });
@@ -52,7 +51,7 @@ export class LlmRunnerService extends BaseService {
 
   async *streamText(dto: StreamTextDto): AsyncIterable<string> {
     const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
-    await this.assertModelType(provider, dto.modelId, "text");
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
     try {
       yield* provider.streamText!(dto.modelId, {
@@ -67,7 +66,7 @@ export class LlmRunnerService extends BaseService {
 
   async generateVideo(dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
     const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
-    await this.assertModelType(provider, dto.modelId, "video");
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Video);
 
     try {
       const result = await provider.generateVideo!(dto.modelId, {
@@ -82,7 +81,7 @@ export class LlmRunnerService extends BaseService {
 
   async generateAudio(dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
     const provider = await this.resolveRunnerProvider(dto.llmConnectionId);
-    await this.assertModelType(provider, dto.modelId, "audio");
+    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Audio);
 
     try {
       const result = await provider.generateAudio!(dto.modelId, {
@@ -114,16 +113,19 @@ export class LlmRunnerService extends BaseService {
     return this.llmProviderFactory.createFromRow(row);
   }
 
-  private async assertModelType(
+  private async assertModelCapability(
     provider: LlmProvider,
     modelId: string,
-    expectedType: LlmModelType
+    expectedCapability: LLMModelCapabilities | LLMModelCapabilities[]
   ): Promise<void> {
-    const models = await provider.listModels(expectedType);
-    if (!models.some((model) => model.modelId === modelId)) {
-      throw new BadRequestException(
-        `Model ${modelId} is not available for type ${expectedType} on this connection`
-      );
+    const model = await provider.getModel(modelId);
+    const capabilities = Array.isArray(expectedCapability) ? expectedCapability : [expectedCapability];
+    for (const capability of capabilities) {
+      if (!model.capabilities.includes(capability)) {
+        throw new BadRequestException(
+          `Model ${modelId} is not available for type ${capability} on this connection`
+        );
+      }
     }
   }
 

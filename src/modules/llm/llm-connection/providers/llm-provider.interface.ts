@@ -1,10 +1,17 @@
 import type { Provider } from "@/common/provider";
 
 import type { LlmModel } from "../model/llm-model.model";
-import type { LlmModelType } from "./llm-model-type";
+import type { LLMModelCapabilities } from "./llm-model-type";
+
+export interface LlmListModelsOptions {
+  capability?: LLMModelCapabilities;
+  take?: number;
+  skip?: number;
+}
 
 export interface LlmProvider extends Provider {
-  listModels(type?: LlmModelType): Promise<LlmModel[]>;
+  listModels(options?: LlmListModelsOptions): Promise<LlmModel[]>;
+  getModel(modelId: string): Promise<LlmModel>;
   generateText?(modelId: string, input: LlmTextGenerateInput): Promise<LlmTextGenerateResult>;
   generateEmbedding?(modelId: string, input: LlmEmbeddingInput): Promise<LlmEmbeddingResult>;
   streamText?(modelId: string, input: LlmTextGenerateInput): AsyncIterable<string>;

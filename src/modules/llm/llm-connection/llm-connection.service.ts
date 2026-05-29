@@ -13,9 +13,8 @@ import { LlmConnection } from "./model/llm-connection.model";
 import { LlmModel } from "./model/llm-model.model";
 import { LlmProviderFactory } from "./providers/llm-provider.factory";
 import { LlmProviderRegistry } from "./providers/llm-provider.registry";
+import { LlmListModelsOptions } from "./providers/llm-provider.interface";
 import { LlmProviderDefinition } from "./providers/llm-provider.types";
-
-import type { LlmModelType } from "./providers/llm-model-type";
 
 @Injectable()
 export class LlmConnectionService extends BaseService {
@@ -118,7 +117,28 @@ export class LlmConnectionService extends BaseService {
     );
   }
 
-  async listModels(id: string, type?: LlmModelType): Promise<LlmModel[]> {
+  async listModels(id: string, options?: LlmListModelsOptions): Promise<LlmModel[]> {
+    const provider = await this.resolveEnabledProvider(id);
+    return provider.listModels(options);
+  }
+
+  async getModel(id: string, modelId: string): Promise<LlmModel> {
+    const provider = await this.resolveEnabledProvider(id);
+    return provider.getModel(modelId);
+  }
+
+  async delete(id: string, opts?: DeleteOpts): Promise<void> {
+    const result = await this.db(opts)
+      .delete(llmConnectionTable)
+      .where(eq(llmConnectionTable.id, id))
+      .returning({ id: llmConnectionTable.id });
+
+    if (result.length === 0) {
+      throw new NotFoundException(`LLM connection ${id} not found`);
+    }
+  }
+
+  private async resolveEnabledProvider(id: string) {
     const [row] = await this.db()
       .select()
       .from(llmConnectionTable)
@@ -133,19 +153,7 @@ export class LlmConnectionService extends BaseService {
       throw new NotFoundException(`LLM connection ${id} is disabled`);
     }
 
-    const provider = this.llmProviderFactory.createFromRow(row);
-    return provider.listModels(type);
-  }
-
-  async delete(id: string, opts?: DeleteOpts): Promise<void> {
-    const result = await this.db(opts)
-      .delete(llmConnectionTable)
-      .where(eq(llmConnectionTable.id, id))
-      .returning({ id: llmConnectionTable.id });
-
-    if (result.length === 0) {
-      throw new NotFoundException(`LLM connection ${id} not found`);
-    }
+    return this.llmProviderFactory.createFromRow(row);
   }
 
   private async resolveStoredConfigForConnectionTest(
