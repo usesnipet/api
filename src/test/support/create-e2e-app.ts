@@ -7,6 +7,7 @@ import { DatabaseModule } from "@/modules/database/database.module";
 import { KnowledgeIndexModule } from "@/modules/knowledge-index/knowledge-index.module";
 import { KnowledgeSourceModule } from "@/modules/knowledge-source/knowledge-source.module";
 import { LlmModule } from "@/modules/llm/llm.module";
+import { PipelineModule } from "@/modules/pipeline/pipeline.module";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 
@@ -23,6 +24,7 @@ export async function buildE2EApp(connectionString: string): Promise<INestApplic
       KnowledgeIndexModule,
       KnowledgeSourceModule,
       LlmModule,
+      PipelineModule,
       ProviderModule.forRoot(),
     ],
   }).compile();

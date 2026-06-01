@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const pipeline = pgTable("pipeline", {
@@ -13,3 +14,7 @@ export const pipeline = pgTable("pipeline", {
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export const pipelineRelations = relations(pipeline, () => ({}));
+
+export type PipelineRow = typeof pipeline.$inferSelect;

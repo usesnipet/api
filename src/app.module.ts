@@ -17,6 +17,7 @@ import { DatabaseModule } from "./modules/database/database.module";
 import { KnowledgeIndexModule } from "./modules/knowledge-index/knowledge-index.module";
 import { KnowledgeSourceModule } from "./modules/knowledge-source/knowledge-source.module";
 import { LlmModule } from "./modules/llm/llm.module";
+import { PipelineModule } from "./modules/pipeline/pipeline.module";
 
 @Module({
   controllers: [AppController],
@@ -29,6 +30,7 @@ import { LlmModule } from "./modules/llm/llm.module";
     KnowledgeIndexModule,
     KnowledgeSourceModule,
     LlmModule,
+    PipelineModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
       config: { schema: schemas },
