@@ -15,6 +15,13 @@
       "when": 1779904513768,
       "tag": "0002_eminent_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1780347493380,
+      "tag": "0003_great_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }

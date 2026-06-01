@@ -1,6 +1,7 @@
 import { ProviderModule } from "@/common/provider/provider.module";
 import { schemas } from "@/db";
 import { ApiKeyModule } from "@/modules/api-key/api-key.module";
+import { ConversationModule } from "@/modules/conversation/conversation.module";
 import { ConfigSchemaModule } from "@/modules/config-schema";
 import { DatabaseModule } from "@/modules/database/database.module";
 import { KnowledgeIndexModule } from "@/modules/knowledge-index/knowledge-index.module";
@@ -18,6 +19,7 @@ export async function buildE2EApp(connectionString: string): Promise<INestApplic
       }),
       ConfigSchemaModule,
       ApiKeyModule,
+      ConversationModule,
       KnowledgeIndexModule,
       KnowledgeSourceModule,
       LlmModule,

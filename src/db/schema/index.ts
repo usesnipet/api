@@ -1,4 +1,6 @@
 import * as apiKeySchema from "./api-key";
+import * as conversationSchema from "./conversation";
+import * as conversationMessageSchema from "./conversation-message";
 import * as indexedItemSchema from "./indexed-item";
 import * as knowledgeIndexSchema from "./knowledge-index";
 import * as knowledgeSourceSchema from "./knowledge-source";
@@ -11,6 +13,8 @@ import * as sourceIndexSchema from "./source-index";
 import * as sourceItemSchema from "./source-item";
 
 export * from "./api-key";
+export * from "./conversation";
+export * from "./conversation-message";
 export * from "./indexed-item";
 export * from "./knowledge-index";
 export * from "./knowledge-source";
@@ -24,6 +28,8 @@ export * from "./source-item";
 
 export const schemas = {
   ...apiKeySchema,
+  ...conversationSchema,
+  ...conversationMessageSchema,
   ...indexedItemSchema,
   ...knowledgeIndexSchema,
   ...knowledgeSourceSchema,
