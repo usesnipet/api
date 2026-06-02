@@ -1,11 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsInt, IsNumber, IsOptional, Max, Min, ValidateNested } from "class-validator";
+import {
+  IsArray, IsInt, IsNumber, IsOptional, IsString, Max, Min, MinLength, ValidateNested
+} from "class-validator";
 
 import { LlmChatMessageDto } from "./llm-chat-message.dto";
 import { LlmRunBaseDto } from "./llm-run-base.dto";
 
 export class GenerateTextDto extends LlmRunBaseDto {
+  @ApiPropertyOptional({
+    example: "You are a helpful assistant. Answer the user's question with a short answer."
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  prompt?: string;
+
   @ApiProperty({ type: [LlmChatMessageDto] })
   @IsArray()
   @ValidateNested({ each: true })

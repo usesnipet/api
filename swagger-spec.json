@@ -4026,6 +4026,10 @@
             "type": "string",
             "example": "gpt-4o"
           },
+          "prompt": {
+            "type": "string",
+            "example": "You are a helpful assistant. Answer the user's question with a short answer."
+          },
           "messages": {
             "type": "array",
             "items": {
@@ -4143,6 +4147,10 @@
           "modelId": {
             "type": "string",
             "example": "gpt-4o"
+          },
+          "prompt": {
+            "type": "string",
+            "example": "You are a helpful assistant. Answer the user's question with a short answer."
           },
           "messages": {
             "type": "array",
