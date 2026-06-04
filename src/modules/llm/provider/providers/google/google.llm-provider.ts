@@ -1,11 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
-import { LlmErrorCode, LlmException } from "../../errors";
 import { LlmModel } from "../../model/llm-model.model";
 
 import {
-  buildAudioGenerateConfig, buildContentsFromMessages, buildGenerateContentConfig, extractAudioBase64,
-  mapTextGenerateResult, pollVideosOperation
+  buildContentsFromMessages,
+  buildGenerateContentConfig,
+  mapTextGenerateResult,
 } from "./google-generation";
 import { mapGoogleError } from "./google-error.mapper";
 import { mapActionsToCapabilities, modelMatchesCapability } from "./google-supported-actions";
@@ -13,16 +13,12 @@ import { mapActionsToCapabilities, modelMatchesCapability } from "./google-suppo
 import type { Model } from "@google/genai";
 
 import type {
-  LlmAudioGenerateInput,
-  LlmAudioGenerateResult,
   LlmEmbeddingInput,
   LlmEmbeddingResult,
   LlmListModelsOptions,
   LlmProvider,
   LlmTextGenerateInput,
   LlmTextGenerateResult,
-  LlmVideoGenerateInput,
-  LlmVideoGenerateResult,
 } from "../../llm-provider.interface";
 import type { GoogleErrorContext } from "./google-error.mapper";
 import type { GoogleLlmConfig } from "./google.config";
@@ -152,82 +148,6 @@ export class GoogleLlmProvider implements LlmProvider {
           usage: tokenCount !== undefined
             ? { promptTokens: tokenCount, totalTokens: tokenCount }
             : undefined,
-        };
-      },
-      { modelId },
-    );
-  }
-
-  async generateVideo(
-    modelId: string,
-    input: LlmVideoGenerateInput,
-  ): Promise<LlmVideoGenerateResult> {
-    return this.run(
-      "generateVideo",
-      async () => {
-        let operation = await this.googleGenAI.models.generateVideos({
-          model: modelId,
-          source: { prompt: input.prompt },
-          config: {
-            numberOfVideos: 1,
-            ...(input.durationSeconds !== undefined
-              ? { durationSeconds: input.durationSeconds }
-              : {}),
-          },
-        });
-
-        operation = await pollVideosOperation(
-          operation,
-          (current) => this.googleGenAI.operations.getVideosOperation({ operation: current }),
-        );
-
-        if (!operation.done) {
-          return {
-            modelId,
-            status: "processing",
-            jobId: operation.name,
-          };
-        }
-
-        const video = operation.response?.generatedVideos?.[0]?.video;
-
-        return {
-          modelId,
-          status: "completed",
-          videoUrl: video?.uri,
-          jobId: operation.name,
-        };
-      },
-      { modelId },
-    );
-  }
-
-  async generateAudio(
-    modelId: string,
-    input: LlmAudioGenerateInput,
-  ): Promise<LlmAudioGenerateResult> {
-    const text = input.text ?? input.prompt;
-    if (!text) {
-      throw new LlmException(
-        LlmErrorCode.INVALID_REQUEST,
-        "Text or prompt is required for audio generation",
-        { provider: this.name, modelId },
-      );
-    }
-
-    return this.run(
-      "generateAudio",
-      async () => {
-        const result = await this.googleGenAI.models.generateContent({
-          model: modelId,
-          contents: text,
-          config: buildAudioGenerateConfig(input.voice),
-        });
-
-        return {
-          modelId,
-          transcript: text,
-          audioBase64: extractAudioBase64(result),
         };
       },
       { modelId },

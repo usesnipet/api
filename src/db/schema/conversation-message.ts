@@ -10,12 +10,7 @@ export const conversationMessageRoleEnum = pgEnum("conversation_message_role", [
   "tool",
 ]);
 
-export type ContentPart =
-  | { type: "text"; text: string }
-  | { type: "image"; mediaId: string; mimeType?: string }
-  | { type: "audio"; mediaId: string; mimeType?: string }
-  | { type: "video"; mediaId: string; mimeType?: string }
-  | { type: "file"; mediaId: string; mimeType: string; name?: string };
+export type ContentPart = { type: "text"; text: string };
 
 export const conversationMessage = pgTable("conversation_message", {
   id: uuid("id").primaryKey().defaultRandom(),

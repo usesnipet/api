@@ -15,21 +15,12 @@ export const GOOGLE_EMBEDDING_SUPPORTED_ACTIONS = [
   "asyncBatchEmbedContent",
 ] as const;
 
-export const GOOGLE_IMAGE_SUPPORTED_ACTIONS = ["predict"] as const;
-
-export const GOOGLE_VIDEO_SUPPORTED_ACTIONS = ["predictLongRunning"] as const;
-
-export const GOOGLE_AUDIO_SUPPORTED_ACTIONS = ["bidiGenerateContent"] as const;
-
 const CAPABILITY_ACTIONS: ReadonlyArray<{
   capability: LLMModelCapabilities;
   actions: readonly string[];
 }> = [
   { capability: LLMModelCapabilities.Text, actions: GOOGLE_TEXT_SUPPORTED_ACTIONS },
   { capability: LLMModelCapabilities.Embedding, actions: GOOGLE_EMBEDDING_SUPPORTED_ACTIONS },
-  { capability: LLMModelCapabilities.Image, actions: GOOGLE_IMAGE_SUPPORTED_ACTIONS },
-  { capability: LLMModelCapabilities.Video, actions: GOOGLE_VIDEO_SUPPORTED_ACTIONS },
-  { capability: LLMModelCapabilities.Audio, actions: GOOGLE_AUDIO_SUPPORTED_ACTIONS },
 ];
 
 export function mapActionsToCapabilities(

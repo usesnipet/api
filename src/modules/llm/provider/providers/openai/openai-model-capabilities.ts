@@ -2,12 +2,6 @@ import { LLMModelCapabilities } from "../../llm-model-type";
 
 const OPENAI_EMBEDDING_ID_PREFIXES = ["text-embedding-"] as const;
 
-const OPENAI_IMAGE_ID_PREFIXES = ["dall-e-", "gpt-image"] as const;
-
-const OPENAI_AUDIO_ID_PREFIXES = ["tts-"] as const;
-
-const OPENAI_VIDEO_ID_PREFIXES = ["sora"] as const;
-
 const OPENAI_TEXT_ID_PREFIXES = ["gpt-", "chatgpt-", "ft:gpt-"] as const;
 
 const OPENAI_TEXT_ID_EXACT = ["o1", "o3", "o4"] as const;
@@ -29,19 +23,6 @@ const CAPABILITY_RULES: ReadonlyArray<{
   {
     capability: LLMModelCapabilities.Embedding,
     matches: (modelId) => hasPrefix(modelId, OPENAI_EMBEDDING_ID_PREFIXES),
-  },
-  {
-    capability: LLMModelCapabilities.Image,
-    matches: (modelId) => hasPrefix(modelId, OPENAI_IMAGE_ID_PREFIXES),
-  },
-  {
-    capability: LLMModelCapabilities.Audio,
-    matches: (modelId) =>
-      hasPrefix(modelId, OPENAI_AUDIO_ID_PREFIXES) || modelId.includes("audio"),
-  },
-  {
-    capability: LLMModelCapabilities.Video,
-    matches: (modelId) => hasPrefix(modelId, OPENAI_VIDEO_ID_PREFIXES),
   },
   {
     capability: LLMModelCapabilities.Text,

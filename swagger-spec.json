@@ -1819,10 +1819,7 @@
               "type": "string",
               "enum": [
                 "text",
-                "embedding",
-                "image",
-                "video",
-                "audio"
+                "embedding"
               ]
             }
           },
@@ -2576,369 +2573,6 @@
         ]
       }
     },
-    "/api/llm-runner/image": {
-      "post": {
-        "operationId": "LlmRunnerController_generateImage",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateImageDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateImageResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "llm-runner"
-        ]
-      }
-    },
-    "/api/llm-runner/video": {
-      "post": {
-        "operationId": "LlmRunnerController_generateVideo",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateVideoDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateVideoResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "llm-runner"
-        ]
-      }
-    },
-    "/api/llm-runner/audio": {
-      "post": {
-        "operationId": "LlmRunnerController_generateAudio",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateAudioDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateAudioResponseDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          },
-          "504": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LlmErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "llm-runner"
-        ]
-      }
-    },
     "/api/pipeline": {
       "get": {
         "operationId": "PipelineController_find",
@@ -3246,6 +2880,140 @@
         },
         "tags": [
           "pipeline"
+        ]
+      }
+    },
+    "/api/pipeline-run/validate": {
+      "post": {
+        "operationId": "PipelineRunController_validate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePipelineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "pipeline-run"
+        ]
+      }
+    },
+    "/api/pipeline-run/{id}/run": {
+      "post": {
+        "operationId": "PipelineRunController_run",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunPipelineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunPipelineResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "pipeline-run"
         ]
       }
     }
@@ -3814,10 +3582,7 @@
               "type": "string",
               "enum": [
                 "text",
-                "embedding",
-                "image",
-                "video",
-                "audio"
+                "embedding"
               ]
             }
           },
@@ -4173,142 +3938,6 @@
           "messages"
         ]
       },
-      "GenerateImageDto": {
-        "type": "object",
-        "properties": {
-          "llmConnectionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "modelId": {
-            "type": "string",
-            "example": "gpt-4o"
-          },
-          "prompt": {
-            "type": "string",
-            "example": "A cat walking in the rain"
-          }
-        },
-        "required": [
-          "llmConnectionId",
-          "modelId",
-          "prompt"
-        ]
-      },
-      "GenerateImageResponseDto": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string"
-          },
-          "imageUrl": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "modelId"
-        ]
-      },
-      "GenerateVideoDto": {
-        "type": "object",
-        "properties": {
-          "llmConnectionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "modelId": {
-            "type": "string",
-            "example": "gpt-4o"
-          },
-          "prompt": {
-            "type": "string",
-            "example": "A cat walking in the rain"
-          },
-          "durationSeconds": {
-            "type": "number",
-            "example": 5
-          }
-        },
-        "required": [
-          "llmConnectionId",
-          "modelId",
-          "prompt"
-        ]
-      },
-      "GenerateVideoResponseDto": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "completed",
-              "processing"
-            ]
-          },
-          "videoUrl": {
-            "type": "string"
-          },
-          "jobId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "modelId",
-          "status"
-        ]
-      },
-      "GenerateAudioDto": {
-        "type": "object",
-        "properties": {
-          "llmConnectionId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "modelId": {
-            "type": "string",
-            "example": "gpt-4o"
-          },
-          "prompt": {
-            "type": "string",
-            "example": "Read this aloud"
-          },
-          "text": {
-            "type": "string",
-            "example": "Hello from Snipet"
-          },
-          "voice": {
-            "type": "string",
-            "example": "alloy"
-          }
-        },
-        "required": [
-          "llmConnectionId",
-          "modelId"
-        ]
-      },
-      "GenerateAudioResponseDto": {
-        "type": "object",
-        "properties": {
-          "modelId": {
-            "type": "string"
-          },
-          "audioBase64": {
-            "type": "string"
-          },
-          "audioUrl": {
-            "type": "string"
-          },
-          "transcript": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "modelId"
-        ]
-      },
       "Pipeline": {
         "type": "object",
         "properties": {
@@ -4385,6 +4014,47 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "ValidatePipelineDto": {
+        "type": "object",
+        "properties": {
+          "definition": {
+            "type": "string",
+            "description": "Pipeline definition as YAML (parsed at run time)",
+            "example": "steps:\n  - use: llm\n    connectionId: \"{{input.llmConnectionId}}\""
+          }
+        },
+        "required": [
+          "definition"
+        ]
+      },
+      "RunPipelineDto": {
+        "type": "object",
+        "properties": {
+          "inputs": {
+            "type": "object",
+            "description": "Input values used to resolve {{input.*}} placeholders in the pipeline definition",
+            "example": {
+              "message": "Hello",
+              "llmConnectionId": "e5f6a7b8-c9d0-1234-efab-567890123456"
+            }
+          }
+        },
+        "required": [
+          "inputs"
+        ]
+      },
+      "RunPipelineResponseDto": {
+        "type": "object",
+        "properties": {
+          "definition": {
+            "type": "object",
+            "description": "Pipeline definition with {{input.*}} placeholders resolved"
+          }
+        },
+        "required": [
+          "definition"
         ]
       }
     }

@@ -4,11 +4,8 @@ import { ApiProduces, ApiTags } from "@nestjs/swagger";
 
 import { LlmErrorCode, LlmException, LLM_ERROR_RESPONSES } from "../provider/errors";
 
-import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
-import { GenerateImageDto, GenerateImageResponseDto } from "./dto/generate-image.dto";
 import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dto";
-import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
 import { StreamTextDto } from "./dto/stream-text.dto";
 import { LlmRunnerService } from "./llm-runner.service";
 
@@ -78,38 +75,5 @@ export class LlmRunnerController {
       res.write(`event: error\ndata: ${JSON.stringify(payload)}\n\n`);
       res.end();
     }
-  }
-
-  @Post("image")
-  @HttpCode(HttpStatus.OK)
-  @ApiResponses({
-    200: { type: GenerateImageResponseDto },
-    401: {}, 500: {},
-    ...LLM_ERROR_RESPONSES,
-  })
-  generateImage(@Body() dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
-    return this.llmRunnerService.generateImage(dto);
-  }
-
-  @Post("video")
-  @HttpCode(HttpStatus.OK)
-  @ApiResponses({
-    200: { type: GenerateVideoResponseDto },
-    401: {}, 500: {},
-    ...LLM_ERROR_RESPONSES,
-  })
-  generateVideo(@Body() dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
-    return this.llmRunnerService.generateVideo(dto);
-  }
-
-  @Post("audio")
-  @HttpCode(HttpStatus.OK)
-  @ApiResponses({
-    200: { type: GenerateAudioResponseDto },
-    401: {}, 500: {},
-    ...LLM_ERROR_RESPONSES,
-  })
-  generateAudio(@Body() dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
-    return this.llmRunnerService.generateAudio(dto);
   }
 }

@@ -15,9 +15,6 @@ export interface LlmProvider extends Provider {
   generateText?(modelId: string, input: LlmTextGenerateInput): Promise<LlmTextGenerateResult>;
   generateEmbedding?(modelId: string, input: LlmEmbeddingInput): Promise<LlmEmbeddingResult>;
   streamText?(modelId: string, input: LlmTextGenerateInput): AsyncIterable<string>;
-  generateVideo?(modelId: string, input: LlmVideoGenerateInput): Promise<LlmVideoGenerateResult>;
-  generateImage?(modelId: string, input: LlmImageGenerateInput): Promise<LlmImageGenerateResult>;
-  generateAudio?(modelId: string, input: LlmAudioGenerateInput): Promise<LlmAudioGenerateResult>;
 }
 
 export interface LlmChatMessage {
@@ -26,6 +23,7 @@ export interface LlmChatMessage {
 }
 
 export interface LlmTextGenerateInput {
+  prompt?: string;
   messages: LlmChatMessage[];
   temperature?: number;
   maxTokens?: number;
@@ -52,39 +50,4 @@ export interface LlmEmbeddingResult {
     promptTokens?: number;
     totalTokens?: number;
   };
-}
-
-export interface LlmImageGenerateInput {
-  prompt: string;
-  durationSeconds?: number;
-}
-
-export interface LlmImageGenerateResult {
-  modelId: string;
-  imageUrl?: string;
-}
-
-export interface LlmVideoGenerateInput {
-  prompt: string;
-  durationSeconds?: number;
-}
-
-export interface LlmVideoGenerateResult {
-  modelId: string;
-  videoUrl?: string;
-  jobId?: string;
-  status: "completed" | "processing";
-}
-
-export interface LlmAudioGenerateInput {
-  prompt?: string;
-  text?: string;
-  voice?: string;
-}
-
-export interface LlmAudioGenerateResult {
-  modelId: string;
-  audioBase64?: string;
-  audioUrl?: string;
-  transcript?: string;
 }

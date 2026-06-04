@@ -87,34 +87,4 @@ describe("LlmRunner (e2e)", () => {
     expect(response.text).toContain("[DONE]");
   });
 
-  it("generates video and audio with mock provider", async () => {
-    const app = getE2EApp();
-    const llmConnectionId = await createMockConnection(app);
-
-    const video = await withRootApiKey(
-      request(app.getHttpServer()).post("/api/llm-runner/video"),
-    )
-      .send({
-        llmConnectionId,
-        modelId: "mock-video",
-        prompt: "sunset",
-      })
-      .expect(200);
-
-    expect(video.body.status).toBe("completed");
-    expect(video.body.videoUrl).toContain("mock.local");
-
-    const audio = await withRootApiKey(
-      request(app.getHttpServer()).post("/api/llm-runner/audio"),
-    )
-      .send({
-        llmConnectionId,
-        modelId: "mock-audio",
-        text: "hello",
-      })
-      .expect(200);
-
-    expect(audio.body.transcript).toBe("hello");
-    expect(audio.body.audioBase64).toBeTruthy();
-  });
 });

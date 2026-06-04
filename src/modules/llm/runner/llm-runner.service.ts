@@ -7,11 +7,8 @@ import { LlmProviderFactory } from "../provider/llm-provider.factory";
 import { LlmProvider } from "../provider/llm-provider.interface";
 import { resolveEnabledLlmConnection } from "../shared/resolve-enabled-llm-provider";
 
-import { GenerateAudioDto, GenerateAudioResponseDto } from "./dto/generate-audio.dto";
 import { GenerateEmbeddingDto, GenerateEmbeddingResponseDto } from "./dto/generate-embedding.dto";
-import { GenerateImageDto, GenerateImageResponseDto } from "./dto/generate-image.dto";
 import { GenerateTextDto, GenerateTextResponseDto } from "./dto/generate-text.dto";
-import { GenerateVideoDto, GenerateVideoResponseDto } from "./dto/generate-video.dto";
 import { StreamTextDto } from "./dto/stream-text.dto";
 
 @Injectable()
@@ -25,6 +22,7 @@ export class LlmRunnerService extends BaseService {
     await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Text);
 
     const result = await provider.generateText!(dto.modelId, {
+      prompt: dto.prompt,
       messages: dto.messages,
       temperature: dto.temperature,
       maxTokens: dto.maxTokens,
@@ -49,39 +47,6 @@ export class LlmRunnerService extends BaseService {
       temperature: dto.temperature,
       maxTokens: dto.maxTokens,
     });
-  }
-
-  async generateImage(dto: GenerateImageDto): Promise<GenerateImageResponseDto> {
-    const provider = await this.resolveProvider(dto.llmConnectionId);
-    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Image);
-
-    const result = await provider.generateImage!(dto.modelId, {
-      prompt: dto.prompt,
-    });
-    return new GenerateImageResponseDto(result);
-  }
-
-  async generateVideo(dto: GenerateVideoDto): Promise<GenerateVideoResponseDto> {
-    const provider = await this.resolveProvider(dto.llmConnectionId);
-    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Video);
-
-    const result = await provider.generateVideo!(dto.modelId, {
-      prompt: dto.prompt,
-      durationSeconds: dto.durationSeconds,
-    });
-    return new GenerateVideoResponseDto(result);
-  }
-
-  async generateAudio(dto: GenerateAudioDto): Promise<GenerateAudioResponseDto> {
-    const provider = await this.resolveProvider(dto.llmConnectionId);
-    await this.assertModelCapability(provider, dto.modelId, LLMModelCapabilities.Audio);
-
-    const result = await provider.generateAudio!(dto.modelId, {
-      prompt: dto.prompt,
-      text: dto.text,
-      voice: dto.voice,
-    });
-    return new GenerateAudioResponseDto(result);
   }
 
   private async resolveProvider(llmConnectionId: string, opts?: ReadOpts) {

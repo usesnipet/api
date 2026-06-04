@@ -4,15 +4,11 @@ import { LLMModelCapabilities } from "../../llm-model-type";
 import { LlmModel } from "../../model/llm-model.model";
 
 import type {
-  LlmAudioGenerateInput,
-  LlmAudioGenerateResult,
   LlmEmbeddingInput,
   LlmEmbeddingResult,
   LlmListModelsOptions,
   LlmTextGenerateInput,
   LlmTextGenerateResult,
-  LlmVideoGenerateInput,
-  LlmVideoGenerateResult,
   LlmProvider,
 } from "../../llm-provider.interface";
 import type { MockLlmConfig } from "./mock.config";
@@ -24,8 +20,6 @@ const MOCK_MODELS: LlmModel[] = [
     capabilities: [LLMModelCapabilities.Embedding],
     displayName: "Mock Embedding",
   }),
-  new LlmModel({ modelId: "mock-video", capabilities: [LLMModelCapabilities.Video], displayName: "Mock Video" }),
-  new LlmModel({ modelId: "mock-audio", capabilities: [LLMModelCapabilities.Audio], displayName: "Mock Audio" }),
 ];
 
 const MOCK_EMBEDDING_VECTOR = [0.1, 0.2, 0.3];
@@ -89,27 +83,5 @@ export class MockLlmProvider implements LlmProvider {
     for (const part of text.content.split(" ")) {
       yield `${part} `;
     }
-  }
-
-  async generateVideo(
-    modelId: string,
-    input: LlmVideoGenerateInput
-  ): Promise<LlmVideoGenerateResult> {
-    return {
-      modelId,
-      status: "completed",
-      videoUrl: `https://mock.local/video?prompt=${encodeURIComponent(input.prompt)}`,
-    };
-  }
-
-  async generateAudio(
-    modelId: string,
-    input: LlmAudioGenerateInput
-  ): Promise<LlmAudioGenerateResult> {
-    return {
-      modelId,
-      transcript: input.text ?? input.prompt ?? "",
-      audioBase64: Buffer.from("mock-audio").toString("base64"),
-    };
   }
 }
