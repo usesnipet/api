@@ -1,16 +1,7 @@
 import { ApiFilterQueries, Filter } from "@/common/filter";
 import { ApiResponses } from "@/decorators/api-responses";
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Put,
+  Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 

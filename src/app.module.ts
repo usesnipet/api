@@ -11,6 +11,7 @@ import { schemas } from "./db";
 import { env } from "./env";
 import { AuthGuard } from "./modules/auth/auth.guard";
 import { AuthModule } from "./modules/auth/auth.module";
+import { ApiKeyModule } from "./modules/api-key/api-key.module";
 import { DatabaseModule } from "./modules/database/database.module";
 import { OrganizationModule } from "./modules/organization/organization.module";
 import { UserModule } from "./modules/user/user.module";
@@ -23,6 +24,7 @@ import { UserModule } from "./modules/user/user.module";
     }),
     ScheduleModule.forRoot(),
     OrganizationModule,
+    ApiKeyModule,
     AuthModule,
     UserModule,
     DatabaseModule.register({

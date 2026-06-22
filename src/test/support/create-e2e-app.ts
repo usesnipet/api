@@ -1,4 +1,5 @@
 import { schemas } from "@/db";
+import { ApiKeyModule } from "@/modules/api-key/api-key.module";
 import { DatabaseModule } from "@/modules/database/database.module";
 import { OrganizationModule } from "@/modules/organization/organization.module";
 import { INestApplication, ValidationPipe } from "@nestjs/common";
@@ -12,6 +13,7 @@ export async function buildE2EApp(connectionString: string): Promise<INestApplic
         config: { schema: schemas },
       }),
       OrganizationModule,
+      ApiKeyModule,
     ],
   }).compile();
 
