@@ -6,16 +6,16 @@ import { APP_INTERCEPTOR } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
 
 import { AppController } from "./app.controller";
-import { ProviderModule } from "./common/provider/provider.module";
 import { schemas } from "./db";
 import { env } from "./env";
 import { DatabaseModule } from "./modules/database/database.module";
+import { OrganizationModule } from "./modules/organization/organization.module";
 
 @Module({
   controllers: [AppController],
   imports: [
-    ProviderModule.forRoot(),
     ScheduleModule.forRoot(),
+    OrganizationModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
       config: { schema: schemas },

@@ -1,1 +1,0 @@
-export * from "./test-connection-respose.dto";

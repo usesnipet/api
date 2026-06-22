@@ -9,8 +9,6 @@
 import dotenv from "dotenv";
 import z from "zod";
 
-
-
 const envFile = process.env.ENV_FILE;
 
 /**
@@ -51,7 +49,11 @@ const envSchema = z.object({
   CORS_HEADERS: z.string().array().optional().default([ "*" ]),
   CORS_CREDENTIALS: z.boolean().optional().default(true),
 
-
+  // JWT
+  JWT_SECRET: z.string().default("change-me"),
+  JWT_EXPIRATION_TIME: z.string().default("1h"),
+  JWT_REFRESH_TOKEN_SECRET: z.string().default("change-me"),
+  JWT_REFRESH_TOKEN_EXPIRATION_TIME: z.string().default("7d"),
 
   // DATABASE
   DATABASE_URL: z.string(),
