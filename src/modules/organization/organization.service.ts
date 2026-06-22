@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { organization as organizationTable } from "@/db/schema/organization";
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
@@ -9,7 +9,18 @@ import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { Organization } from "./model/organization.model";
 
 @Injectable()
-export class OrganizationService extends BaseService {
+export class OrganizationService extends BaseService implements OnModuleInit {
+  private readonly logger = new Logger(OrganizationService.name);
+
+  async onModuleInit(): Promise<void> {
+    const hasOrganization = !!(await this.find({ limit: 1 }));
+    if (hasOrganization) return;
+    this.logger.log("No organization found, creating default organization");
+
+    await this.create({ slug: "default", name: "Default" });
+    this.logger.log("Organization created");
+  }
+
   async find(
     filter: FilterOptions<Organization>,
     opts?: ReadOpts

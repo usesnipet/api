@@ -1,8 +1,9 @@
 import { env } from "@/env";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 
+import { CreateUserDto } from "../user/dto/create-user.dto";
 import { User } from "../user/model/user.model";
 import { UserService } from "../user/user.service";
 
@@ -43,6 +44,21 @@ export class AuthService {
     });
   }
 
+  async register(dto: CreateUserDto): Promise<LoginResponseDto> {
+    const isFirstUser = await this.userService.count() === 0;
+
+    const withEmail = await this.userService.find({ where: { email: dto.email }, limit: 1 });
+    if (withEmail.length > 0) throw new BadRequestException('Email already exists');
+
+    const user = await this.userService.create({
+      name: dto.name,
+      email: dto.email,
+      password: await bcrypt.hash(dto.password, 10),
+      role: isFirstUser ? "admin" : "user",
+    });
+    return this.login({ email: user.email, password: dto.password });
+  }
+
   private generateAccessTokenPayload(user: User): { token: string, expiresIn: number } {
     const token = this.jwtService.sign<AccessTokenPayload>({
       type: "access",
@@ -51,7 +67,6 @@ export class AuthService {
       email: user.email,
       role: user.role,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + env.JWT_EXPIRATION_TIME,
     }, { expiresIn: env.JWT_EXPIRATION_TIME, secret: env.JWT_SECRET });
     return { token, expiresIn: env.JWT_EXPIRATION_TIME };
   }
@@ -62,7 +77,6 @@ export class AuthService {
       sub: user.id,
       jti: uuid(),
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
     }, { expiresIn: env.JWT_REFRESH_TOKEN_EXPIRATION_TIME, secret: env.JWT_REFRESH_TOKEN_SECRET });
     return { token, expiresIn: env.JWT_REFRESH_TOKEN_EXPIRATION_TIME };
   }
