@@ -51,9 +51,9 @@ const envSchema = z.object({
 
   // JWT
   JWT_SECRET: z.string().default("change-me"),
-  JWT_EXPIRATION_TIME: z.string().default("1h"),
+  JWT_EXPIRATION_TIME: z.number().default(1 * 60 * 60), // 1 hour
   JWT_REFRESH_TOKEN_SECRET: z.string().default("change-me"),
-  JWT_REFRESH_TOKEN_EXPIRATION_TIME: z.string().default("7d"),
+  JWT_REFRESH_TOKEN_EXPIRATION_TIME: z.number().default(7 * 24 * 60 * 60), // 7 days
 
   // DATABASE
   DATABASE_URL: z.string(),
