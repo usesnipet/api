@@ -1,7 +1,7 @@
 import { BaseService, CreateOpts, DeleteOpts, ReadOpts, UpdateOpts } from "@/common/crud";
 import { DrizzleFilterConverter, FilterOptions } from "@/common/filter";
 import { organization as organizationTable } from "@/db/schema/organization";
-import { ConflictException, Injectable, Logger, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
@@ -9,22 +9,9 @@ import { UpdateOrganizationDto } from "./dto/update-organization.dto";
 import { Organization } from "./model/organization.model";
 
 @Injectable()
-export class OrganizationService extends BaseService implements OnModuleInit {
-  private readonly logger = new Logger(OrganizationService.name);
+export class OrganizationService extends BaseService {
 
-  async onModuleInit(): Promise<void> {
-    const hasOrganization = !!(await this.find({ limit: 1 }));
-    if (hasOrganization) return;
-    this.logger.log("No organization found, creating default organization");
-
-    await this.create({ slug: "default", name: "Default" });
-    this.logger.log("Organization created");
-  }
-
-  async find(
-    filter: FilterOptions<Organization>,
-    opts?: ReadOpts
-  ): Promise<Organization[]> {
+  async find(filter: FilterOptions<Organization>, opts?: ReadOpts): Promise<Organization[]> {
     const rows = await this.db(opts).query.organization.findMany(
       DrizzleFilterConverter.toFindMany(filter)
     );
@@ -81,11 +68,7 @@ export class OrganizationService extends BaseService implements OnModuleInit {
     }
   }
 
-  private async assertSlugAvailable(
-    slug: string,
-    opts?: ReadOpts,
-    excludeId?: string
-  ): Promise<void> {
+  private async assertSlugAvailable(slug: string, opts?: ReadOpts, excludeId?: string): Promise<void> {
     const [existing] = await this.db(opts)
       .select({ id: organizationTable.id })
       .from(organizationTable)
