@@ -1,21 +1,30 @@
-import { jsonb, pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { boolean, jsonb, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const memoryScopeTypeEnum = pgEnum("memory_scope_type", [
-  "global",
-  "session",
-  "custom",
-]);
+import { organization } from "./organization";
 
-export const memory = pgTable("memory", {
+export const memory = pgTable("memories", {
   id: uuid("id").primaryKey().defaultRandom(),
-  scopeType: memoryScopeTypeEnum("scope_type").notNull(),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 255 }).notNull(),
+  isDefault: boolean("is_default").notNull().default(false),
   provider: varchar("provider", { length: 255 }).notNull(),
-  config: jsonb("config").notNull().default({}),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+  configuration: jsonb("configuration").notNull().default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull()
     .$onUpdate(() => new Date()),
 });
+
+export const memoryRelations = relations(memory, ({ one }) => ({
+  organization: one(organization, {
+    fields: [memory.organizationId],
+    references: [organization.id],
+  }),
+}));
+
+export type MemoryRow = typeof memory.$inferSelect;

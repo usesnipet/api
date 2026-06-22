@@ -2,35 +2,20 @@
  * @file This file defines the root module of the NestJS application.
  */
 import { ClassSerializerInterceptor, Module } from "@nestjs/common";
-import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
-import { LlmExceptionFilter } from "@/common/filters/llm-exception.filter";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 import { ScheduleModule } from "@nestjs/schedule";
 
 import { AppController } from "./app.controller";
 import { ProviderModule } from "./common/provider/provider.module";
 import { schemas } from "./db";
 import { env } from "./env";
-import { ApiKeyModule } from "./modules/api-key/api-key.module";
-import { ConversationModule } from "./modules/conversation/conversation.module";
-import { ConfigSchemaModule } from "./modules/config-schema";
 import { DatabaseModule } from "./modules/database/database.module";
-import { KnowledgeIndexModule } from "./modules/knowledge-index/knowledge-index.module";
-import { KnowledgeSourceModule } from "./modules/knowledge-source/knowledge-source.module";
-import { LlmModule } from "./modules/llm/llm.module";
-import { PipelineModule } from "./modules/pipeline/pipeline.module";
 
 @Module({
   controllers: [AppController],
   imports: [
     ProviderModule.forRoot(),
     ScheduleModule.forRoot(),
-    ConfigSchemaModule,
-    ApiKeyModule,
-    ConversationModule,
-    KnowledgeIndexModule,
-    KnowledgeSourceModule,
-    LlmModule,
-    PipelineModule,
     DatabaseModule.register({
       pg: { connection: "pool", config: { connectionString: env.DATABASE_URL } },
       config: { schema: schemas },
@@ -40,10 +25,6 @@ import { PipelineModule } from "./modules/pipeline/pipeline.module";
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: LlmExceptionFilter,
     },
   ],
 })

@@ -4034,7 +4034,7 @@
         "properties": {
           "inputs": {
             "type": "object",
-            "description": "Input values used to resolve {{input.*}} placeholders in the pipeline definition",
+            "description": "Input values used to resolve ${input.*} placeholders in the pipeline definition",
             "example": {
               "message": "Hello",
               "llmConnectionId": "e5f6a7b8-c9d0-1234-efab-567890123456"
@@ -4050,7 +4050,7 @@
         "properties": {
           "definition": {
             "type": "object",
-            "description": "Pipeline definition with {{input.*}} placeholders resolved"
+            "description": "Pipeline definition with ${input.*} placeholders resolved"
           }
         },
         "required": [
